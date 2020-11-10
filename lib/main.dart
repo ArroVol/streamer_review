@@ -17,7 +17,7 @@ class MyApp extends StatelessWidget {
 
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home: MyHomePage(title: "My Home Page",)
+      home: FirstRoute()
       // home: ColorCircle(title: 'Color Circle',),
     );
   }
