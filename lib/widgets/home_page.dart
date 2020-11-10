@@ -5,20 +5,20 @@ import 'package:flutter/material.dart';
 void main() {
   runApp(MaterialApp(
     title: 'Navigation Basics',
-    home: FirstRoute(),
+    home: HomePage(),
   ));
 }
 
-class FirstRoute extends StatelessWidget {
+class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('First Route'),
+        title: Text('Streamer Review Hub'),
       ),
       body: Center(
         child: ElevatedButton(
-          child: Text('Open route'),
+          child: Text('Go To Next Page'),
           onPressed: () {
             Navigator.push(
               context,
@@ -36,7 +36,7 @@ class SecondRoute extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Second Route"),
+        title: Text("Return to Home Page"),
       ),
       body: Center(
         child: ElevatedButton(

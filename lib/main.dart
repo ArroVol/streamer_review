@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:streamer_review/secondScreen.dart';
-import 'package:streamer_review/widgets/color_circle.dart';
+import 'package:streamer_review/widgets/home_page.dart';
 
 void main() {
   runApp(MyApp());
@@ -11,13 +11,13 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Color Circlce App',
+      title: 'Streamer Review App',
       theme: ThemeData(
         primarySwatch: Colors.blue,
 
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home: FirstRoute()
+      home: HomePage()
       // home: ColorCircle(title: 'Color Circle',),
     );
   }
