@@ -11,7 +11,32 @@ class Gooby extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text('ITS GOOBY TIME'),
+
       ),
     );
+    
   }
 }
+
+
+
+// Container(
+// Row(
+// children: [
+// IconButton(
+// icon: Icon(Icons.menu),
+// tooltip: 'Navigation menu',
+// ),
+// Expanded(
+// child: title,
+// ),
+// IconButton(
+// icon: Icon(Icons.search),
+// tooltip: 'Search',
+// ),
+// ],
+// ),
+// height: 56.0,
+// padding: const EdgeInsets.symmetric(horizontal: 8.0),
+// decoration: BoxDecoration(color: Colors.blue[500]),
+// );
