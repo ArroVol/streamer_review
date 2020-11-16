@@ -24,8 +24,8 @@ class HomeScreen extends StatelessWidget {
           backgroundColor: Colors.black54),
       body: Padding(
         padding: EdgeInsets.fromLTRB(10, 20, 10, 20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+        child: ListView(
+          scrollDirection: Axis.vertical,
           children: <Widget>[
             Center(
               child:
@@ -87,6 +87,40 @@ class HomeScreen extends StatelessWidget {
               color: Colors.black38,
             ),
             Text('Up and Coming'),
+            Container(
+              height: 100,
+              child: ListView(
+                scrollDirection: Axis.horizontal,
+                children: <Widget>[
+                  StreamerThumb(),
+                  StreamerThumb(),
+                  StreamerThumb(),
+                  StreamerThumb(),
+                  StreamerThumb(),
+                ],
+              ),
+            ),
+            Divider(
+              color: Colors.black38,
+            ),
+            Text('Tag - Funny'),
+            Container(
+              height: 100,
+              child: ListView(
+                scrollDirection: Axis.horizontal,
+                children: <Widget>[
+                  StreamerThumb(),
+                  StreamerThumb(),
+                  StreamerThumb(),
+                  StreamerThumb(),
+                  StreamerThumb(),
+                ],
+              ),
+            ),
+            Divider(
+              color: Colors.black38,
+            ),
+            Text('Tag - Competitive'),
             Container(
               height: 100,
               child: ListView(
