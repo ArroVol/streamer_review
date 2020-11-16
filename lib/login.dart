@@ -6,6 +6,8 @@ import 'custom_route.dart';
 import 'home.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import 'main_screen.dart';
+
 
 // const users = const {
 //   'reviewer@gmail.com': 'reviewer',
@@ -164,7 +166,7 @@ class LoginScreen extends StatelessWidget {
       },
       onSubmitAnimationCompleted: () {
         Navigator.of(context).pushReplacement(FadePageRoute(
-          builder: (context) => HomeScreen(),
+          builder: (context) => MainScreen(),
         ));
       },
       onRecoverPassword: (name) {
