@@ -31,11 +31,11 @@ class StreamerProfile extends State<StreamerPage> {
         }
     );
     topStreamerInfo = json.decode(response.body);
-    print(topStreamerInfo['data'][0]);
+    // print(topStreamerInfo['data'][0]);
     var topStreamerId = topStreamerInfo['data'][0]['user_id'];
 
     var url = "https://api.twitch.tv/helix/users?id=" + topStreamerId;
-    print(url);
+    // print(url);
 
     http.Response channelInformation = await http.get(
         Uri.encodeFull(url),
@@ -52,10 +52,10 @@ class StreamerProfile extends State<StreamerPage> {
     var viewCount = data['data'][0]['view_count'];
     var streamer = new Streamer(
         username, description, profilePictureUrl, viewCount);
-    print(streamer.username);
-    print(streamer.description);
-    print(streamer.profilePictureUrl);
-    print(streamer.viewCount);
+    // print(streamer.username);
+    // print(streamer.description);
+    // print(streamer.profilePictureUrl);
+    // print(streamer.viewCount);
 
 
     var streamers = List();
@@ -69,7 +69,7 @@ class StreamerProfile extends State<StreamerPage> {
     //   // streamers.add(streamer);
     //   // streamers2.putIfAbsent(streamer.username, () => streamer);
     // }
-    print(streamers.length);
+    // print(streamers.length);
 
     setState(() {
       topStreamer = streamer;
