@@ -7,8 +7,14 @@ Database db;
 
 class DatabaseCreator {
   static const todoTable = 'todo';
+  static const userTable = 'the_user';
+  static const broadcasterTable = 'broadcaster';
+  static const userFollowsTable = 'user_follows';
+
   static const id = 'id';
   static const name = 'name';
+  static const email = 'email';
+  static const password = 'password';
   static const info = 'info';
   static const isDeleted = 'isDeleted';
 
@@ -58,6 +64,29 @@ class DatabaseCreator {
   }
 
   Future<void> onCreate(Database db, int version) async {
+    await createTodoTable(db);
+  }
+
+  Future<void> createUserTable(Database db) async {
+    final todoSql = '''CREATE TABLE $todoTable
+    (
+      $id INTEGER PRIMARY KEY,
+      $email TEXT,
+      $password TEXT,
+      // $isDeleted BIT NOT NULL
+    )''';
+
+    await db.execute(todoSql);
+  }
+
+
+  Future<void> initDatabase2() async {
+    final path = await getDatabasePath('user_db');
+    db = await openDatabase(path, version: 1, onCreate: onCreate);
+    print(db);
+  }
+
+  Future<void> onCreate2(Database db, int version) async {
     await createTodoTable(db);
   }
 }

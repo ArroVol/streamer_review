@@ -16,6 +16,7 @@ class User extends DBInterface{
   User({this.id, this.email, this.password});
 
 
+
   User.fromJson(Map<String, dynamic> m) {
     id = m['user_id'];
     email = m['user_email'];
@@ -54,7 +55,9 @@ class User extends DBInterface{
 
   @override
   // TODO: implement name
-  String get name => throw UnimplementedError();
+  String get name => 'a_user';
+
+
   //
   // @override
   // get name => 'testing.db';
