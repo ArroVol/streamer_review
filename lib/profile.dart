@@ -39,7 +39,7 @@ class _ProfileState extends State<Profile> {
             Text(
               'ExampleUser1234',
               style: TextStyle(
-                color: Colors.amberAccent[200],
+                color: Colors.lightGreenAccent,
                 letterSpacing: 2.0,
                 fontSize: 28,
                 fontWeight: FontWeight.bold,
@@ -56,7 +56,7 @@ class _ProfileState extends State<Profile> {
                 Text(
                   'test@gmail.com',
                   style:TextStyle(
-                      color: Colors.grey[400],
+                      color: Colors.lightGreenAccent[100],
                       fontSize: 18,
                       letterSpacing: 1
                   ),
