@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:streamer_review/helper/database_helper.dart';
+import 'package:streamer_review/repository/broadcaster_repository.dart';
+import 'package:streamer_review/repository/user_repository.dart';
 
 void main() {
   runApp(MyApp());
@@ -31,6 +33,8 @@ class AaronsMain extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<AaronsMain> {
+  BroadcasterRepository _broadcasterRepository = new BroadcasterRepository();
+  UserRepository _userRepository = new UserRepository();
   String _email = "";
   String _password = "";
   int _iD;
@@ -111,12 +115,12 @@ class _MyHomePageState extends State<AaronsMain> {
                   int rowsAffected = await DatabaseHelper2.instance.delete(_iD);
                   print(rowsAffected);
                 },
-                child: Text('delete')),
+                child: Text('delete user')),
             FlatButton(
                 onPressed: () async {
                   DatabaseHelper2.instance.resetDb();
                 },
-                child: Text('Delete Database')),
+                child: Text('Reset Table')),
             FlatButton(
                 onPressed: () async {
                   DatabaseHelper2.instance.createUserTable();

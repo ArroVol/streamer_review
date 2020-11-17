@@ -15,7 +15,11 @@ class User extends DBInterface{
   // User(this.id, this.email, this.password, {id, password, email});
   User({this.id, this.email, this.password});
 
-
+  // User(int id, String email, String password){
+  //   this.id = id;
+  //   this.email = email;
+  //   this.password = password;
+  // }
 
   User.fromJson(Map<String, dynamic> m) {
     id = m['user_id'];

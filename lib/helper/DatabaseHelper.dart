@@ -1,7 +1,7 @@
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:streamer_review/model/Todo.dart';
-import 'package:streamer_review/model/User.dart';
+import 'package:streamer_review/model/user.dart';
 
 
 // import '../model/Todo.dart';
