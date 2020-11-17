@@ -7,23 +7,19 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:streamer_review/streamer.dart';
 
-
 class SettingsPage extends StatelessWidget {
-
   var data;
   var topStreamerInfo;
   Streamer topStreamer;
 
-
   Future<Streamer> getStreamInfo() async {
-
     http.Response response = await http.get(
-        Uri.encodeFull("https://api.twitch.tv/helix/search/channels?query=criticalrole"),
+        Uri.encodeFull(
+            "https://api.twitch.tv/helix/search/channels?query=criticalrole"),
         headers: {
           "Authorization": "Bearer 5e46v0tks21zqvnloyua8e76bcsui9",
           "Client-Id": "874uve10v0bcn3rmp2bq4cvz8fb5wj"
-        }
-    );
+        });
 
     data = json.decode(response.body);
     print(data['data'][0]);
@@ -38,8 +34,7 @@ class SettingsPage extends StatelessWidget {
         headers: {
           "Authorization": "Bearer 5e46v0tks21zqvnloyua8e76bcsui9",
           "Client-Id": "874uve10v0bcn3rmp2bq4cvz8fb5wj"
-        }
-    );
+        });
 
     data = json.decode(response.body);
     print(data['data'][0]);
@@ -54,14 +49,13 @@ class SettingsPage extends StatelessWidget {
         headers: {
           "Authorization": "Bearer 5e46v0tks21zqvnloyua8e76bcsui9",
           "Client-Id": "874uve10v0bcn3rmp2bq4cvz8fb5wj"
-        }
-    );
+        });
 
     data = json.decode(response.body);
 
     for (int i = 0; i < data['data'].length; i++) {
       int number = i + 1;
-      print(number.toString() + '.) '+ data['data'][i]['user_name']);
+      print(number.toString() + '.) ' + data['data'][i]['user_name']);
     }
     var streamer = new Streamer('test', 'test', 'test', 10);
     return streamer;
@@ -73,14 +67,13 @@ class SettingsPage extends StatelessWidget {
         headers: {
           "Authorization": "Bearer 5e46v0tks21zqvnloyua8e76bcsui9",
           "Client-Id": "874uve10v0bcn3rmp2bq4cvz8fb5wj"
-        }
-    );
+        });
 
     data = json.decode(response.body);
 
     for (int i = 0; i < data['data'].length; i++) {
       int number = i + 1;
-      print(number.toString() + '.) '+ data['data'][i]['name']);
+      print(number.toString() + '.) ' + data['data'][i]['name']);
     }
     var streamer = new Streamer('test', 'test', 'test', 10);
     return streamer;
@@ -92,28 +85,35 @@ class SettingsPage extends StatelessWidget {
         headers: {
           "Authorization": "Bearer 5e46v0tks21zqvnloyua8e76bcsui9",
           "Client-Id": "874uve10v0bcn3rmp2bq4cvz8fb5wj"
-        }
-    );
+        });
     topStreamerInfo = json.decode(response.body);
     var topStreamerId = topStreamerInfo['data'][0]['user_id'];
+    var topStreamerName = topStreamerInfo['data'][0]['user_name'];
 
     var url = "https://api.twitch.tv/helix/users?id=" + topStreamerId;
 
-    http.Response channelInformation = await http.get(
-        Uri.encodeFull(url),
-        headers: {
-          "Authorization": "Bearer 5e46v0tks21zqvnloyua8e76bcsui9",
-          "Client-Id": "874uve10v0bcn3rmp2bq4cvz8fb5wj"
-        }
-    );
+    http.Response channelInformation =
+        await http.get(Uri.encodeFull(url), headers: {
+      "Authorization": "Bearer 5e46v0tks21zqvnloyua8e76bcsui9",
+      "Client-Id": "874uve10v0bcn3rmp2bq4cvz8fb5wj"
+    });
+    url =
+        "https://api.twitch.tv/helix/search/channels?query=" + topStreamerName;
+    http.Response isLiveInformation =
+        await http.get(Uri.encodeFull(url), headers: {
+      "Authorization": "Bearer 5e46v0tks21zqvnloyua8e76bcsui9",
+      "Client-Id": "874uve10v0bcn3rmp2bq4cvz8fb5wj"
+    });
+    var isLive = json.decode(isLiveInformation.body);
+    print('LIVE?: ' + isLive['data'][0]['is_live'].toString());
 
     data = json.decode(channelInformation.body);
     var username = data['data'][0]['display_name'];
     var description = data['data'][0]['description'];
     var profilePictureUrl = data['data'][0]['profile_image_url'];
     var viewCount = data['data'][0]['view_count'];
-    var streamer = new Streamer(
-        username, description, profilePictureUrl, viewCount);
+    var streamer =
+        new Streamer(username, description, profilePictureUrl, viewCount);
     print('USERNAME: ' + streamer.username);
     print('DESCRIPTION: ' + streamer.description);
     print('PICTURE URL: ' + streamer.profilePictureUrl);
@@ -121,8 +121,6 @@ class SettingsPage extends StatelessWidget {
 
     return streamer;
   }
-
-
 
   @override
   Widget build(BuildContext context) {
