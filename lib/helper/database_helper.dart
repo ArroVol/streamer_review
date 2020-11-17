@@ -13,7 +13,7 @@ import 'DatabaseCreator.dart';
 class DatabaseHelper2 {
   //These are not given a type because it will automatically take the type that it is given first to it
   //we need to have a database name and database version
-  static final _dbName = 'myDatabase.db';
+  static final _dbName = 'myDatabase11.db';
   static final _dbVersion = 1;
   static final _tableName = '_user_table';
 
@@ -65,45 +65,45 @@ class DatabaseHelper2 {
       $columnId INTEGER PRIMARY KEY AUTOINCREMENT,
       $columnEmail TEXT NOT NULL,
       $columnPassword TEXT NOT NULL)
+      
       ''');
     db.execute('''
       CREATE TABLE broadcaster_table(
       broadcaster_id INTEGER PRIMARY KEY,
       broadcaster_name TEXT NOT NULL,
-      broadcaster_overall_rating INTEGER, 
-      broadcaster_overall_skill INTEGER, 
-      broadcaster_category TEXT, 
-      broadcaster_interactiveness INTEGER, 
+      overall_satisfaction INTEGER, 
+      overall_skill INTEGER, 
+      overall_entertainment INTEGER, 
+      overall_interactiveness INTEGER 
       )
       ''');
     db.execute('''
       CREATE TABLE user_favorites(
-      favorites_id INTEGER PRIMARY KEY AUTO INCREMENT,
-      CONSTRAINT fk_user_table
-        FOREIGN KEY (_id)
-        REFERENCES _user_table(_id)
-      )
+      favorites_id INTEGER PRIMARY KEY,
+      FOREIGN KEY (_id)
+        REFERENCES _user_table(_id)  
+       FOREIGN KEY (broadcaster_id)
+        REFERENCES broadcaster_table(broadcaster_id)  
+        )
       ''');
     db.execute('''
-      CREATE TABLE user_follows(
-      user_follows_id INTEGER PRIMARY KEY,
-      user_given_rating INTEGER,
-      user_given_category TEXT, 
-      user_given_interactiveness INTEGER, 
-      user_given_skill_level INTEGER, 
-      CONSTRAINT fk_user_table
-        FOREIGN KEY (_id)
+      CREATE TABLE reviews(
+      reviews_id INTEGER PRIMARY KEY,
+      satisfaction_rating INTEGER, 
+      entertainment_rating INTEGER, 
+      interactiveness_rating INTEGER, 
+      skill_rating INTEGER 
+      FOREIGN KEY (_id)
         REFERENCES _user_table(_id)
-      CONSTRAINT fk_broadcaster_table
-        FOREIGN KEY (broadcaster_id)
+      FOREIGN KEY (broadcaster_id)
         REFERENCES broadcaster_table(broadcaster_id)
       )
       ''');
     db.execute('''
       CREATE TABLE broadcaster_Tags(
       tags_id INTEGER PRIMARY KEY AUTO INCREMENT,
-      CONSTRAINT fk_broadcaster_table
-        FOREIGN KEY (broadcaster_id)
+      tag_name TEXT
+      FOREIGN KEY (broadcaster_id)
         REFERENCES broadcaster_table(broadcaster_id)
       )
       ''');
@@ -133,7 +133,9 @@ class DatabaseHelper2 {
   //All data will be in the form of map, so it returns a list of map
   Future<List<Map<String, dynamic>>> queryAll() async {
     Database db = await instance.database;
-    return await db.query(_tableName);
+    return await db.query("broadcaster_table");
+
+    // return await db.query(_tableName);
   }
 
   //to update you need to pass the id of which will be updated as well as pass the value
@@ -296,3 +298,58 @@ class DatabaseHelper2 {
 //     return await db.delete(_tableName,
 //         where: '$columnId = ? $columnName = ?', whereArgs: [id]);
 //   }
+//
+// db.execute('''
+//       CREATE TABLE $_tableName(
+//       $columnId INTEGER PRIMARY KEY AUTOINCREMENT,
+//       $columnEmail TEXT NOT NULL,
+//       $columnPassword TEXT NOT NULL)
+//
+//       ''');
+// db.execute('''
+//       CREATE TABLE broadcaster_table(
+//       broadcaster_id INTEGER PRIMARY KEY,
+//       broadcaster_name TEXT NOT NULL,
+//       overall_satisfaction INTEGER,
+//       overall_skill INTEGER,
+//       overall_entertainment INTEGER,
+//       overall_interactiveness INTEGER,
+//       )
+//       ''');
+// db.execute('''
+//       CREATE TABLE user_favorites(
+//       favorites_id INTEGER PRIMARY KEY AUTO INCREMENT,
+//       CONSTRAINT fk_user_table
+//         FOREIGN KEY (_id)
+//         REFERENCES _user_table(_id)
+//       )
+//       CONSTRAINT fk_broadcaster_table
+//         FOREIGN KEY (broadcaster_id)
+//         REFERENCES broadcaster_table(broadcaster_id)
+//       )
+//       ''');
+// db.execute('''
+//       CREATE TABLE reviews(
+//       reviews_id INTEGER PRIMARY KEY,
+//       satisfaction_rating INTEGER,
+//       entertainment_rating INTEGER,
+//       interactiveness_rating INTEGER,
+//       skill_rating INTEGER,
+//       CONSTRAINT fk_user_table
+//         FOREIGN KEY (_id)
+//         REFERENCES _user_table(_id)
+//       CONSTRAINT fk_broadcaster_table
+//         FOREIGN KEY (broadcaster_id)
+//         REFERENCES broadcaster_table(broadcaster_id)
+//       )
+//       ''');
+// db.execute('''
+//       CREATE TABLE broadcaster_Tags(
+//       tags_id INTEGER PRIMARY KEY AUTO INCREMENT,
+//       tag_name TEXT,
+//       CONSTRAINT fk_broadcaster_table
+//         FOREIGN KEY (broadcaster_id)
+//         REFERENCES broadcaster_table(broadcaster_id)
+//       )
+//       ''');
+// }
