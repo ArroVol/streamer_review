@@ -2,43 +2,60 @@ import 'package:flutter/material.dart';
 import 'package:streamer_review/streamer_thumb.dart';
 
 class HomeScreen extends StatelessWidget {
+
+
   @override
   Widget build(BuildContext context) {
     print('here');
     return Scaffold(
-      backgroundColor: Colors.grey[500],
-      appBar: AppBar(
-          title: Text(
-            'STREVIEW',
-            style:
-                TextStyle(color: Colors.lightGreenAccent, letterSpacing: 1.5),
-          ),
-          actions: <Widget>[
-            IconButton(
-                icon: Icon(Icons.search),
+        backgroundColor: Colors.grey[500],
+        appBar: AppBar(
+            title: Text(
+              'STREVIEW',
+              style:
+                  TextStyle(color: Colors.lightGreenAccent, letterSpacing: 1.5),
+            ),
+            actions: <Widget>[
+              IconButton(
+                icon: Icon(Icons.person),
+                alignment: Alignment.centerLeft,
                 onPressed: () {
-                  showSearch(context: context, delegate: StreamerSearch());
-                })
-          ],
-          centerTitle: true,
-          backgroundColor: Colors.black54),
-      body: Padding(
-        padding: EdgeInsets.fromLTRB(10, 20, 10, 20),
-        child: ListView(
-          scrollDirection: Axis.vertical,
-          children: <Widget>[
-            Center(
-              child:
-              Text('Featured Streamer'),
-            ),
-            Divider(
-              height: 50,
-              color: Colors.black38,
-            ),
-            Text('Favorites'),
-            Container(
-              height: 100,
-              child: ListView(
+                  Navigator.pushNamed(context, '/profile');
+                },
+              ),
+              IconButton(
+                  icon: Icon(Icons.search),
+                  onPressed: () {
+                    showSearch(context: context, delegate: StreamerSearch());
+                  })
+            ],
+            centerTitle: true,
+            backgroundColor: Colors.black54),
+        body: Padding(
+          padding: EdgeInsets.fromLTRB(10, 20, 10, 20),
+          child: ListView(
+            scrollDirection: Axis.vertical,
+            children: <Widget>[
+              Center(
+                child: Container(
+                  child: Column(
+                    children: <Widget>[
+                      StreamerThumb(),
+                      Text(
+                        'Featured Streamer',
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              Divider(
+                height: 50,
+                color: Colors.black38,
+              ),
+              Text('Favorites'),
+              Container(
+                height: 150,
+                child: ListView(
                   scrollDirection: Axis.horizontal,
                   children: <Widget>[
                     StreamerThumb(),
@@ -48,103 +65,100 @@ class HomeScreen extends StatelessWidget {
                     StreamerThumb(),
                   ],
                 ),
-            ),
-            Divider(
-              color: Colors.black38,
-            ),
-            Text('Top Rated Streamers'),
-            Container(
-              height: 100,
-              child: ListView(
-                scrollDirection: Axis.horizontal,
-                children: <Widget>[
-                  StreamerThumb(),
-                  StreamerThumb(),
-                  StreamerThumb(),
-                  StreamerThumb(),
-                  StreamerThumb(),
-                ],
               ),
-            ),
-            Divider(
-              color: Colors.black38,
-            ),
-            Text('Streaming Now'),
-            Container(
-              height: 100,
-              child: ListView(
-                scrollDirection: Axis.horizontal,
-                children: <Widget>[
-                  StreamerThumb(),
-                  StreamerThumb(),
-                  StreamerThumb(),
-                  StreamerThumb(),
-                  StreamerThumb(),
-                ],
+              Divider(
+                color: Colors.black38,
               ),
-            ),
-            Divider(
-              color: Colors.black38,
-            ),
-            Text('Up and Coming'),
-            Container(
-              height: 100,
-              child: ListView(
-                scrollDirection: Axis.horizontal,
-                children: <Widget>[
-                  StreamerThumb(),
-                  StreamerThumb(),
-                  StreamerThumb(),
-                  StreamerThumb(),
-                  StreamerThumb(),
-                ],
+              Text('Top Rated Streamers'),
+              Container(
+                height: 150,
+                child: ListView(
+                  scrollDirection: Axis.horizontal,
+                  children: <Widget>[
+                    StreamerThumb(),
+                    StreamerThumb(),
+                    StreamerThumb(),
+                    StreamerThumb(),
+                    StreamerThumb(),
+                  ],
+                ),
               ),
-            ),
-            Divider(
-              color: Colors.black38,
-            ),
-            Text('Tag - Funny'),
-            Container(
-              height: 100,
-              child: ListView(
-                scrollDirection: Axis.horizontal,
-                children: <Widget>[
-                  StreamerThumb(),
-                  StreamerThumb(),
-                  StreamerThumb(),
-                  StreamerThumb(),
-                  StreamerThumb(),
-                ],
+              Divider(
+                color: Colors.black38,
               ),
-            ),
-            Divider(
-              color: Colors.black38,
-            ),
-            Text('Tag - Competitive'),
-            Container(
-              height: 100,
-              child: ListView(
-                scrollDirection: Axis.horizontal,
-                children: <Widget>[
-                  StreamerThumb(),
-                  StreamerThumb(),
-                  StreamerThumb(),
-                  StreamerThumb(),
-                  StreamerThumb(),
-                ],
+              Text('Streaming Now'),
+              Container(
+                height: 150,
+                child: ListView(
+                  scrollDirection: Axis.horizontal,
+                  children: <Widget>[
+                    StreamerThumb(),
+                    StreamerThumb(),
+                    StreamerThumb(),
+                    StreamerThumb(),
+                    StreamerThumb(),
+                  ],
+                ),
               ),
-            ),
-            Divider(
-              color: Colors.black38,
-            ),
-          ],
-        ),
-      )
-    );
-
+              Divider(
+                color: Colors.black38,
+              ),
+              Text('Up and Coming'),
+              Container(
+                height: 150,
+                child: ListView(
+                  scrollDirection: Axis.horizontal,
+                  children: <Widget>[
+                    StreamerThumb(),
+                    StreamerThumb(),
+                    StreamerThumb(),
+                    StreamerThumb(),
+                    StreamerThumb(),
+                  ],
+                ),
+              ),
+              Divider(
+                color: Colors.black38,
+              ),
+              Text('Tag - Funny'),
+              Container(
+                height: 150,
+                child: ListView(
+                  scrollDirection: Axis.horizontal,
+                  children: <Widget>[
+                    StreamerThumb(),
+                    StreamerThumb(),
+                    StreamerThumb(),
+                    StreamerThumb(),
+                    StreamerThumb(),
+                  ],
+                ),
+              ),
+              Divider(
+                color: Colors.black38,
+              ),
+              Text('Tag - Competitive'),
+              Container(
+                height: 150,
+                child: ListView(
+                  scrollDirection: Axis.horizontal,
+                  children: <Widget>[
+                    StreamerThumb(),
+                    StreamerThumb(),
+                    StreamerThumb(),
+                    StreamerThumb(),
+                    StreamerThumb(),
+                  ],
+                ),
+              ),
+              Divider(
+                color: Colors.black38,
+              ),
+            ],
+          ),
+        ));
   }
 }
-
 
 class StreamerSearch extends SearchDelegate<String> {
   final streamerList = [

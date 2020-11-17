@@ -9,15 +9,31 @@ class StreamerThumb extends StatefulWidget {
 class _StreamerThumb extends State<StreamerThumb> {
   @override
   Widget build(BuildContext context) {
-    return Container(
-        width: 100,
-        height: 100,
-        child: Center(
-          child: CircleAvatar(
-            backgroundImage: AssetImage('assets/example.jpg'),
-            radius: 35,
+    return Card(
+      color: Colors.transparent,
+      elevation: 50,
+      shadowColor: Colors.lightGreenAccent[100],
+      shape: CircleBorder(),
+      child: new InkWell(
+        onTap: () {
+          print("Streamer card clicked");
+        },
+        child: Container(
+          width: 150.0,
+          height: 150.0,
+          child: Column(
+            children: <Widget>[
+              CircleAvatar(
+                backgroundImage: AssetImage('assets/example.jpg'),
+                backgroundColor: Colors.lightGreenAccent,
+                radius: 35,
+              ),
+              Text('Ninja'),
+              Icon(Icons.contactless, color: Colors.black54),
+            ],
           ),
         ),
-      );
+      ),
+    );
   }
 }
