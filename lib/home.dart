@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:streamer_review/streamer_thumb.dart';
+import 'package:streamer_review/push_notifications.dart';
 
 class HomeScreen extends StatelessWidget {
 
-
   @override
   Widget build(BuildContext context) {
+    PushNotificationsManager().init();
     print('here');
     return Scaffold(
         backgroundColor: Colors.grey[500],
