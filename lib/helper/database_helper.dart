@@ -2,7 +2,7 @@ import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
-import 'package:streamer_review/model/User.dart';
+import 'package:streamer_review/model/user.dart';
 import 'dart:convert';
 
 // library for input and output
@@ -13,7 +13,7 @@ import 'DatabaseCreator.dart';
 class DatabaseHelper2 {
   //These are not given a type because it will automatically take the type that it is given first to it
   //we need to have a database name and database version
-  static final _dbName = 'myDatabase.db';
+  static final _dbName = 'myDatabase18.db';
   static final _dbVersion = 1;
   static final _tableName = '_user_table';
 
@@ -21,7 +21,6 @@ class DatabaseHelper2 {
   static final columnId = '_id';
   static final columnEmail = 'email';
   static final columnPassword = 'password';
-
 
   //making it a singleton class
   DatabaseHelper2._privateConstructor();
@@ -63,9 +62,56 @@ class DatabaseHelper2 {
 
     db.execute('''
       CREATE TABLE $_tableName(
-      $columnId INTEGER PRIMARY KEY,
+      $columnId INTEGER PRIMARY KEY AUTOINCREMENT,
       $columnEmail TEXT NOT NULL,
-      $columnPassword TEXT )
+      $columnPassword TEXT NOT NULL,
+      phone_number TEXT,
+      user_name TEXT NOT NULL)
+      ''');
+    db.execute('''
+      CREATE TABLE broadcaster_table(
+      broadcaster_id INTEGER PRIMARY KEY,
+      broadcaster_name TEXT NOT NULL,
+      overall_satisfaction INTEGER, 
+      overall_skill INTEGER, 
+      overall_entertainment INTEGER, 
+      overall_interactiveness INTEGER 
+      )
+      ''');
+    db.execute('''
+      CREATE TABLE user_favorites(
+      favorites_id INTEGER PRIMARY KEY AUTOINCREMENT, 
+      fk_broadcaster_id INTEGER,
+      fk_user_id INTEGER,
+       FOREIGN KEY (fk_broadcaster_id)
+        REFERENCES broadcaster_table(broadcaster_id),
+       FOREIGN KEY (fk_user_id)
+         REFERENCES _user_table(_id)  
+        )
+      ''');
+    db.execute('''
+      CREATE TABLE reviews(
+      reviews_id INTEGER PRIMARY KEY AUTOINCREMENT,
+      satisfaction_rating INTEGER, 
+      entertainment_rating INTEGER, 
+      interactiveness_rating INTEGER, 
+      skill_rating INTEGER, 
+      fk_broadcaster_id INTEGER,
+      fk_user_id INTEGER,
+       FOREIGN KEY (fk_broadcaster_id)
+        REFERENCES broadcaster_table(broadcaster_id),
+       FOREIGN KEY (fk_user_id)
+         REFERENCES _user_table(_id)  
+        )
+      ''');
+    db.execute('''
+      CREATE TABLE broadcaster_Tags(
+      tags_id INTEGER PRIMARY KEY AUTOINCREMENT,
+      tag_name TEXT,
+      fk_broadcaster_id INTEGER,
+      FOREIGN KEY (fk_broadcaster_id)
+        REFERENCES broadcaster_table(broadcaster_id)
+      )
       ''');
   }
 
@@ -93,7 +139,9 @@ class DatabaseHelper2 {
   //All data will be in the form of map, so it returns a list of map
   Future<List<Map<String, dynamic>>> queryAll() async {
     Database db = await instance.database;
-    return await db.query(_tableName);
+    return await db.query("broadcaster_table");
+
+    // return await db.query(_tableName);
   }
 
   //to update you need to pass the id of which will be updated as well as pass the value
@@ -106,8 +154,8 @@ class DatabaseHelper2 {
 
     //This will update the specific row
     //first question mark will be replaced by 1, second question mark will be replaced by saheb
-    return await db.update(_tableName, row,
-        where: '$columnId = ?',  whereArgs: [id]);
+    return await db
+        .update(_tableName, row, where: '$columnId = ?', whereArgs: [id]);
     //await because this will take some time
   }
 
@@ -116,8 +164,7 @@ class DatabaseHelper2 {
     print('deleting...');
     print(id);
     Database db = await instance.database;
-    return await db.delete(_tableName,
-        where: '$columnId = ?', whereArgs: [id]);
+    return await db.delete(_tableName, where: '$columnId = ?', whereArgs: [id]);
   }
 
   Future<List<User>> retrieveUsers() async {
@@ -135,15 +182,22 @@ class DatabaseHelper2 {
   }
 
   Future resetDb() async {
+
     Database db = await instance.database;
-    db.execute("DROP TABLE IF EXISTS _user_table");
-
-
+    // db.execute("DROP TABLE IF EXISTS _user_table");
+    db.execute("DELETE FROM _user_table");
+    db.execute("DROP TABLE _user_table");
+    db.execute('''
+      CREATE TABLE $_tableName(
+      $columnId INTEGER PRIMARY KEY AUTOINCREMENT,
+      $columnEmail TEXT NOT NULL,
+      $columnPassword TEXT NOT NULL)
+      ''');
   }
 
   //returns 2 parameters (database, version)
   // create the database if it doesnt exist
-  Future createUserTable () {
+  Future createUserTable() {
     //write the query that creates the database
     //3 single quotes allows us to write the lines as a single string (command)
 
@@ -154,10 +208,9 @@ class DatabaseHelper2 {
       $columnPassword TEXT )
       ''');
   }
+
+
 }
-
-
-
 
 // class DatabaseHelper2 {
 //   //These are not given a type because it will automatically take the type that it is given first to it
@@ -251,3 +304,58 @@ class DatabaseHelper2 {
 //     return await db.delete(_tableName,
 //         where: '$columnId = ? $columnName = ?', whereArgs: [id]);
 //   }
+//
+// db.execute('''
+//       CREATE TABLE $_tableName(
+//       $columnId INTEGER PRIMARY KEY AUTOINCREMENT,
+//       $columnEmail TEXT NOT NULL,
+//       $columnPassword TEXT NOT NULL)
+//
+//       ''');
+// db.execute('''
+//       CREATE TABLE broadcaster_table(
+//       broadcaster_id INTEGER PRIMARY KEY,
+//       broadcaster_name TEXT NOT NULL,
+//       overall_satisfaction INTEGER,
+//       overall_skill INTEGER,
+//       overall_entertainment INTEGER,
+//       overall_interactiveness INTEGER,
+//       )
+//       ''');
+// db.execute('''
+//       CREATE TABLE user_favorites(
+//       favorites_id INTEGER PRIMARY KEY AUTO INCREMENT,
+//       CONSTRAINT fk_user_table
+//         FOREIGN KEY (_id)
+//         REFERENCES _user_table(_id)
+//       )
+//       CONSTRAINT fk_broadcaster_table
+//         FOREIGN KEY (broadcaster_id)
+//         REFERENCES broadcaster_table(broadcaster_id)
+//       )
+//       ''');
+// db.execute('''
+//       CREATE TABLE reviews(
+//       reviews_id INTEGER PRIMARY KEY,
+//       satisfaction_rating INTEGER,
+//       entertainment_rating INTEGER,
+//       interactiveness_rating INTEGER,
+//       skill_rating INTEGER,
+//       CONSTRAINT fk_user_table
+//         FOREIGN KEY (_id)
+//         REFERENCES _user_table(_id)
+//       CONSTRAINT fk_broadcaster_table
+//         FOREIGN KEY (broadcaster_id)
+//         REFERENCES broadcaster_table(broadcaster_id)
+//       )
+//       ''');
+// db.execute('''
+//       CREATE TABLE broadcaster_Tags(
+//       tags_id INTEGER PRIMARY KEY AUTO INCREMENT,
+//       tag_name TEXT,
+//       CONSTRAINT fk_broadcaster_table
+//         FOREIGN KEY (broadcaster_id)
+//         REFERENCES broadcaster_table(broadcaster_id)
+//       )
+//       ''');
+// }

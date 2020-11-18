@@ -1,10 +1,36 @@
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:streamer_review/helper/database_helper.dart';
-import 'package:meta/meta.dart';
 
+class UserRepository {
 
+  SharedPreferences prefs;
 
-class userRepository2 {
+  // Database db = DatabaseHelper2.instance.database as Database;
+
+  // UserRepository({this.prefs});
+
+  static const String _IS_LOGGED_IN = "is_logged_in";
+  static const String _NAME = "name";
+
+  login(String name) async {
+    await prefs.setBool(_IS_LOGGED_IN, true);
+    await prefs.setString(_NAME, name);
+  }
+
+  Future<bool> isLoggedIn() async {
+    // return prefs.containsKey(_IS_LOGGED_IN);
+    return true;
+    // prefs.k
+  }
+
+  Future<String> getName() async {
+    return prefs.getString(_NAME);
+  }
+
+  logout() async {
+    prefs.clear();
+  }
 
   static final _dbName = 'sr.db';
   static final _dbVersion = 1;
@@ -14,7 +40,7 @@ class userRepository2 {
   static final columnId = '_id';
   static final columnEmail = 'email';
   static final columnPassword = 'password';
-  DatabaseHelper2 db = DatabaseHelper2.instance;
+  // Database db = await DatabaseHelper2.instance.database;
 // int is used to make all id values unique since they are auto incremented by 1
   Future<int> insertUser(Map<String, dynamic> row) async {
     //we need to get the database first
@@ -33,7 +59,7 @@ class userRepository2 {
 //to update you need to pass the id of which will be updated as well as pass the value
 // takes in a map type parameter
   Future<int> updateUser(Map<String, dynamic> row) async {
-    Database db = await DatabaseHelper2.instance.database;
+   Database db = await DatabaseHelper2.instance.database;
     int id = row[columnId];
 
     //This will update the specific row

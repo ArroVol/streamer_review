@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:streamer_review/helper/database_helper.dart';
-import 'package:streamer_review/secondScreen.dart';
-import 'package:streamer_review/widgets/home_page.dart';
+import 'package:streamer_review/repository/broadcaster_repository.dart';
+import 'package:streamer_review/repository/user_repository.dart';
 
 void main() {
   runApp(MyApp());
@@ -15,12 +15,11 @@ class MyApp extends StatelessWidget {
         title: 'Streamer Review App',
         theme: ThemeData(
           primarySwatch: Colors.blue,
-
           visualDensity: VisualDensity.adaptivePlatformDensity,
         ),
         home: AaronsMain()
-      // home: ColorCircle(title: 'Color Circle',),
-    );
+        // home: ColorCircle(title: 'Color Circle',),
+        );
   }
 }
 
@@ -28,71 +27,64 @@ class AaronsMain extends StatefulWidget {
   AaronsMain({Key key, this.title}) : super(key: key);
 
   final String title;
-  // String email;
-  // String password;
 
-  String get email {
-    return email;
-  }
-  void set email(String email){
-    email = email;
-  }
   @override
   _MyHomePageState createState() => _MyHomePageState();
 }
 
 class _MyHomePageState extends State<AaronsMain> {
-
-  String email;
-  String password;
-
-// String get email => email;
-//
-// String get password => password;
+  BroadcasterRepository _broadcasterRepository = new BroadcasterRepository();
+  UserRepository _userRepository = new UserRepository();
+  String _email = "";
+  String _password = "";
+  int _iD;
 
   @override
   Widget build(BuildContext context) {
-    Widget titleSection = Container(
-    );
+    Widget titleSection = Container();
     return Scaffold(
       appBar: AppBar(
         title: Text('Streamer Review'),
-
       ),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             new TextField(
-            decoration: new InputDecoration.collapsed(hintText: "input email"),
+              decoration:
+                  new InputDecoration.collapsed(hintText: "input email"),
               // onChanged: (String text) {
               // print("Text => $text");
               // },
-              onSubmitted: (String email){
-              email = email;
-              print("Submitted:  $email");
+              onSubmitted: (email) {
+                print("Submitted:  $email");
+                _setEmail(email);
               },
             ),
             new TextField(
-              decoration: new InputDecoration.collapsed(hintText: "input password"),
+              decoration:
+                  new InputDecoration.collapsed(hintText: "input password"),
               // onChanged: (String text) {
               // print("Text => $text");
               // },
-              onSubmitted: (String password){
+              onSubmitted: (String password) {
                 print("Submitted:  $password");
+                _setPassword(password);
               },
             ),
             FlatButton(
                 onPressed: () async {
-                  int i = await DatabaseHelper2.instance
-                      .insert({DatabaseHelper2.columnEmail: 'sarah@spoopmail.net', DatabaseHelper2.columnPassword:'spoopy9r'});
+                  int i = await DatabaseHelper2.instance.insert({
+                    DatabaseHelper2.columnEmail: 'sarah@spoopmail.net',
+                    DatabaseHelper2.columnPassword: 'spoopy9r'
+                  });
                   print('the inserted id is $i');
                 },
                 child: Text('insert')),
             FlatButton(
                 onPressed: () async {
                   List<Map<String, dynamic>> queryRows =
-                  await DatabaseHelper2.instance.queryAll();
+                      await DatabaseHelper2.instance.queryAll();
                   print(queryRows);
                 },
                 child: Text('query')),
@@ -107,25 +99,66 @@ class _MyHomePageState extends State<AaronsMain> {
                   print(updatedId);
                 },
                 child: Text('update')),
-            FlatButton(onPressed: () async {
-              int rowsAffected = await DatabaseHelper2.instance.delete(13);
-              print(rowsAffected);
-            }, child: Text('delete')),
-            FlatButton(onPressed: () async {
-              DatabaseHelper2.instance.resetDb();
-            }, child: Text('Delete Database')),
-            FlatButton(onPressed: () async {
-              DatabaseHelper2.instance.createUserTable();
-            }, child: Text('Recreate user table')),
-            FlatButton(onPressed: () async {
-              print(email);
-              print(password);
-              DatabaseHelper2.instance.insert({DatabaseHelper2.columnEmail: email, DatabaseHelper2.columnPassword: password});
-            }, child: Text('Insert specified email and pass')),
+            Center(
+              child: new TextField(
+                decoration:
+                new InputDecoration.collapsed(hintText: "Enter an ID to delete"),
+                onSubmitted: (iD) {
+                  print("Submitted:  $iD");
+                  _setId(num.parse(iD));
+                },
+
+              ),
+            ),
+            FlatButton(
+                onPressed: () async {
+                  int rowsAffected = await DatabaseHelper2.instance.delete(_iD);
+                  print(rowsAffected);
+                },
+                child: Text('delete user')),
+            FlatButton(
+                onPressed: () async {
+                  DatabaseHelper2.instance.resetDb();
+                },
+                child: Text('Reset Table')),
+            FlatButton(
+                onPressed: () async {
+                  DatabaseHelper2.instance.createUserTable();
+                },
+                child: Text('Recreate user table')),
+            FlatButton(
+                onPressed: () async {
+                  print("testing pushing email and pass");
+                  print(_email);
+                  print(_password);
+                  DatabaseHelper2.instance.insert({
+                    DatabaseHelper2.columnEmail: _email,
+                    DatabaseHelper2.columnPassword: _password
+                  });
+                },
+                child: Text('Insert specified email and pass')),
           ],
         ),
       ),
     );
+  }
+
+  void _setEmail(String email) {
+    setState(() {
+      _email = email;
+    });
+  }
+
+  void _setId(int iD){
+    setState(() {
+      _iD = iD;
+    });
+  }
+
+  void _setPassword(String password) {
+    setState(() {
+      _password = password;
+    });
   }
 
 // _openPopup(context) {

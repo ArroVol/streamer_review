@@ -8,14 +8,20 @@ import 'package:dbutils/sqllitedb.dart' show DBInterface;
 
 class User extends DBInterface{
   int id;
+  String userName;
   String email;
   String password;
+  String phoneNumber;
   static const String TABLENAME = "the_user";
 
   // User(this.id, this.email, this.password, {id, password, email});
-  User({this.id, this.email, this.password});
+  User({this.id, this.email, this.password, this.userName, this.phoneNumber});
 
-
+  // User(int id, String email, String password){
+  //   this.id = id;
+  //   this.email = email;
+  //   this.password = password;
+  // }
 
   User.fromJson(Map<String, dynamic> m) {
     id = m['user_id'];

@@ -2,10 +2,11 @@ import 'dart:convert';
 
 import 'package:sqflite/sqflite.dart';
 import 'package:streamer_review/helper/database_helper.dart';
-import 'package:streamer_review/model/Broadcaster.dart';
+import 'package:streamer_review/model/broadcaster.dart';
 
 class BroadcasterRepository  {
 
+  // final Dio _dio;
   static final _dbName = 'myDatabase.db';
 
   static final _dbVersion = 1;
