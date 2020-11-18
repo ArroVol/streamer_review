@@ -87,7 +87,14 @@ class _MyHomePageState extends State<AaronsMain> {
                       await DatabaseHelper2.instance.queryAll();
                   print(queryRows);
                 },
-                child: Text('query')),
+                child: Text('query all users')),
+            FlatButton(
+                onPressed: () async {
+                  List<Map<String, dynamic>> queryRows =
+                  await DatabaseHelper2.instance.queryAllStreamers();
+                  print(queryRows);
+                },
+                child: Text('query all streamers')),
             FlatButton(
                 onPressed: () async {
                   int updatedId = await DatabaseHelper2.instance.update({

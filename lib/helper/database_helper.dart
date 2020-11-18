@@ -13,7 +13,7 @@ import 'DatabaseCreator.dart';
 class DatabaseHelper2 {
   //These are not given a type because it will automatically take the type that it is given first to it
   //we need to have a database name and database version
-  static final _dbName = 'myDatabase18.db';
+  static final _dbName = 'myDatabase21.db';
   static final _dbVersion = 1;
   static final _tableName = '_user_table';
 
@@ -113,7 +113,23 @@ class DatabaseHelper2 {
         REFERENCES broadcaster_table(broadcaster_id)
       )
       ''');
+    db.execute(''' INSERT INTO _user_table (email, password, phone_number, user_name)
+    VALUES('Gooby@gmail.com', 'gooby4ever', '708-843-6969', 'GoobyChan')
+    '''
+    );
+    db.execute(''' INSERT INTO broadcaster_table (broadcaster_id, broadcaster_name)
+    VALUES(229729353, 'criticalrole')
+    '''
+    );
+    // addDummyData();
   }
+  
+  // Future addDummyData(){
+  //   // db.execute(''' INSERT INTO _user_table (EMAIL, PASSWORD, PHONE_NUMBER, USERNAME)
+  //   // VALUES('Gooby@gmail.com', 'gooby4ever', '708-843-6969', 'GoobyChan')
+  //   // '''
+  //   // );
+  // }
 
   // int is used to make all id values unique since they are auto incremented by 1
   Future<int> insert(Map<String, dynamic> row) async {
@@ -139,10 +155,19 @@ class DatabaseHelper2 {
   //All data will be in the form of map, so it returns a list of map
   Future<List<Map<String, dynamic>>> queryAll() async {
     Database db = await instance.database;
+    return await db.query("_user_table");
+
+    // return await db.query(_tableName);
+  }
+  //Query returns a list of map (must be passed as a type)
+  //All data will be in the form of map, so it returns a list of map
+  Future<List<Map<String, dynamic>>> queryAllStreamers() async {
+    Database db = await instance.database;
     return await db.query("broadcaster_table");
 
     // return await db.query(_tableName);
   }
+
 
   //to update you need to pass the id of which will be updated as well as pass the value
   // takes in a map type parameter
