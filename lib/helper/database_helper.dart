@@ -13,7 +13,7 @@ import 'DatabaseCreator.dart';
 class DatabaseHelper2 {
   //These are not given a type because it will automatically take the type that it is given first to it
   //we need to have a database name and database version
-  static final _dbName = 'myDatabase11.db';
+  static final _dbName = 'myDatabase18.db';
   static final _dbVersion = 1;
   static final _tableName = '_user_table';
 
@@ -64,8 +64,9 @@ class DatabaseHelper2 {
       CREATE TABLE $_tableName(
       $columnId INTEGER PRIMARY KEY AUTOINCREMENT,
       $columnEmail TEXT NOT NULL,
-      $columnPassword TEXT NOT NULL)
-      
+      $columnPassword TEXT NOT NULL,
+      phone_number TEXT,
+      user_name TEXT NOT NULL)
       ''');
     db.execute('''
       CREATE TABLE broadcaster_table(
@@ -79,31 +80,36 @@ class DatabaseHelper2 {
       ''');
     db.execute('''
       CREATE TABLE user_favorites(
-      favorites_id INTEGER PRIMARY KEY,
-      FOREIGN KEY (_id)
-        REFERENCES _user_table(_id)  
-       FOREIGN KEY (broadcaster_id)
-        REFERENCES broadcaster_table(broadcaster_id)  
+      favorites_id INTEGER PRIMARY KEY AUTOINCREMENT, 
+      fk_broadcaster_id INTEGER,
+      fk_user_id INTEGER,
+       FOREIGN KEY (fk_broadcaster_id)
+        REFERENCES broadcaster_table(broadcaster_id),
+       FOREIGN KEY (fk_user_id)
+         REFERENCES _user_table(_id)  
         )
       ''');
     db.execute('''
       CREATE TABLE reviews(
-      reviews_id INTEGER PRIMARY KEY,
+      reviews_id INTEGER PRIMARY KEY AUTOINCREMENT,
       satisfaction_rating INTEGER, 
       entertainment_rating INTEGER, 
       interactiveness_rating INTEGER, 
-      skill_rating INTEGER 
-      FOREIGN KEY (_id)
-        REFERENCES _user_table(_id)
-      FOREIGN KEY (broadcaster_id)
-        REFERENCES broadcaster_table(broadcaster_id)
-      )
+      skill_rating INTEGER, 
+      fk_broadcaster_id INTEGER,
+      fk_user_id INTEGER,
+       FOREIGN KEY (fk_broadcaster_id)
+        REFERENCES broadcaster_table(broadcaster_id),
+       FOREIGN KEY (fk_user_id)
+         REFERENCES _user_table(_id)  
+        )
       ''');
     db.execute('''
       CREATE TABLE broadcaster_Tags(
-      tags_id INTEGER PRIMARY KEY AUTO INCREMENT,
-      tag_name TEXT
-      FOREIGN KEY (broadcaster_id)
+      tags_id INTEGER PRIMARY KEY AUTOINCREMENT,
+      tag_name TEXT,
+      fk_broadcaster_id INTEGER,
+      FOREIGN KEY (fk_broadcaster_id)
         REFERENCES broadcaster_table(broadcaster_id)
       )
       ''');
