@@ -8,10 +8,11 @@ import 'package:dbutils/sqllitedb.dart' show DBInterface;
 
 class User extends DBInterface{
   int id;
-  String userName;
   String email;
   String password;
   String phoneNumber;
+  String userName;
+
   static const String TABLENAME = "the_user";
 
   // User(this.id, this.email, this.password, {id, password, email});
@@ -23,10 +24,18 @@ class User extends DBInterface{
   //   this.password = password;
   // }
 
+  // User.fromJson(Map<String, dynamic> m) {
+  //   id = m['user_id'];
+  //   email = m['user_email'];
+  //   password = m['user_password'];
+  // }
+
   User.fromJson(Map<String, dynamic> m) {
-    id = m['user_id'];
-    email = m['user_email'];
-    password = m['user_password'];
+    id = m['_id'];
+    email = m['email'];
+    password = m['password'];
+    phoneNumber = m['phone_number'];
+    userName = m['user_name'];
   }
 
   // int get id => id;
@@ -36,14 +45,34 @@ class User extends DBInterface{
   // String get password => password;
 
   Map<String, dynamic> toJson() => {
-    'user_id': id,
-    'user_email': email,
-    'user_password': password,
+    '_id': id,
+    'email': email,
+    'password': password,
+    'phone_number': phoneNumber,
+    'user_name': userName,
   };
 
   Map<String, dynamic> toMap() {
-    return {'user_id': id, 'user_email': email, 'user_password': password};
+    return {'_id': id, 'email': email, 'password': password, 'phone_number': phoneNumber, 'user_name':userName};
   }
+
+  User.fromMap(Map<String, dynamic> m) {
+    id = m['_id'];
+    email = m['email'];
+    password = m['password'];
+    phoneNumber = m['phone_number'];
+    userName = m['user_name'];
+  }
+
+  // factory User.fromMap(Map<String, dynamic> json) => new User(
+  //   id: json["id"],
+  //   firstName: json["first_name"],
+  //   lastName: json["last_name"],
+  //   blocked: json["blocked"] == 1,
+  // );
+  // Map<String, dynamic> toMap() {
+  //   return {'user_id': id, 'user_email': email, 'user_password': password};
+  // }
 
   @override
   Future<void> onCreate(Database db, int version) async {
