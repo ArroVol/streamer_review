@@ -6,8 +6,11 @@ import 'package:streamer_review/users.dart';
 import 'custom_route.dart';
 import 'home.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+
 
 import 'main_screen.dart';
+import 'model/user.dart';
 
 
 // const users = const {
@@ -16,6 +19,11 @@ import 'main_screen.dart';
 // };
 
 class LoginScreen extends StatelessWidget {
+
+  final _storage = FlutterSecureStorage();
+
+  User userStored = new User();
+
   String _email = "";
   String _password = "";
   static const routeName = '/auth';
@@ -23,17 +31,26 @@ class LoginScreen extends StatelessWidget {
   Duration get loginTime => Duration(milliseconds: timeDilation.ceil() * 2250);
 
   Future<String> _loginUser(LoginData data) {
-    return Future.delayed(loginTime).then((_) {
-      bool match = false;
-     match = DatabaseHelper2.instance.checkEmailByEmail(_email) as bool;
-     if(!match){
-         return 'Username not exists';
-     }
+    return Future.delayed(loginTime).then((_) async {
+      // bool match = false;
+
+      if(!await DatabaseHelper2.instance.checkEmailByEmail(_email)){
+        return 'Username not exists';
+
+      }
+     // bool match = DatabaseHelper2.instance.checkEmailByEmail(_email);
+     // if(!match){
+     //     return 'Username not exists';
+     // }
       // if (!mockUsers.containsKey(data.name)) {
       //   return 'Username not exists';
       // }
-      if (mockUsers[data.name] != data.password) {
+      // if (mockUsers[data.name] != data.password) {
+      //   return 'Password does not match';
+      // }
+      if(!await DatabaseHelper2.instance.checkPasswordByPassword(_password)){
         return 'Password does not match';
+
       }
       return null;
     });

@@ -7,9 +7,9 @@ import 'package:streamer_review/model/broadcaster.dart';
 class BroadcasterRepository  {
 
   // final Dio _dio;
-  static final _dbName = 'myDatabase.db';
+  // static final _dbName = 'myDatabase.db';
 
-  static final _dbVersion = 1;
+  // static final _dbVersion = 1;
   static final _tableName = 'broadcaster';
 
   // int is used to make all id values unique since they are auto incremented by 1

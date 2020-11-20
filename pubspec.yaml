@@ -31,6 +31,7 @@ dependencies:
   flutter_login: ^1.0.14
   google_fonts: ^1.1.1
   material_floating_search_bar: ^0.2.3
+  flutter_secure_storage: ^3.3.5
 
   flutter_rating_bar: ^3.2.0
   http: ^0.12.0
