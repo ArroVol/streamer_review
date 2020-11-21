@@ -21,6 +21,11 @@ class DatabaseHelper2 {
   static final columnId = '_id';
   static final columnEmail = 'email';
   static final columnPassword = 'password';
+  static final columnUserName = 'user_name';
+  static final columnPhoneNumber = 'phone_number';
+
+
+
 
   //making it a singleton class
   DatabaseHelper2._privateConstructor();
@@ -123,8 +128,128 @@ class DatabaseHelper2 {
     );
     // addDummyData();
   }
-  
-  // Future addDummyData(){
+
+  Future<void> insertUser(User user) async {
+    // Get a reference to the database.
+    final Database db = await instance.database;
+
+    // Insert the User into the correct table. You might also specify the
+    // `conflictAlgorithm` to use in case the same dog is inserted twice.
+    //
+    // In this case, replace any previous data.
+   return await db.insert(
+      '_user_table',
+      user.toMap(),
+      conflictAlgorithm: ConflictAlgorithm.replace,
+    );
+  }
+
+  Future<List<Map<String, dynamic>>> retrieveUser(int id) async {
+    // Get a reference to the database.
+    Database db = await instance.database;
+    List<Map<String, dynamic >> user = await db.query('_user_table', where: '_id = ?', whereArgs: [id]);
+    if(user.isEmpty){
+      print('The user with id: $id does not exist');
+    } else {
+      print('the user already exists');
+    }
+    return user;
+    // return await db.query('_user_table', where: '_id = ?', whereArgs: [id]);
+    //
+    // List<Map<String, dynamic >> user = await db.query('_user_table', where: '_id = ?', whereArgs: [id]);
+    // return user.isNotEmpty ? User.fromMap(user.first): Null;
+
+  }
+
+  Future<List<Map<String, dynamic>>> addUserToDatabase(User user) async {
+    // Get a reference to the database.
+    Database db = await instance.database;
+    //check if the user already exists
+    List<Map<String, dynamic >> user = await
+    db.query('_user_table', where: '_id = ?', whereArgs: []);
+    if(user.isEmpty){
+      // print('The user with id: $id does not exist');
+    } else {
+      print('the user already exists');
+    }
+    return user;
+
+    }
+    // return await db.query('_user_table', where: '_id = ?', whereArgs: [id]);
+    //
+    // List<Map<String, dynamic >> user = await db.query('_user_table', where: '_id = ?', whereArgs: [id]);
+    // return user.isNotEmpty ? User.fromMap(user.first): Null;
+
+  Future<void> checkUserIntoDatabase(User user) async {
+
+    // Future<void> checkUserIntoDatabase(Map<String, dynamic> user) async {
+    bool userExists = false;
+    Database db = await instance.database;
+    String userName = user.userName;
+
+    List<Map<String, dynamic >> userPulled = await db.query('_user_table', where: 'user_name = ?', whereArgs: [user.userName]);
+    if(userPulled.isNotEmpty){
+      print("The user name already exits in the DB");
+
+    } else {
+     checkEmail(db, user);
+
+    }
+    // await db.execute("SELECT COUNT(*) FROM _user_table WHERE user_name = :user_name", user.userName=user.userName);
+}
+
+Future<void> checkEmail(Database db, User user) async{
+  List<Map<String, dynamic >> userPulled = await db.query('_user_table', where: 'email = ?', whereArgs: [user.email]);
+  if(userPulled.isNotEmpty){
+    print("The email already exits in the DB");
+  } else {
+    checkPhoneNumber(db, user);
+  }
+}
+
+  Future<bool> checkEmailByEmail(String email) async{
+    Database db = await instance.database;
+    List<Map<String, dynamic >> userPulled = await db.query('_user_table', where: 'email = ?', whereArgs: [email]);
+    if(userPulled.isNotEmpty){
+      print('The email matches one in the db');
+      return true;
+    }
+    return false;
+
+  }
+
+  Future<bool> checkByUserName(String userName) async{
+    Database db = await instance.database;
+    List<Map<String, dynamic >> userPulled = await db.query('_user_table', where: 'email = ?', whereArgs: [userName]);
+    if(userPulled.isNotEmpty){
+      print('The user name: $userName matches one in the db');
+      return true;
+    }
+    print('The user name: $userName DOES NOT match one in the db');
+    return false;
+
+  }
+
+  Future<void> checkPhoneNumber(Database db, User user) async {
+    List<Map<String, dynamic >> userPulled = await db.query('_user_table', where: 'phone_number = ?', whereArgs: [user.phoneNumber]);
+    if(userPulled.isNotEmpty) {
+      print("The phone number already exits in the DB");
+    } else {
+      addVerifiedUserToDatabase(db, user);
+    }
+  }
+
+  Future<void> addVerifiedUserToDatabase(Database db, User user) async {
+    return await db.insert(
+      '_user_table',
+      user.toMap(),
+      conflictAlgorithm: ConflictAlgorithm.replace,
+    );
+  }
+
+
+
+    // Future addDummyData(){
   //   // db.execute(''' INSERT INTO _user_table (EMAIL, PASSWORD, PHONE_NUMBER, USERNAME)
   //   // VALUES('Gooby@gmail.com', 'gooby4ever', '708-843-6969', 'GoobyChan')
   //   // '''
@@ -233,6 +358,8 @@ class DatabaseHelper2 {
       $columnPassword TEXT )
       ''');
   }
+
+
 
 
 }

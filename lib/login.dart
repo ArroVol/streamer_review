@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_login/flutter_login.dart';
+import 'package:streamer_review/helper/database_helper.dart';
 import 'package:streamer_review/users.dart';
 import 'custom_route.dart';
 import 'home.dart';
@@ -15,15 +16,22 @@ import 'main_screen.dart';
 // };
 
 class LoginScreen extends StatelessWidget {
+  String _email = "";
+  String _password = "";
   static const routeName = '/auth';
 
   Duration get loginTime => Duration(milliseconds: timeDilation.ceil() * 2250);
 
   Future<String> _loginUser(LoginData data) {
     return Future.delayed(loginTime).then((_) {
-      if (!mockUsers.containsKey(data.name)) {
-        return 'Username not exists';
-      }
+      bool match = false;
+     match = DatabaseHelper2.instance.checkEmailByEmail(_email) as bool;
+     if(!match){
+         return 'Username not exists';
+     }
+      // if (!mockUsers.containsKey(data.name)) {
+      //   return 'Username not exists';
+      // }
       if (mockUsers[data.name] != data.password) {
         return 'Password does not match';
       }
@@ -141,15 +149,18 @@ class LoginScreen extends StatelessWidget {
       //   ),
       ),
       emailValidator: (value) {
+       // bool exists =  DatabaseHelper2.instance.checkEmailByEmail(value);
         if (!value.contains('@') || !value.endsWith('.com')) {
           return "Email must contain '@' and end with '.com'";
         }
+        _email = value;
         return null;
       },
       passwordValidator: (value) {
         if (value.isEmpty) {
           return 'Password is empty';
         }
+        _password = value;
         return null;
       },
       onLogin: (loginData) {

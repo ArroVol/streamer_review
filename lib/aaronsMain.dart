@@ -3,6 +3,8 @@ import 'package:streamer_review/helper/database_helper.dart';
 import 'package:streamer_review/repository/broadcaster_repository.dart';
 import 'package:streamer_review/repository/user_repository.dart';
 
+import 'model/user.dart';
+
 void main() {
   runApp(MyApp());
 }
@@ -72,15 +74,15 @@ class _MyHomePageState extends State<AaronsMain> {
                 _setPassword(password);
               },
             ),
-            FlatButton(
-                onPressed: () async {
-                  int i = await DatabaseHelper2.instance.insert({
-                    DatabaseHelper2.columnEmail: 'sarah@spoopmail.net',
-                    DatabaseHelper2.columnPassword: 'spoopy9r'
-                  });
-                  print('the inserted id is $i');
-                },
-                child: Text('insert')),
+            // FlatButton(
+            //     onPressed: () async {
+            //       int i = await DatabaseHelper2.instance.insert({
+            //         DatabaseHelper2.columnEmail: 'sarah@spoopmail.net',
+            //         DatabaseHelper2.columnPassword: 'spoopy9r'
+            //       });
+            //       print('the inserted id is $i');
+            //     },
+            //     child: Text('insert')),
             FlatButton(
                 onPressed: () async {
                   List<Map<String, dynamic>> queryRows =
@@ -144,6 +146,33 @@ class _MyHomePageState extends State<AaronsMain> {
                   });
                 },
                 child: Text('Insert specified email and pass')),
+            FlatButton(
+                onPressed: () async {;
+                  User newUser = new User();
+                  newUser.email = 'newEmail@gmail.com';
+                  newUser.phoneNumber = '7777777777';
+                  newUser.userName = 'new user guy';
+                  newUser.password = 'password123';
+                 // User returnedUser =
+                  DatabaseHelper2.instance.insertUser(newUser);
+                },
+                child: Text('Insert a user object')),
+            FlatButton(
+                onPressed: () async {
+                  List<Map<String, dynamic >> user = await DatabaseHelper2.instance.retrieveUser(1);
+                  print(user.toString());
+                },
+                child: Text('retrieving user object, id 1')),
+            FlatButton(
+                onPressed: () async {
+                  User newUser = new User();
+                  newUser.email = 'newEmail2@gmail.com';
+                  newUser.phoneNumber = '7777777770';
+                  newUser.userName = 'new user guy2';
+                  newUser.password = 'password123';
+                  DatabaseHelper2.instance.checkUserIntoDatabase(newUser);
+                },
+                child: Text('insert a user into the database')),
           ],
         ),
       ),

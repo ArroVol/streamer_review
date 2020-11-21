@@ -10,7 +10,7 @@ class Broadcaster extends DBInterface{
   int id;
   String broadcasterID;
   String broadcasterName;
-  static const String TABLENAME = "broadcaster";
+  static const String TABLENAME = "broadcaster_table";
 
   // User(this.id, this.email, this.password, {id, password, email});
   Broadcaster({this.id, this.broadcasterID, this.broadcasterName});
