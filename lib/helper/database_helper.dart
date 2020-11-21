@@ -147,6 +147,7 @@ class DatabaseHelper2 {
   Future<List<Map<String, dynamic>>> retrieveUser(int id) async {
     // Get a reference to the database.
     Database db = await instance.database;
+    // Map<String, dynamic > user = (await db.query('_user_table', where: '_id = ?', whereArgs: [id])) as Map<String, dynamic >;
     List<Map<String, dynamic >> user = await db.query('_user_table', where: '_id = ?', whereArgs: [id]);
     if(user.isEmpty){
       print('The user with id: $id does not exist');
@@ -212,6 +213,17 @@ Future<void> checkEmail(Database db, User user) async{
     List<Map<String, dynamic >> userPulled = await db.query('_user_table', where: 'email = ?', whereArgs: [email]);
     if(userPulled.isNotEmpty){
       print('The email matches one in the db');
+      return true;
+    }
+    return false;
+
+  }
+
+  Future<bool> checkPasswordByPassword(String password) async{
+    Database db = await instance.database;
+    List<Map<String, dynamic >> userPulled = await db.query('_user_table', where: 'password = ?', whereArgs: [password]);
+    if(userPulled.isNotEmpty){
+      print('The password matches one in the db');
       return true;
     }
     return false;
