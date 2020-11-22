@@ -5,6 +5,10 @@ import 'package:flutter/material.dart';
 import 'dart:async';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:streamer_review/helper/database_helper.dart' as DBHelper;
+import 'helper/database_helper.dart';
+import 'model/broadcaster_from_db.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 void main() {
   runApp(new MaterialApp(
@@ -21,6 +25,16 @@ class StreamerProfile extends State<StreamerPage> {
   var data;
   var topStreamerInfo;
   Streamer topStreamer;
+  BroadcasterFromDB broadcasterFromDB;
+  var average_satisfaction_rating;
+  var average_entertainment_rating;
+  var average_interaction_rating;
+  var average_skill_rating;
+  String broadcaster_id;
+  int user_id = 1;
+  BroadcasterFromDB b;
+  bool offline = false;
+
 
   Future<Streamer> getData() async {
     http.Response response = await http.get(
@@ -33,6 +47,7 @@ class StreamerProfile extends State<StreamerPage> {
     topStreamerInfo = json.decode(response.body);
     // print(topStreamerInfo['data'][0]);
     var topStreamerId = topStreamerInfo['data'][0]['user_id'];
+    broadcaster_id = topStreamerId;
 
     var url = "https://api.twitch.tv/helix/users?id=" + topStreamerId;
     // print(url);
@@ -46,19 +61,54 @@ class StreamerProfile extends State<StreamerPage> {
     );
 
     data = json.decode(channelInformation.body);
+    // print(data);
     var username = data['data'][0]['display_name'];
+    var login = data['data'][0]['login'];
     var description = data['data'][0]['description'];
     var profilePictureUrl = data['data'][0]['profile_image_url'];
     var viewCount = data['data'][0]['view_count'];
     var streamer = new Streamer(
-        username, description, profilePictureUrl, viewCount);
+        login, description, profilePictureUrl, viewCount);
+    DatabaseHelper2 d = DBHelper.DatabaseHelper2.instance;
+   var x = await d.selectBroadcaster(broadcaster_id);
+   // print(x);
+    await d.selectBroadcaster(topStreamerId).then((value) {
+      // print(value[0]);
+      // print(value[0]['overall_satisfaction']);
+      // print(value[0]['overall_skill']);
+      // print(value[0]['overall_entertainment']);
+      // print(value[0]['overall_interactiveness']);
+      // print(value);
+      if(value.isNotEmpty) {
+        b = new BroadcasterFromDB(value[0]['overall_satisfaction'], value[0]['overall_skill'], value[0]['overall_entertainment'], value[0]['overall_interactiveness']);
+      }
+      // b = new BroadcasterFromDB(value[0]['overall_satisfaction'], value[0]['overall_skill'], value[0]['overall_entertainment'], value[0]['overall_interactiveness']);
+    }, onError: (error) {
+      print(error);
+    });
+    await d.updateBroadcaster(broadcaster_id, user_id);
+
+    var url2 = "https://api.twitch.tv/helix/search/channels?query=" + login;
+    // print(url);
+
+    http.Response channelInformation2 = await http.get(
+        Uri.encodeFull(url2),
+        headers: {
+          "Authorization": "Bearer 5e46v0tks21zqvnloyua8e76bcsui9",
+          "Client-Id": "874uve10v0bcn3rmp2bq4cvz8fb5wj"
+        }
+    );
+
+    data = json.decode(channelInformation2.body);
+    offline = data['data'][0]['is_live'];
+    // print(isOnline);
+
     // print(streamer.username);
     // print(streamer.description);
     // print(streamer.profilePictureUrl);
     // print(streamer.viewCount);
 
 
-    var streamers = List();
 
     // for (var i = 0; i < data['data'].length; i++) {
     //   var username = data['data'][i]['user_name'];
@@ -73,8 +123,31 @@ class StreamerProfile extends State<StreamerPage> {
 
     setState(() {
       topStreamer = streamer;
+      // print(b);
+      if(b != null) {
+        // print('this is happening');
+        broadcasterFromDB = b;
+        average_satisfaction_rating = broadcasterFromDB.overall_satisfaction;
+        average_entertainment_rating =  broadcasterFromDB.overall_entertainment;
+        average_interaction_rating =  broadcasterFromDB.overall_interactiveness;
+        average_skill_rating =  broadcasterFromDB.overall_skill;
+        // print(broadcasterFromDB.overall_skill);
+      } else{
+        broadcasterFromDB = new BroadcasterFromDB(0, 0, 0, 0);
+      }
+      // print(topStreamerFromDB);
+      // topStreamerFromDB = sfd;
+
     });
     return streamer;
+  }
+
+  void openUrl() {
+    String url = 'https://www.twitch.tv/';
+    if (topStreamer != null) {
+      url += topStreamer.username;
+    }
+    launch(url);
   }
 
   @override
@@ -93,6 +166,13 @@ class StreamerProfile extends State<StreamerPage> {
   Widget build(BuildContext context) {
     getData();
     return Scaffold(
+      floatingActionButton: !offline ? null : new FloatingActionButton(
+        child: const Icon(Icons.settings_input_antenna_sharp),
+        onPressed: openUrl,
+        backgroundColor: Colors.red,
+      ),
+      floatingActionButtonLocation:
+      FloatingActionButtonLocation.startTop,
       body: Column(
         children: <Widget>[
           Container(
@@ -129,6 +209,10 @@ class StreamerProfile extends State<StreamerPage> {
                           fontSize: 26.0,
                           color: Colors.white,
                         ),
+                      ),
+                      RaisedButton(
+                        child: Text('Open Url'),
+                          onPressed: (){openUrl();},
                       ),
                       Container(
                         child: Padding(
@@ -227,7 +311,8 @@ class StreamerProfile extends State<StreamerPage> {
                                       ),
                                     ),
                                     Text(
-                                      "General Satisfaction: " + satisfaction,
+                                      // "General Satisfaction: " + broadcasterFromDB.overall_satisfaction.toString(),
+                                      "General Satisfaction: " + average_satisfaction_rating.toString(),
                                       textAlign: TextAlign.left,
                                       style: TextStyle(
                                         fontSize: 20.0,
@@ -236,7 +321,8 @@ class StreamerProfile extends State<StreamerPage> {
                                       ),
                                     ),
                                     Text(
-                                      "Interaction: " + interaction,
+                                      // "Interaction: " + broadcasterFromDB.overall_interactiveness.toString(),
+                                      "Interaction: " + average_interaction_rating.toString(),
                                       textAlign: TextAlign.left,
                                       style: TextStyle(
                                         fontSize: 20.0,
@@ -245,7 +331,18 @@ class StreamerProfile extends State<StreamerPage> {
                                       ),
                                     ),
                                     Text(
-                                      "Entertainment: " + entertainment,
+                                      // "Entertainment: " + broadcasterFromDB.overall_entertainment.toString(),
+                                      "Entertainment: " + average_entertainment_rating.toString(),
+                                      textAlign: TextAlign.left,
+                                      style: TextStyle(
+                                        fontSize: 20.0,
+                                        color: Colors.deepPurple,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
+                                    Text(
+                                      // "Skill Level: " + broadcasterFromDB.overall_skill.toString(),
+                                      "Skill Level: " + average_skill_rating.toString(),
                                       textAlign: TextAlign.left,
                                       style: TextStyle(
                                         fontSize: 20.0,

@@ -13,7 +13,7 @@ class User extends DBInterface{
   String phoneNumber;
   String userName;
 
-  static const String TABLENAME = "the_user";
+  static const String TABLENAME = "_user_table";
 
   // User(this.id, this.email, this.password, {id, password, email});
   User({this.id, this.email, this.password, this.userName, this.phoneNumber});
