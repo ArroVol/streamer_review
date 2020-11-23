@@ -6,7 +6,7 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    PushNotificationsManager().init();
+    // PushNotificationsManager().init();
     print('here');
     return Scaffold(
         backgroundColor: Colors.grey[500],

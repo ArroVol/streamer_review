@@ -20,6 +20,7 @@ class MyApp extends StatelessWidget {
           visualDensity: VisualDensity.adaptivePlatformDensity,
         ),
         home: AaronsMain()
+
         // home: ColorCircle(title: 'Color Circle',),
         );
   }
@@ -173,6 +174,19 @@ class _MyHomePageState extends State<AaronsMain> {
                   DatabaseHelper2.instance.checkUserIntoDatabase(newUser);
                 },
                 child: Text('insert a user into the database')),
+            FlatButton(
+                onPressed: () async {
+                  int userId = await DatabaseHelper2.instance.getUserIdByUserName('new user guy2');
+                  print(userId);
+                },
+                child: Text('get id by username')),
+            FlatButton(
+                onPressed: () async {
+                 List<User> pulledUser = await DatabaseHelper2.instance.getUserByUserName("new user guy2");
+                  print(pulledUser.first.phoneNumber);
+                 print(pulledUser.first.id);
+                },
+                child: Text('get user by username')),
           ],
         ),
       ),

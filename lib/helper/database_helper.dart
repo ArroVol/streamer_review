@@ -14,7 +14,7 @@ import 'DatabaseCreator.dart';
 class DatabaseHelper2 {
   //These are not given a type because it will automatically take the type that it is given first to it
   //we need to have a database name and database version
-  static final _dbName = 'myDatabase21.db';
+  static final _dbName = 'myDatabase22.db';
   static final _dbVersion = 1;
   static final _tableName = '_user_table';
   static final _reviewTable = 'reviews';
@@ -190,6 +190,10 @@ class DatabaseHelper2 {
     return List.generate(user.length, (i) {
       return User(
         id: user[i]['_id'],
+        email: user[i]['email'],
+        password: user[i]['password'],
+        userName: user[i]['user_name'],
+        phoneNumber: user[i]['phone_number'],
       );
     });
     // return User(
@@ -204,13 +208,16 @@ class DatabaseHelper2 {
     List<Map<String, dynamic>> user = await db
         .query('_user_table', where: 'user_name = ?', whereArgs: [userName]);
     final userMap = user.asMap();
-
     final user1 = userMap[0];
 
     List<User> userList = [];
     List.generate(user.length, (i) {
       userList.add(User(
         id: user[i]['_id'],
+        // email: user[i]['email'],
+        // password: user[i]['password'],
+        // userName: user[i]['user_name'],
+        // phoneNumber: user[i]['phone_number'],
       ));
     });
     int id = userList.first.id;
