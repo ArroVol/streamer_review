@@ -1,5 +1,4 @@
 
-import 'package:streamer_review/profile.dart';
 import 'package:streamer_review/temp_favorites.dart';
 import 'package:streamer_review/streamer_screen.dart';
 import 'package:streamer_review/temp_settings.dart';
@@ -21,7 +20,6 @@ class _MainScreenState extends State<MainScreen> {
     StreamerPage(),
     FavoritesPage(),
     SettingsPage(),
-    Profile(),
   ];
 
   @override
