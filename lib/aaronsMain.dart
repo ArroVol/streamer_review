@@ -99,15 +99,25 @@ class _MyHomePageState extends State<AaronsMain> {
                 child: Text('query all streamers')),
             FlatButton(
                 onPressed: () async {
-                  int updatedId = await DatabaseHelper2.instance.update({
-                    DatabaseHelper2.columnId: 12,
-                    DatabaseHelper2.columnPassword: 'Mark'
-                  });
-                  //returns the number of rows affected
-                  print("on update, this is the updated ID: ,  ");
-                  print(updatedId);
+
+                  List<Map<String, dynamic>> queryRows =
+                  await _userFavoritesRepository.queryAllFavorites();
+                  print(queryRows);
                 },
-                child: Text('update')),
+                child: Text('query all favorites')),
+            // FlatButton(
+            //     onPressed: () async {
+            //       int updatedId = await DatabaseHelper2.instance.update({
+            //         DatabaseHelper2.columnId: 12,
+            //         DatabaseHelper2.columnPassword: 'Mark'
+            //       });
+            //       //returns the number of rows affected
+            //       print("on update, this is the updated ID: ,  ");
+            //       print(updatedId);
+            //     },
+            //     child: Text('update')),
+
+
             Center(
               child: new TextField(
                 decoration:

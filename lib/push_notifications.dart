@@ -22,6 +22,7 @@ class PushNotificationsManager {
       print('FirebaseMessaging token: $token');
 
       _initialized = true;
+      
     }
   }
 }
