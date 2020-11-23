@@ -40,9 +40,7 @@ class LoginScreen extends StatelessWidget {
   Future<String> _loginUser(LoginData data) {
 
     return Future.delayed(loginTime).then((_) async {
-      print('in get users..');
         // User user = loadUsers();
-
       // bool match = false;
       if(!await DatabaseHelper2.instance.checkEmailByEmail(_email)){
         return 'Username not exists';

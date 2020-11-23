@@ -1,14 +1,12 @@
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart';
-import 'package:path/path.dart';
 import 'package:streamer_review/model/broadcaster_tag.dart';
 import 'package:streamer_review/model/user.dart';
-import 'dart:convert';
+import 'package:streamer_review/secure_storage/secure_storage.dart';
 
 // library for input and output
 import 'dart:io';
-
 import 'DatabaseCreator.dart';
 
 class DatabaseHelper2 {
@@ -18,6 +16,8 @@ class DatabaseHelper2 {
   static final _dbVersion = 1;
   static final _tableName = '_user_table';
   static final _reviewTable = 'reviews';
+  final SecureStorage secureStorage = SecureStorage();
+
 
   //Fields given to the table
   static final columnId = '_id';
@@ -134,8 +134,7 @@ class DatabaseHelper2 {
     final Database db = await instance.database;
 
     // Insert the User into the correct table. You might also specify the
-    // `conflictAlgorithm` to use in case the same dog is inserted twice.
-    //
+    // `conflictAlgorithm` to use in case the same user is inserted twice.
     // In this case, replace any previous data.
     return await db.insert(
       '_user_table',
@@ -167,8 +166,6 @@ class DatabaseHelper2 {
   Future<List<Map<String, dynamic>>> queryAllUsers() async {
     Database db = await instance.database;
     return await db.query("_user_table");
-
-    // return await db.query(_tableName);
   }
 
   Future<List<User>> getUserByUserName(String userName) async {
@@ -218,6 +215,22 @@ class DatabaseHelper2 {
         // password: user[i]['password'],
         // userName: user[i]['user_name'],
         // phoneNumber: user[i]['phone_number'],
+      ));
+    });
+    int id = userList.first.id;
+    return id;
+  }
+  Future<int> getUserIdByEmail(String email) async {
+    Database db = await instance.database;
+    List<Map<String, dynamic>> user = await db
+        .query('_user_table', where: 'email = ?', whereArgs: [email]);
+    final userMap = user.asMap();
+    final user1 = userMap[0];
+
+    List<User> userList = [];
+    List.generate(user.length, (i) {
+      userList.add(User(
+        id: user[i]['_id'],
       ));
     });
     int id = userList.first.id;
@@ -313,7 +326,6 @@ class DatabaseHelper2 {
 
   Future<List<User>> retrieveUsers() async {
     final db = await database;
-
     final List<Map<String, dynamic>> maps = await db.query(User.TABLENAME);
 
     return List.generate(maps.length, (i) {
@@ -586,6 +598,29 @@ class DatabaseHelper2 {
   Future<void> clearReviews() async {
     Database db = await DatabaseHelper2.instance.database;
     db.rawQuery('DELETE FROM reviews WHERE reviews_id >= 0');
+  }
+
+  Future<void> insertFavorite(int broadcasterId) async {
+    Database db = await DatabaseHelper2.instance.database;
+    String userEmail = await secureStorage.readSecureData("email");
+    int userId = await DatabaseHelper2.instance.getUserIdByEmail(userEmail);
+    print("**inserting favorite: $userId**");
+
+    // Insert the User into the correct table. You might also specify the
+    // `conflictAlgorithm` to use in case the same user is inserted twice.
+    // In this case, replace any previous data.
+    await db.rawQuery(
+        'INSERT INTO user_favorites (fk_broadcaster_id, fk_user_id) VALUES(?, ?)',
+        [broadcasterId, userId]);
+  }
+  Future<int> deleteFavorite(int broadcasterId) async {
+    print("in the delete method for favorite in the database");
+    Database db = await DatabaseHelper2.instance.database;
+    String userEmail = await secureStorage.readSecureData("email");
+    int userId = await DatabaseHelper2.instance.getUserIdByEmail(userEmail);
+
+    int deletedRow = await db.delete('user_favorites', where: 'fk_broadcaster_id = ?', whereArgs: [broadcasterId]);
+    return deletedRow;
   }
 
   // int is used to make all id values unique since they are auto incremented by 1

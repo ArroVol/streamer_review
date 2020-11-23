@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:streamer_review/helper/database_helper.dart';
 import 'package:streamer_review/repository/broadcaster_repository.dart';
+import 'package:streamer_review/repository/user_favorites_repository.dart';
 import 'package:streamer_review/repository/user_repository.dart';
 
 import 'model/user.dart';
@@ -36,6 +37,7 @@ class AaronsMain extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<AaronsMain> {
+  UserFavoritesRepository _userFavoritesRepository = new UserFavoritesRepository();
   BroadcasterRepository _broadcasterRepository = new BroadcasterRepository();
   UserRepository _userRepository = new UserRepository();
   String _email = "";
@@ -100,6 +102,13 @@ class _MyHomePageState extends State<AaronsMain> {
                 child: Text('query all streamers')),
             FlatButton(
                 onPressed: () async {
+                  List<Map<String, dynamic>> queryRows =
+                  await _userFavoritesRepository.queryAllFavorites();
+                  print(queryRows);
+                },
+                child: Text('query all favorites')),
+            FlatButton(
+                onPressed: () async {
                   int updatedId = await DatabaseHelper2.instance.update({
                     DatabaseHelper2.columnId: 12,
                     DatabaseHelper2.columnPassword: 'Mark'
@@ -126,16 +135,16 @@ class _MyHomePageState extends State<AaronsMain> {
                   print(rowsAffected);
                 },
                 child: Text('delete user')),
-            FlatButton(
-                onPressed: () async {
-                  DatabaseHelper2.instance.resetDb();
-                },
-                child: Text('Reset Table')),
-            FlatButton(
-                onPressed: () async {
-                  DatabaseHelper2.instance.createUserTable();
-                },
-                child: Text('Recreate user table')),
+            // FlatButton(
+            //     onPressed: () async {
+            //       DatabaseHelper2.instance.resetDb();
+            //     },
+            //     child: Text('Reset Table')),
+            // FlatButton(
+            //     onPressed: () async {
+            //       DatabaseHelper2.instance.createUserTable();
+            //     },
+            //     child: Text('Recreate user table')),
             FlatButton(
                 onPressed: () async {
                   print("testing pushing email and pass");
@@ -187,6 +196,11 @@ class _MyHomePageState extends State<AaronsMain> {
                  print(pulledUser.first.id);
                 },
                 child: Text('get user by username')),
+            FlatButton(
+                onPressed: () async {
+                  await _userFavoritesRepository.insertFavorite(229729353);
+                },
+                child: Text('insert favorite')),
           ],
         ),
       ),

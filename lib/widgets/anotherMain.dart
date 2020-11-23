@@ -1,56 +1,44 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:streamer_review/login.dart';
 import 'package:streamer_review/main_screen.dart';
 import 'package:streamer_review/profile.dart';
-import 'package:streamer_review/secondScreen.dart';
 import 'package:streamer_review/secure_storage/secure_storage.dart';
-import 'package:streamer_review/widgets/home_page.dart';
-
 
 final SecureStorage secureStorage = SecureStorage();
+final FlutterSecureStorage _secureStorage = FlutterSecureStorage();
 
 
-void main() {
+Future<void> main() async {
 
   if(secureStorage.readSecureData("email") != null){
-    Future email = secureStorage.readSecureData("email");
-    String sEmail = email.toString();
+    String email = await secureStorage.readSecureData("email");
+    // String sEmail = email.toString();
     print("***FOUND EMAIL***");
-    print("***$sEmail***");
+    // print("***$sEmail***");
+    print("***$email***");
+
 
     // home: Profile();
     runApp(MaterialApp(
       initialRoute: '/main_screen',
 
       routes: {
-        // '/': (context) => Loading(),
-        // '/home': (context) => Home(),
-
         '/login': (context) => LoginScreen(),
-        // '/registration': (context) => Registration(),
         '/main_screen': (context) => MainScreen(),
-
-
       },
     ));
 
   }else {
-    print("there is not an email saved");
+    print("***THERE IS NOT AN EMAIL SAVED***");
 
     // home: LoginScreen();
     runApp(MaterialApp(
       initialRoute: '/login',
 
       routes: {
-        // '/': (context) => Loading(),
-        // '/home': (context) => Home(),
-
         '/login': (context) => LoginScreen(),
-        // '/registration': (context) => Registration(),
         '/profile': (context) => Profile(),
-
 
       },
     ));
