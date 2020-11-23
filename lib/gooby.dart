@@ -10,15 +10,12 @@ class Gooby extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('ITS GOOBY TIME'),
-
+        title: Text('ITS P GOOBY TIME'),
       ),
     );
     
   }
 }
-
-
 
 // Container(
 // Row(
