@@ -277,61 +277,6 @@ Future<void> checkEmail(Database db, User user) async{
     // {_id: 3, name: Susan, age: 12}
   }
 
-  Future<List<User>> retrieveUsers() async {
-    final db = await database;
-    final List<Map<String, dynamic>> maps = await db.query(User.TABLENAME);
-
-    return List.generate(maps.length, (i) {
-      return User(
-        id: maps[i]['_id'],
-        email: maps[i]['email'],
-        password: maps[i]['password'],
-        userName: maps[i]['user_name'],
-        phoneNumber: maps[i]['phone_number'],
-      );
-    });
-  }
-
-  //to update you need to pass the id of which will be updated as well as pass the value
-  // takes in a map type parameter
-  Future<int> updateUser(User user) async {
-    print("in the update method for user in the database");
-    print(user.toMap());
-    Database db = await instance.database;
-    String userName = user.userName;
-    List<User> newUser = await getUserByUserName(user.userName);
-    int id = newUser.first.id;
-    // List<Map<String, dynamic >> user = await db.query('_user_table', where: '_id = ?', whereArgs: []);
-
-    int updatedCount = await db.rawUpdate('''
-    UPDATE _user_table 
-    SET email = ?, password = ?, user_name = ?, phone_number = ? 
-    WHERE _id = ?
-    ''', [user.email, user.password, user.userName, user.phoneNumber, id]);
-    return updatedCount;
-  }
-
-  Future<void> addBroadcasterTag(BroadcasterTag broadcasterTag) async {
-    return await db.insert(
-      'broadcaster_tags',
-      broadcasterTag.toMap(),
-      conflictAlgorithm: ConflictAlgorithm.replace,
-    );
-  }
-
-  Future<List<Map<String, dynamic>>> insertBroadcasterTag(
-      broadcasterId, tagName) async {
-    // get a reference to the database
-    Database db = await DatabaseHelper2.instance.database;
-
-    // raw query
-    List<Map> result = await db.rawQuery(
-        'SELECT * FROM broadcaster_tags WHERE broadcaster_id=?',
-        [broadcasterId]);
-    await db.rawQuery(
-        'INSERT INTO broadcaster_tags (tag_name, fk_broadcaster_id) VALUES(?, ?)',
-        [tagName, broadcasterId]);
-    // await db.rawQuery('UPDATE reviews SET satisfaction_rating = ?, entertainment_rating = ?, interactiveness_rating = ?, skill_rating = ? WHERE fk_broadcaster_id = ? AND fk_user_id = ?', [satisfaction_rating, entertainment_rating, interactiveness_rating, skill_rating, broadcaster_id, user_id]);
   Future<List<Map<String, dynamic>>> selectReviews(broadcaster_id, user_id) async {
 
     // get a reference to the database
@@ -566,6 +511,7 @@ Future<void> checkEmail(Database db, User user) async{
   }
 
   Future resetBroadcasters() async {
+
     Database db = await instance.database;
     db.execute("DELETE FROM broadcaster_table");
     db.execute("DROP TABLE broadcaster_table");
