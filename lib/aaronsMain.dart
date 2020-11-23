@@ -86,7 +86,7 @@ class _MyHomePageState extends State<AaronsMain> {
             FlatButton(
                 onPressed: () async {
                   List<Map<String, dynamic>> queryRows =
-                      await DatabaseHelper2.instance.queryAll();
+                      await DatabaseHelper2.instance.queryAllUsers();
                   print(queryRows);
                 },
                 child: Text('query all users')),
@@ -159,7 +159,7 @@ class _MyHomePageState extends State<AaronsMain> {
                 child: Text('Insert a user object')),
             FlatButton(
                 onPressed: () async {
-                  List<Map<String, dynamic >> user = await DatabaseHelper2.instance.retrieveUser(1);
+                  List<Map<String, dynamic >> user = await DatabaseHelper2.instance.retrieveUserById(1);
                   print(user.toString());
                 },
                 child: Text('retrieving user object, id 1')),
