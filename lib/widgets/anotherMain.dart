@@ -18,7 +18,6 @@ Future<void> main() async {
     // print("***$sEmail***");
     print("***$email***");
 
-
     // home: Profile();
     runApp(MaterialApp(
       initialRoute: '/main_screen',

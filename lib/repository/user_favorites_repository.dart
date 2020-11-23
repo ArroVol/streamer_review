@@ -36,6 +36,13 @@ class UserFavoritesRepository{
     return await db.query("user_favorites");
   }
 
+  //Query returns a list of map (must be passed as a type)
+  //All data will be in the form of map, so it returns a list of map
+  Future<List<Map<String, dynamic>>> queryAllFavoritesByUser() async {
+    Database db = await DatabaseHelper2.instance.database;
+    return await db.query("user_favorites");
+  }
+
   // //to update you need to pass the id of which will be updated as well as pass the value
   // // takes in a map type parameter
   // Future<int> updateFavorite(int broadcasterId) async {
