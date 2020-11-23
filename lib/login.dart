@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_login/flutter_login.dart';
 import 'package:streamer_review/helper/database_helper.dart';
-import 'package:streamer_review/secure_storage/secure_storage.dart';
 import 'package:streamer_review/users.dart';
 import 'custom_route.dart';
 import 'home.dart';
@@ -21,8 +20,7 @@ import 'model/user.dart';
 
 class LoginScreen extends StatelessWidget {
 
-  // final _storage = FlutterSecureStorage();
-  final SecureStorage secureStorage = SecureStorage();
+  final _storage = FlutterSecureStorage();
 
   User userStored = new User();
 
@@ -32,18 +30,13 @@ class LoginScreen extends StatelessWidget {
 
   Duration get loginTime => Duration(milliseconds: timeDilation.ceil() * 2250);
 
-
-  static User loadUsers() {
-
-  }
-
   Future<String> _loginUser(LoginData data) {
-
     return Future.delayed(loginTime).then((_) async {
-        // User user = loadUsers();
       // bool match = false;
+
       if(!await DatabaseHelper2.instance.checkEmailByEmail(_email)){
         return 'Username not exists';
+
       }
      // bool match = DatabaseHelper2.instance.checkEmailByEmail(_email);
      // if(!match){
@@ -178,7 +171,6 @@ class LoginScreen extends StatelessWidget {
           return "Email must contain '@' and end with '.com'";
         }
         _email = value;
-        secureStorage.writeSecureData("email", _email);
         return null;
       },
       passwordValidator: (value) {
@@ -186,8 +178,6 @@ class LoginScreen extends StatelessWidget {
           return 'Password is empty';
         }
         _password = value;
-        secureStorage.writeSecureData("password", _password);
-
         return null;
       },
       onLogin: (loginData) {
