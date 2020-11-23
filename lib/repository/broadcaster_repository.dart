@@ -1,34 +1,31 @@
-import 'dart:convert';
-
 import 'package:sqflite/sqflite.dart';
 import 'package:streamer_review/helper/database_helper.dart';
-import 'package:streamer_review/model/broadcaster.dart';
 
 class BroadcasterRepository  {
 
   // final Dio _dio;
   // static final _dbName = 'myDatabase.db';
 
-  // static final _dbVersion = 1;
-  static final _tableName = 'broadcaster';
+  static final _dbVersion = 1;
+  static final _tableName = 'broadcaster_table';
 
-  // int is used to make all id values unique since they are auto incremented by 1
-  Future<int> insert(Map<String, dynamic> row) async {
-    //we need to get the database first
-    // calls the get database method above
+
+  Future<List<Map<String, dynamic>>> selectBroadcaster(broadcaster_id) async {
+    // get a reference to the database
+
     Database db = await DatabaseHelper2.instance.database;
-    //returns the primary key (unique id)
 
-    // final textBroadcaster = Broadcaster(
-    //   id: 0,
-    //   email: 'Gooby4Ever',
-    //   password: 'YeetBois',
-    // );
-    //
-    //
-    // var res = await db.insert(_tableName, textBroadcaster.toJson(),
-    //     conflictAlgorithm: ConflictAlgorithm.replace);
-    return await db.insert(_tableName, row);
+    // raw query
+    List<Map> result = await db.rawQuery(
+        'SELECT * FROM broadcaster_table WHERE broadcaster_id=?',
+        [broadcaster_id]);
+    // List<Map> result2 = await db.rawQuery('SELECT * FROM broadcaster_table WHERE broadcaster_id=?', [broadcaster_id]);
+    // List<Map> result = await db.rawQuery('SELECT * FROM broadcaster_table WHERE user_id=?', [1]);
+    // print('WE ARE HERE');
+    // print(broadcaster_id);
+    // print(result2);
+
+    return result;
   }
 
   //Query returns a list of map (must be passed as a type)
@@ -36,6 +33,79 @@ class BroadcasterRepository  {
   Future<List<Map<String, dynamic>>> queryAll() async {
     Database db = await DatabaseHelper2.instance.database;
     return await db.query(_tableName);
+  }
+
+  Future<void> updateBroadcaster(broadcaster_id, user_id) async {
+    // get a reference to the database
+    Database db = await DatabaseHelper2.instance.database;
+    List<Map> result = await db.rawQuery(
+      'SELECT * FROM reviews WHERE fk_user_id=? AND fk_broadcaster_id=?',
+      [user_id, broadcaster_id],
+    );
+    double temp_satisfaction_rating = 0;
+    double temp_entertainment_rating = 0;
+    double temp_interaction_rating = 0;
+    double temp_skill_rating = 0;
+    for (var i = 0; i < result.length; i++) {
+      temp_satisfaction_rating += result[i]['satisfaction_rating'];
+      temp_entertainment_rating += result[i]['entertainment_rating'];
+      temp_interaction_rating += result[i]['interactiveness_rating'];
+      temp_skill_rating += result[i]['skill_rating'];
+    }
+    temp_satisfaction_rating /= result.length;
+    temp_entertainment_rating /= result.length;
+    temp_interaction_rating /= result.length;
+    temp_skill_rating /= result.length;
+    await insertBroadcaster(temp_satisfaction_rating, temp_skill_rating,
+        temp_entertainment_rating, temp_interaction_rating, broadcaster_id);
+    return 0;
+  }
+
+  Future<int> insertBroadcaster(
+      temp_satisfaction_rating,
+      temp_skill_rating,
+      temp_entertainment_rating,
+      temp_interaction_rating,
+      broadcaster_id) async {
+    // get a reference to the database
+    Database db = await DatabaseHelper2.instance.database;
+    int count;
+    List<Map> result = await db.rawQuery(
+        'SELECT * FROM broadcaster_table WHERE broadcaster_id=?',
+        [broadcaster_id]);
+    count = result.length;
+    if (count == 0) {
+      db.rawQuery(
+          'INSERT INTO broadcaster_table (broadcaster_id, broadcaster_name, overall_satisfaction, overall_entertainment, overall_interactiveness, overall_skill) VALUES(?, ?, ?, ?, ?, ?)',
+          [
+            broadcaster_id,
+            'test',
+            temp_satisfaction_rating,
+            temp_skill_rating,
+            temp_entertainment_rating,
+            temp_interaction_rating
+          ]);
+    } else {
+      db.rawQuery(
+          'UPDATE broadcaster_table SET overall_satisfaction = ?, overall_skill = ?, overall_entertainment = ?, overall_interactiveness = ? WHERE broadcaster_id = ?',
+          [
+            temp_satisfaction_rating,
+            temp_skill_rating,
+            temp_entertainment_rating,
+            temp_interaction_rating,
+            broadcaster_id
+          ]);
+    }
+    return 0;
+  }
+
+  // int is used to make all id values unique since they are auto incremented by 1
+  Future<int> insert(Map<String, dynamic> row) async {
+    //we need to get the database first
+    // calls the get database method above
+    Database db = await DatabaseHelper2.instance.database;
+
+    return await db.insert(_tableName, row);
   }
 
   // //to update you need to pass the id of which will be updated as well as pass the value
