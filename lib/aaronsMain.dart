@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:streamer_review/helper/database_helper.dart';
 import 'package:streamer_review/repository/broadcaster_repository.dart';
+import 'package:streamer_review/repository/user_favorites_repository.dart';
 import 'package:streamer_review/repository/user_repository.dart';
 
 import 'model/user.dart';
@@ -20,6 +21,7 @@ class MyApp extends StatelessWidget {
           visualDensity: VisualDensity.adaptivePlatformDensity,
         ),
         home: AaronsMain()
+
         // home: ColorCircle(title: 'Color Circle',),
         );
   }
@@ -35,6 +37,7 @@ class AaronsMain extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<AaronsMain> {
+  UserFavoritesRepository _userFavoritesRepository = new UserFavoritesRepository();
   BroadcasterRepository _broadcasterRepository = new BroadcasterRepository();
   UserRepository _userRepository = new UserRepository();
   String _email = "";
@@ -86,7 +89,7 @@ class _MyHomePageState extends State<AaronsMain> {
             FlatButton(
                 onPressed: () async {
                   List<Map<String, dynamic>> queryRows =
-                      await DatabaseHelper2.instance.queryAll();
+                      await DatabaseHelper2.instance.queryAllUsers();
                   print(queryRows);
                 },
                 child: Text('query all users')),
@@ -97,6 +100,13 @@ class _MyHomePageState extends State<AaronsMain> {
                   print(queryRows);
                 },
                 child: Text('query all streamers')),
+            FlatButton(
+                onPressed: () async {
+                  List<Map<String, dynamic>> queryRows =
+                  await _userFavoritesRepository.queryAllFavorites();
+                  print(queryRows);
+                },
+                child: Text('query all favorites')),
             FlatButton(
                 onPressed: () async {
                   int updatedId = await DatabaseHelper2.instance.update({
@@ -125,16 +135,16 @@ class _MyHomePageState extends State<AaronsMain> {
                   print(rowsAffected);
                 },
                 child: Text('delete user')),
-            FlatButton(
-                onPressed: () async {
-                  DatabaseHelper2.instance.resetDb();
-                },
-                child: Text('Reset Table')),
-            FlatButton(
-                onPressed: () async {
-                  DatabaseHelper2.instance.createUserTable();
-                },
-                child: Text('Recreate user table')),
+            // FlatButton(
+            //     onPressed: () async {
+            //       DatabaseHelper2.instance.resetDb();
+            //     },
+            //     child: Text('Reset Table')),
+            // FlatButton(
+            //     onPressed: () async {
+            //       DatabaseHelper2.instance.createUserTable();
+            //     },
+            //     child: Text('Recreate user table')),
             FlatButton(
                 onPressed: () async {
                   print("testing pushing email and pass");
@@ -159,7 +169,7 @@ class _MyHomePageState extends State<AaronsMain> {
                 child: Text('Insert a user object')),
             FlatButton(
                 onPressed: () async {
-                  List<Map<String, dynamic >> user = await DatabaseHelper2.instance.retrieveUser(1);
+                  List<Map<String, dynamic >> user = await DatabaseHelper2.instance.retrieveUserById(1);
                   print(user.toString());
                 },
                 child: Text('retrieving user object, id 1')),
@@ -173,6 +183,24 @@ class _MyHomePageState extends State<AaronsMain> {
                   DatabaseHelper2.instance.checkUserIntoDatabase(newUser);
                 },
                 child: Text('insert a user into the database')),
+            FlatButton(
+                onPressed: () async {
+                  int userId = await DatabaseHelper2.instance.getUserIdByUserName('new user guy2');
+                  print(userId);
+                },
+                child: Text('get id by username')),
+            FlatButton(
+                onPressed: () async {
+                 List<User> pulledUser = await DatabaseHelper2.instance.getUserByUserName("new user guy2");
+                  print(pulledUser.first.phoneNumber);
+                 print(pulledUser.first.id);
+                },
+                child: Text('get user by username')),
+            FlatButton(
+                onPressed: () async {
+                  await _userFavoritesRepository.insertFavorite(229729353);
+                },
+                child: Text('insert favorite')),
           ],
         ),
       ),
