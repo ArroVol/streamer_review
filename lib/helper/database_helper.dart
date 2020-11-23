@@ -380,6 +380,7 @@ class DatabaseHelper2 {
         [tagName, broadcasterId]);
     // await db.rawQuery('UPDATE reviews SET satisfaction_rating = ?, entertainment_rating = ?, interactiveness_rating = ?, skill_rating = ? WHERE fk_broadcaster_id = ? AND fk_user_id = ?', [satisfaction_rating, entertainment_rating, interactiveness_rating, skill_rating, broadcaster_id, user_id]);
 
+
     return result;
   }
 
@@ -681,6 +682,7 @@ class DatabaseHelper2 {
   }
 
   Future resetBroadcasters() async {
+
     Database db = await instance.database;
     db.execute("DELETE FROM broadcaster_table");
     db.execute("DROP TABLE broadcaster_table");
