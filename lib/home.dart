@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:streamer_review/streamer_thumb.dart';
 import 'package:streamer_review/push_notifications.dart';
+import 'package:streamer_review/temp_search.dart';
 
 class HomeScreen extends StatelessWidget {
 
@@ -27,7 +28,7 @@ class HomeScreen extends StatelessWidget {
               IconButton(
                   icon: Icon(Icons.search),
                   onPressed: () {
-                    showSearch(context: context, delegate: StreamerSearch());
+                    showSearch(context: context, delegate: SearchPage());
                   })
             ],
             centerTitle: true,

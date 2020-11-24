@@ -8,8 +8,13 @@ import 'helper/database_helper.dart';
 
 
 class ReviewPage extends StatefulWidget {
+  String broadcaster_id;
+  ReviewPage(String broadcaster_id) {
+    this.broadcaster_id = broadcaster_id;
+  }
+
   @override
-  StreamerReview  createState() => new StreamerReview ();
+  StreamerReview  createState() => new StreamerReview (broadcaster_id);
 }
 
 class StreamerReview extends State<ReviewPage> {
@@ -25,7 +30,8 @@ class StreamerReview extends State<ReviewPage> {
   // int broadcaster_id = 48526626;
   // int broadcaster_id = 469790580;
   // int broadcaster_id = 37402112;
-  int broadcaster_id = 138117508;
+  // int broadcaster_id = 138117508;
+  String broadcaster_id;
 
   int user_id = 1;
 
@@ -52,6 +58,10 @@ class StreamerReview extends State<ReviewPage> {
     11 : 'Travel & Outdoors',
     12 : 'ASMR',
   };
+
+  StreamerReview(String broadcaster_id) {
+    this.broadcaster_id = broadcaster_id;
+  }
 
   Future<void> submitReview() async {
     // print(tags);
