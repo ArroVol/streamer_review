@@ -1,15 +1,22 @@
+import 'dart:convert';
+
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:streamer_review/helper/database_helper.dart' as DBHelper;
-
+import 'package:http/http.dart' as http;
 import 'helper/database_helper.dart';
 
 
 
 class ReviewPage extends StatefulWidget {
+  String broadcaster_id;
+  ReviewPage(String broadcaster_id) {
+    this.broadcaster_id = broadcaster_id;
+  }
+
   @override
-  StreamerReview  createState() => new StreamerReview ();
+  StreamerReview  createState() => new StreamerReview (broadcaster_id);
 }
 
 class StreamerReview extends State<ReviewPage> {
@@ -25,7 +32,8 @@ class StreamerReview extends State<ReviewPage> {
   // int broadcaster_id = 48526626;
   // int broadcaster_id = 469790580;
   // int broadcaster_id = 37402112;
-  int broadcaster_id = 459331509;
+  // int broadcaster_id = 138117508;
+  String broadcaster_id;
 
   int user_id = 1;
 
@@ -53,18 +61,35 @@ class StreamerReview extends State<ReviewPage> {
     12 : 'ASMR',
   };
 
+  StreamerReview(String broadcaster_id) {
+    this.broadcaster_id = broadcaster_id;
+  }
+
   Future<void> submitReview() async {
-    // print(tags);
+
+    String url = "https://api.twitch.tv/helix/users?id=" + broadcaster_id;
+
+    // print(url);
+
+    http.Response channelInformation =
+    await http.get(Uri.encodeFull(url), headers: {
+      "Authorization": "Bearer 5e46v0tks21zqvnloyua8e76bcsui9",
+      "Client-Id": "874uve10v0bcn3rmp2bq4cvz8fb5wj"
+    });
+
+    var data = json.decode(channelInformation.body);
+    var login = data['data'][0]['login'];
+    print(login);
     DatabaseHelper2 d = DBHelper.DatabaseHelper2.instance;
-    await d.insertReview(satisfaction_rating, entertainment_rating, interaction_rating, skill_rating, broadcaster_id, user_id);
-    await d.updateBroadcaster(broadcaster_id, user_id);
+    await d.insertReview(satisfaction_rating, entertainment_rating, interaction_rating, skill_rating, broadcaster_id, user_id, login);
+    await d.updateBroadcaster(broadcaster_id, user_id, login);
   }
 
   void getOldReview() async {
     DatabaseHelper2 d = DBHelper.DatabaseHelper2.instance;
     oldReview = await d.selectReviews(broadcaster_id, user_id);
-    print(oldReview[0]);
-    print(oldReview[0]['satisfaction_rating'].runtimeType);
+    // print(oldReview[0]);
+    // print(oldReview[0]['satisfaction_rating'].runtimeType);
     old_satisfaction_rating = oldReview[0]['satisfaction_rating'];
     old_entertainment_rating = oldReview[0]['entertainment_rating'];
     old_interaction_rating = oldReview[0]['interactiveness_rating'];
