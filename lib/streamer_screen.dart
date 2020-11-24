@@ -84,7 +84,7 @@ class StreamerProfile extends State<StreamerPage> {
 
     url = "https://api.twitch.tv/helix/users?id=" + topStreamerId;
 
-    print(url);
+    // print(url);
 
     http.Response channelInformation =
     await http.get(Uri.encodeFull(url), headers: {
@@ -93,8 +93,8 @@ class StreamerProfile extends State<StreamerPage> {
     });
 
     data = json.decode(channelInformation.body);
-    print('HERE !!!!!');
-    print(data);
+    // print('HERE !!!!!');
+    // print(data);
     // var username = data['data'][0]['display_name'];
     var login = data['data'][0]['login'];
     var description = data['data'][0]['description'];
