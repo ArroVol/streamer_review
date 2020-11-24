@@ -1,8 +1,10 @@
+import 'dart:convert';
+
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:streamer_review/helper/database_helper.dart' as DBHelper;
-
+import 'package:http/http.dart' as http;
 import 'helper/database_helper.dart';
 
 
@@ -64,17 +66,30 @@ class StreamerReview extends State<ReviewPage> {
   }
 
   Future<void> submitReview() async {
-    // print(tags);
+
+    String url = "https://api.twitch.tv/helix/users?id=" + broadcaster_id;
+
+    // print(url);
+
+    http.Response channelInformation =
+    await http.get(Uri.encodeFull(url), headers: {
+      "Authorization": "Bearer 5e46v0tks21zqvnloyua8e76bcsui9",
+      "Client-Id": "874uve10v0bcn3rmp2bq4cvz8fb5wj"
+    });
+
+    var data = json.decode(channelInformation.body);
+    var login = data['data'][0]['login'];
+    print(login);
     DatabaseHelper2 d = DBHelper.DatabaseHelper2.instance;
-    await d.insertReview(satisfaction_rating, entertainment_rating, interaction_rating, skill_rating, broadcaster_id, user_id);
-    await d.updateBroadcaster(broadcaster_id, user_id);
+    await d.insertReview(satisfaction_rating, entertainment_rating, interaction_rating, skill_rating, broadcaster_id, user_id, login);
+    await d.updateBroadcaster(broadcaster_id, user_id, login);
   }
 
   void getOldReview() async {
     DatabaseHelper2 d = DBHelper.DatabaseHelper2.instance;
     oldReview = await d.selectReviews(broadcaster_id, user_id);
-    print(oldReview[0]);
-    print(oldReview[0]['satisfaction_rating'].runtimeType);
+    // print(oldReview[0]);
+    // print(oldReview[0]['satisfaction_rating'].runtimeType);
     old_satisfaction_rating = oldReview[0]['satisfaction_rating'];
     old_entertainment_rating = oldReview[0]['entertainment_rating'];
     old_interaction_rating = oldReview[0]['interactiveness_rating'];
