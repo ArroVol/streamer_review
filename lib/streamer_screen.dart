@@ -123,7 +123,7 @@ class StreamerProfile extends State<StreamerPage> {
     }, onError: (error) {
       print(error);
     });
-    await d.updateBroadcaster(broadcaster_id, user_id);
+    await d.updateBroadcaster(broadcaster_id, user_id, login);
 
     var url2 = "https://api.twitch.tv/helix/search/channels?query=" + login;
     // print(url);
