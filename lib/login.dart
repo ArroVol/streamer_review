@@ -42,8 +42,12 @@ class LoginScreen extends StatelessWidget {
     return Future.delayed(loginTime).then((_) async {
         // User user = loadUsers();
       // bool match = false;
+      // User newUser = new User();
       if(!await DatabaseHelper2.instance.checkEmailByEmail(_email)){
+        // newUser.userName = data.name;
+        // newUser.email = data.name;
         return 'Username not exists';
+
       }
      // bool match = DatabaseHelper2.instance.checkEmailByEmail(_email);
      // if(!match){
@@ -56,6 +60,7 @@ class LoginScreen extends StatelessWidget {
       //   return 'Password does not match';
       // }
       if(!await DatabaseHelper2.instance.checkPasswordByPassword(_password)){
+
         return 'Password does not match';
 
       }
@@ -196,11 +201,21 @@ class LoginScreen extends StatelessWidget {
         print('Password: ${loginData.password}');
         return _loginUser(loginData);
       },
-      onSignup: (loginData) {
+      onSignup: (loginData) async {
         print('Signup info');
         print('Name: ${loginData.name}');
         print('Password: ${loginData.password}');
+        User newUser = new User();
+
+        if(!await DatabaseHelper2.instance.checkEmailByEmail(loginData.name)){
+        newUser.userName = loginData.name;
+        newUser.email = loginData.name;
+        newUser.password = loginData.password;
+        print('Username is available');
         return _loginUser(loginData);
+
+        }
+        return 'Email already in use';
       },
       onSubmitAnimationCompleted: () {
         Navigator.of(context).pushReplacement(FadePageRoute(

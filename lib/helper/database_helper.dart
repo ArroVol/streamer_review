@@ -119,6 +119,7 @@ class DatabaseHelper2 {
         REFERENCES broadcaster_table(broadcaster_id)
       )
       ''');
+
     db.execute(
         ''' INSERT INTO _user_table (email, password, phone_number, user_name)
     VALUES('Gooby@gmail.com', 'gooby4ever', '708-843-6969', 'GoobyChan')
