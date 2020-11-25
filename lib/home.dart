@@ -3,6 +3,7 @@ import 'package:streamer_review/expansion_row_container.dart';
 import 'package:streamer_review/streamer_thumb.dart';
 import 'package:streamer_review/push_notifications.dart';
 import 'package:streamer_review/temp_search.dart';
+import 'package:streamer_review/widgets/anotherMain.dart';
 import 'custom_route.dart';
 import 'login.dart';
 
@@ -22,6 +23,8 @@ class HomeScreen extends StatelessWidget {
                 icon: Icon(Icons.logout),
                 alignment: Alignment.centerLeft,
                 onPressed: () {
+                  secureStorage.deleteSecureData('email');
+                  secureStorage.deleteSecureData('password');
                   Navigator.of(context).pushReplacement(FadePageRoute(
                     builder: (context) => LoginScreen(),
                   ));

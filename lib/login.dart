@@ -43,7 +43,7 @@ class LoginScreen extends StatelessWidget {
         // User user = loadUsers();
       // bool match = false;
       // User newUser = new User();
-      if(!await DatabaseHelper2.instance.checkEmailByEmail(_email.toLowerCase())){
+      if(!await DatabaseHelper2.instance.checkEmailByEmail(data.name.toLowerCase())){
         // newUser.userName = data.name;
         // newUser.email = data.name;
         return 'Username not exists';
@@ -59,7 +59,7 @@ class LoginScreen extends StatelessWidget {
       // if (mockUsers[data.name] != data.password) {
       //   return 'Password does not match';
       // }
-      if(!await DatabaseHelper2.instance.checkPasswordByPassword(_password)){
+      if(!await DatabaseHelper2.instance.checkPasswordByPassword(data.password)){
 
         return 'Password does not match';
 
@@ -182,7 +182,7 @@ class LoginScreen extends StatelessWidget {
         if (!value.contains('@') || !value.endsWith('.com')) {
           return "Email must contain '@' and end with '.com'";
         }
-        _email = value;
+        _email = value.toLowerCase();
         secureStorage.writeSecureData("email", _email);
         return null;
       },
@@ -198,6 +198,7 @@ class LoginScreen extends StatelessWidget {
       onLogin: (loginData) {
         print('Login info');
         print('Name: ${loginData.name}');
+        // loginData.name = loginData.name.toLowerCase();
         print('Password: ${loginData.password}');
         return _loginUser(loginData);
       },
@@ -212,6 +213,8 @@ class LoginScreen extends StatelessWidget {
         newUser.email = loginData.name.toLowerCase();
         newUser.password = loginData.password;
         print('Username is available');
+        print(newUser.userName);
+        print(newUser.email);
         DatabaseHelper2.instance.insertUser(newUser);
         return _loginUser(loginData);
 

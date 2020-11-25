@@ -61,6 +61,9 @@ class DatabaseHelper2 {
   //returns 2 parameters (database, version)
   // create the database if it doesnt exist
   Future _onCreate(Database db, int version) {
+
+    secureStorage.deleteSecureData('email');
+    secureStorage.deleteSecureData('password');
     //write the query that creates the database
     //3 single quotes allows us to write the lines as a single string (command)
 

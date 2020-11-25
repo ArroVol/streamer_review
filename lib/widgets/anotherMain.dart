@@ -11,11 +11,11 @@ final FlutterSecureStorage _secureStorage = FlutterSecureStorage();
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   if (secureStorage != null) {
-    if (secureStorage.readSecureData("email") != null) {
-      String email = await secureStorage.readSecureData("email");
-      // String sEmail = email.toString();
+    String email = await secureStorage.readSecureData("email");
+    print(email);
+    if (email != null) {
+      print('passed if check, its not null');
       print("***FOUND EMAIL***");
-      // print("***$sEmail***");
       print("***$email***");
 
       // home: Profile();
@@ -26,33 +26,32 @@ Future<void> main() async {
           '/main_screen': (context) => MainScreen(),
         },
       ));
+    } else {
+      print("***THERE IS NOT AN EMAIL SAVED***");
+      // home: LoginScreen();
+      runApp(MaterialApp(
+        initialRoute: '/login',
+        routes: {
+          '/login': (context) => LoginScreen(),
+          '/profile': (context) => Profile(),
+        },
+      ));
     }
-  } else {
-    print("***THERE IS NOT AN EMAIL SAVED***");
-
-    // home: LoginScreen();
-    runApp(MaterialApp(
-      initialRoute: '/login',
-      routes: {
-        '/login': (context) => LoginScreen(),
-        '/profile': (context) => Profile(),
-      },
-    ));
+    // runApp(MaterialApp(
+    //   initialRoute: '/login',
+    //
+    //   routes: {
+    //     // '/': (context) => Loading(),
+    //     // '/home': (context) => Home(),
+    //
+    //     '/login': (context) => LoginScreen(),
+    //     // '/registration': (context) => Registration(),
+    //     '/profile': (context) => Profile(),
+    //
+    //
+    //   },
+    // ));
   }
-  // runApp(MaterialApp(
-  //   initialRoute: '/login',
-  //
-  //   routes: {
-  //     // '/': (context) => Loading(),
-  //     // '/home': (context) => Home(),
-  //
-  //     '/login': (context) => LoginScreen(),
-  //     // '/registration': (context) => Registration(),
-  //     '/profile': (context) => Profile(),
-  //
-  //
-  //   },
-  // ));
 }
 
 class MyApp extends StatelessWidget {
