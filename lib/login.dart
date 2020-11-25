@@ -212,6 +212,7 @@ class LoginScreen extends StatelessWidget {
         newUser.email = loginData.name;
         newUser.password = loginData.password;
         print('Username is available');
+        DatabaseHelper2.instance.insertUser(newUser);
         return _loginUser(loginData);
 
         }

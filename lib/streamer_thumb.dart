@@ -1,12 +1,20 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:streamer_review/streamer_screen.dart';
 
 class StreamerThumb extends StatefulWidget {
+  String streamerName;
+
+  StreamerThumb(this.streamerName);
+
   @override
-  _StreamerThumb createState() => _StreamerThumb();
+  _StreamerThumb createState() => _StreamerThumb(streamerName);
 }
 
 class _StreamerThumb extends State<StreamerThumb> {
+  String streamerName;
+
+  _StreamerThumb(this.streamerName);
+
   @override
   Widget build(BuildContext context) {
     return Card(
@@ -17,6 +25,7 @@ class _StreamerThumb extends State<StreamerThumb> {
       child: new InkWell(
         onTap: () {
           print("Streamer card clicked");
+          Navigator.push(context, MaterialPageRoute(builder: (context) => StreamerPage('ninja')));
         },
         child: Container(
           width: 150.0,
@@ -28,7 +37,7 @@ class _StreamerThumb extends State<StreamerThumb> {
                 backgroundColor: Colors.lightGreenAccent,
                 radius: 35,
               ),
-              Text('Ninja'),
+              Text(streamerName),
               Icon(Icons.contactless, color: Colors.black54),
             ],
           ),

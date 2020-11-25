@@ -457,8 +457,22 @@ class DatabaseHelper2 {
     return result;
   }
 
+  Future<List<Map>> selectAllBroadcasters() async {
+    Database db = await DatabaseHelper2.instance.database;
+    List<Map> result = await db.rawQuery('SELECT * FROM broadcaster_table');
+    print(result[0]);
+    // List<StreamerThumb> streamerThumbList;
+    // for(var i = 0; i < result.length; i++){
+    //   if(result[i]['broadcaster_name'] != null){
+    //     streamerThumbList.add(new StreamerThumb(result[i]['broadcaster_name']));
+    //   }
+    // }
+    return result;
+  }
+
+
   Future<int> insertReview(satisfaction_rating, entertainment_rating,
-      interactiveness_rating, skill_rating, broadcaster_id, user_id) async {
+      interactiveness_rating, skill_rating, broadcaster_id, user_id, login) async {
     // get a reference to the database
     Database db = await DatabaseHelper2.instance.database;
     int count;
@@ -515,7 +529,7 @@ class DatabaseHelper2 {
     // print(temp_interaction_rating);
     // print(temp_skill_rating);
     await insertBroadcaster(temp_satisfaction_rating, temp_skill_rating,
-        temp_entertainment_rating, temp_interaction_rating, broadcaster_id);
+        temp_entertainment_rating, temp_interaction_rating, broadcaster_id, login);
     // db = await DatabaseHelper2.instance.database;
     // List<Map> result2 = await db.rawQuery('SELECT * FROM broadcaster_table WHERE broadcaster_id=?', [broadcaster_id],);
     // count = result2.length;
@@ -533,7 +547,8 @@ class DatabaseHelper2 {
     return 0;
   }
 
-  Future<void> updateBroadcaster(broadcaster_id, user_id) async {
+
+  Future<void> updateBroadcaster(broadcaster_id, user_id, login) async {
     // get a reference to the database
     Database db = await DatabaseHelper2.instance.database;
     List<Map> result = await db.rawQuery(
@@ -555,7 +570,7 @@ class DatabaseHelper2 {
     temp_interaction_rating /= result.length;
     temp_skill_rating /= result.length;
     await insertBroadcaster(temp_satisfaction_rating, temp_skill_rating,
-        temp_entertainment_rating, temp_interaction_rating, broadcaster_id);
+        temp_entertainment_rating, temp_interaction_rating, broadcaster_id, login);
     return 0;
   }
 
@@ -564,7 +579,7 @@ class DatabaseHelper2 {
       temp_skill_rating,
       temp_entertainment_rating,
       temp_interaction_rating,
-      broadcaster_id) async {
+      broadcaster_id, login) async {
     // get a reference to the database
     Database db = await DatabaseHelper2.instance.database;
     int count;
@@ -577,7 +592,7 @@ class DatabaseHelper2 {
           'INSERT INTO broadcaster_table (broadcaster_id, broadcaster_name, overall_satisfaction, overall_entertainment, overall_interactiveness, overall_skill) VALUES(?, ?, ?, ?, ?, ?)',
           [
             broadcaster_id,
-            'test',
+            'login',
             temp_satisfaction_rating,
             temp_skill_rating,
             temp_entertainment_rating,

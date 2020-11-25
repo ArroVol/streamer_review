@@ -1,22 +1,32 @@
 import 'package:flutter/material.dart';
+import 'package:streamer_review/expansion_row_container.dart';
 import 'package:streamer_review/streamer_thumb.dart';
 import 'package:streamer_review/push_notifications.dart';
+import 'package:streamer_review/temp_search.dart';
+import 'custom_route.dart';
+import 'login.dart';
 
 class HomeScreen extends StatelessWidget {
-
   @override
   Widget build(BuildContext context) {
-    PushNotificationsManager().init();
-    print('here');
     return Scaffold(
         backgroundColor: Colors.grey[500],
         appBar: AppBar(
             title: Text(
               'STREVIEW',
               style:
-                  TextStyle(color: Colors.lightGreenAccent, letterSpacing: 1.5),
+              TextStyle(color: Colors.lightGreenAccent, letterSpacing: 1.5),
             ),
             actions: <Widget>[
+              IconButton(
+                icon: Icon(Icons.logout),
+                alignment: Alignment.centerLeft,
+                onPressed: () {
+                  Navigator.of(context).pushReplacement(FadePageRoute(
+                    builder: (context) => LoginScreen(),
+                  ));
+                },
+              ),
               IconButton(
                 icon: Icon(Icons.person),
                 alignment: Alignment.centerLeft,
@@ -27,7 +37,7 @@ class HomeScreen extends StatelessWidget {
               IconButton(
                   icon: Icon(Icons.search),
                   onPressed: () {
-                    showSearch(context: context, delegate: StreamerSearch());
+                    showSearch(context: context, delegate: SearchPage());
                   })
             ],
             centerTitle: true,
@@ -41,7 +51,7 @@ class HomeScreen extends StatelessWidget {
                 child: Container(
                   child: Column(
                     children: <Widget>[
-                      StreamerThumb(),
+                      // StreamerThumb(),
                       Text(
                         'Featured Streamer',
                       ),
@@ -50,107 +60,59 @@ class HomeScreen extends StatelessWidget {
                 ),
               ),
               Divider(
-                height: 50,
+                height: 10,
                 color: Colors.black38,
               ),
               Text('Favorites'),
-              Container(
-                height: 150,
-                child: ListView(
-                  scrollDirection: Axis.horizontal,
-                  children: <Widget>[
-                    StreamerThumb(),
-                    StreamerThumb(),
-                    StreamerThumb(),
-                    StreamerThumb(),
-                    StreamerThumb(),
-                  ],
-                ),
+              ExpansionTile(
+                children: [
+                  ExpansionRowContainer(),
+                ],
               ),
               Divider(
                 color: Colors.black38,
               ),
               Text('Top Rated Streamers'),
-              Container(
-                height: 150,
-                child: ListView(
-                  scrollDirection: Axis.horizontal,
-                  children: <Widget>[
-                    StreamerThumb(),
-                    StreamerThumb(),
-                    StreamerThumb(),
-                    StreamerThumb(),
-                    StreamerThumb(),
-                  ],
-                ),
+              ExpansionTile(
+                children: [
+                  ExpansionRowContainer(),
+                ],
               ),
               Divider(
                 color: Colors.black38,
               ),
               Text('Streaming Now'),
-              Container(
-                height: 150,
-                child: ListView(
-                  scrollDirection: Axis.horizontal,
-                  children: <Widget>[
-                    StreamerThumb(),
-                    StreamerThumb(),
-                    StreamerThumb(),
-                    StreamerThumb(),
-                    StreamerThumb(),
-                  ],
-                ),
+              ExpansionTile(
+                children: [
+                  ExpansionRowContainer(),
+                ],
               ),
               Divider(
                 color: Colors.black38,
               ),
               Text('Up and Coming'),
-              Container(
-                height: 150,
-                child: ListView(
-                  scrollDirection: Axis.horizontal,
-                  children: <Widget>[
-                    StreamerThumb(),
-                    StreamerThumb(),
-                    StreamerThumb(),
-                    StreamerThumb(),
-                    StreamerThumb(),
-                  ],
-                ),
+              ExpansionTile(
+                children: [
+                  ExpansionRowContainer(),
+                ],
               ),
               Divider(
                 color: Colors.black38,
               ),
               Text('Tag - Funny'),
-              Container(
-                height: 150,
-                child: ListView(
-                  scrollDirection: Axis.horizontal,
-                  children: <Widget>[
-                    StreamerThumb(),
-                    StreamerThumb(),
-                    StreamerThumb(),
-                    StreamerThumb(),
-                    StreamerThumb(),
-                  ],
-                ),
+              ExpansionTile(
+                children: [
+                  ExpansionRowContainer(),
+                ],
               ),
               Divider(
                 color: Colors.black38,
               ),
               Text('Tag - Competitive'),
-              Container(
-                height: 150,
-                child: ListView(
-                  scrollDirection: Axis.horizontal,
-                  children: <Widget>[
-                    StreamerThumb(),
-                    StreamerThumb(),
-                    StreamerThumb(),
-                    StreamerThumb(),
-                    StreamerThumb(),
-                  ],
-                ),
+              ExpansionTile(
+                children: [
+                  ExpansionRowContainer(),
+                ],
               ),
               Divider(
                 color: Colors.black38,
@@ -207,10 +169,11 @@ class StreamerSearch extends SearchDelegate<String> {
   Widget buildSuggestions(BuildContext context) {
     final searchResults = query.isEmpty ? recentStreamerList : streamerList;
     return ListView.builder(
-      itemBuilder: (context, index) => ListTile(
-        leading: Icon(Icons.gamepad),
-        title: Text(searchResults[index]),
-      ),
+      itemBuilder: (context, index) =>
+          ListTile(
+            leading: Icon(Icons.gamepad),
+            title: Text(searchResults[index]),
+          ),
       itemCount: searchResults.length,
     );
   }

@@ -1,8 +1,7 @@
 
 import 'package:streamer_review/profile.dart';
 import 'package:streamer_review/temp_favorites.dart';
-import 'package:streamer_review/streamer_screen.dart';
-import 'package:streamer_review/temp_settings.dart';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -18,9 +17,10 @@ class _MainScreenState extends State<MainScreen> {
 
   List<Widget> _widgetOptions = <Widget>[
     HomeScreen(),
-    StreamerPage(),
+    // StreamerPage(),
+    // HomePage(),
     FavoritesPage(),
-    SettingsPage(),
+    // SettingsPage(),
     Profile(),
   ];
 
@@ -49,17 +49,17 @@ class _MainScreenState extends State<MainScreen> {
               color: Colors.deepPurple[800],
             ),
           ),
-          BottomNavigationBarItem(
-            icon: Icon(
-              Icons.search,
-              color: Colors.grey,
-            ),
-            title: Text('SEARCH'),
-            activeIcon: Icon(
-              Icons.search,
-              color: Colors.deepPurple[800],
-            ),
-          ),
+          // BottomNavigationBarItem(
+          //   icon: Icon(
+          //     Icons.search,
+          //     color: Colors.grey,
+          //   ),
+          //   title: Text('SEARCH'),
+          //   activeIcon: Icon(
+          //     Icons.search,
+          //     color: Colors.deepPurple[800],
+          //   ),
+          // ),
           BottomNavigationBarItem(
             icon: Icon(
               Icons.favorite,
@@ -95,7 +95,7 @@ class _MainScreenState extends State<MainScreen> {
           _buildOffstageNavigator(0),
           _buildOffstageNavigator(1),
           _buildOffstageNavigator(2),
-          _buildOffstageNavigator(3),
+          // _buildOffstageNavigator(3),
         ],
       ),
     );
@@ -106,9 +106,11 @@ class _MainScreenState extends State<MainScreen> {
       '/': (context) {
         return [
           HomeScreen(),
-          StreamerPage(),
+          // StreamerPage(),
+          // HomePage(),
           FavoritesPage(),
-          SettingsPage(),
+          Profile()
+          // SettingsPage(),
         ].elementAt(index);
       },
     };
