@@ -598,7 +598,7 @@ class DatabaseHelper2 {
           'INSERT INTO broadcaster_table (broadcaster_id, broadcaster_name, overall_satisfaction, overall_entertainment, overall_interactiveness, overall_skill) VALUES(?, ?, ?, ?, ?, ?)',
           [
             broadcaster_id,
-            'login',
+            login,
             temp_satisfaction_rating,
             temp_skill_rating,
             temp_entertainment_rating,
