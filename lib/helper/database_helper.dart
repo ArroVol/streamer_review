@@ -12,7 +12,7 @@ import 'DatabaseCreator.dart';
 class DatabaseHelper2 {
   //These are not given a type because it will automatically take the type that it is given first to it
   //we need to have a database name and database version
-  static final _dbName = 'myDatabase22.db';
+  static final _dbName = 'myDatabase24.db';
   static final _dbVersion = 1;
   static final _tableName = '_user_table';
   static final _reviewTable = 'reviews';
@@ -120,10 +120,10 @@ class DatabaseHelper2 {
       )
       ''');
 
-    db.execute(
-        ''' INSERT INTO _user_table (email, password, phone_number, user_name)
-    VALUES('Gooby@gmail.com', 'gooby4ever', '708-843-6969', 'GoobyChan')
-    ''');
+    // db.execute(
+    //     ''' INSERT INTO _user_table (email, password, phone_number, user_name)
+    // VALUES('gooby@gmail.com', 'gooby4ever', '708-843-6969', 'goobychan')
+    // ''');
     db.execute(
         ''' INSERT INTO broadcaster_table (broadcaster_id, broadcaster_name)
     VALUES(229729353, 'criticalrole')
