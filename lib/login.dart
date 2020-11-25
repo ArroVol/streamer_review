@@ -43,7 +43,7 @@ class LoginScreen extends StatelessWidget {
         // User user = loadUsers();
       // bool match = false;
       // User newUser = new User();
-      if(!await DatabaseHelper2.instance.checkEmailByEmail(_email)){
+      if(!await DatabaseHelper2.instance.checkEmailByEmail(_email.toLowerCase())){
         // newUser.userName = data.name;
         // newUser.email = data.name;
         return 'Username not exists';
@@ -207,9 +207,9 @@ class LoginScreen extends StatelessWidget {
         print('Password: ${loginData.password}');
         User newUser = new User();
 
-        if(!await DatabaseHelper2.instance.checkEmailByEmail(loginData.name)){
-        newUser.userName = loginData.name;
-        newUser.email = loginData.name;
+        if(!await DatabaseHelper2.instance.checkEmailByEmail(loginData.name.toLowerCase())){
+        newUser.userName = loginData.name.toLowerCase();
+        newUser.email = loginData.name.toLowerCase();
         newUser.password = loginData.password;
         print('Username is available');
         DatabaseHelper2.instance.insertUser(newUser);
