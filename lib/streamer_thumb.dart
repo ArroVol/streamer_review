@@ -25,7 +25,7 @@ class _StreamerThumb extends State<StreamerThumb> {
       child: new InkWell(
         onTap: () {
           print("Streamer card clicked");
-          Navigator.push(context, MaterialPageRoute(builder: (context) => StreamerPage()));
+          Navigator.push(context, MaterialPageRoute(builder: (context) => StreamerPage(streamerName)));
         },
         child: Container(
           width: 150.0,
