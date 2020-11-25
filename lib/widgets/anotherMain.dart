@@ -10,6 +10,7 @@ final FlutterSecureStorage _secureStorage = FlutterSecureStorage();
 
 
 Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
 
   if(secureStorage.readSecureData("email") != null){
     String email = await secureStorage.readSecureData("email");

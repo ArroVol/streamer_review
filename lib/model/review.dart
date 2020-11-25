@@ -24,10 +24,4 @@ class Review {
     userId = m['fk_user_id'];
   }
 
-// satisfaction_rating INTEGER,
-//     entertainment_rating INTEGER,
-// interactiveness_rating INTEGER,
-//     skill_rating INTEGER,
-// fk_broadcaster_id INTEGER,
-//     fk_user_id INTEGER,
 }

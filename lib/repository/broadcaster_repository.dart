@@ -3,9 +3,6 @@ import 'package:streamer_review/helper/database_helper.dart';
 
 class BroadcasterRepository  {
 
-  // final Dio _dio;
-  // static final _dbName = 'myDatabase.db';
-
   static final _dbVersion = 1;
   static final _tableName = 'broadcaster_table';
 

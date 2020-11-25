@@ -6,9 +6,6 @@ import 'package:streamer_review/model/broadcaster.dart';
 
 class ReviewRepository {
 
-  // final Dio _dio;
-  // static final _dbName = 'myDatabase.db';
-
   // static final _dbVersion = 1;
   static final _tableName = 'reviews';
 

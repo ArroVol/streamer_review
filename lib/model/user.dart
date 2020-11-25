@@ -4,8 +4,6 @@ import 'package:sqflite/sqflite.dart' show Database;
 
 import 'package:dbutils/sqllitedb.dart' show DBInterface;
 
-
-
 class User extends DBInterface{
   int id;
   String email;
@@ -18,18 +16,6 @@ class User extends DBInterface{
   // User(this.id, this.email, this.password, {id, password, email});
   User({this.id, this.email, this.password, this.userName, this.phoneNumber});
 
-  // User(int id, String email, String password){
-  //   this.id = id;
-  //   this.email = email;
-  //   this.password = password;
-  // }
-
-  // User.fromJson(Map<String, dynamic> m) {
-  //   id = m['user_id'];
-  //   email = m['user_email'];
-  //   password = m['user_password'];
-  // }
-
   User.fromJson(Map<String, dynamic> m) {
     id = m['_id'];
     email = m['email'];
@@ -37,12 +23,6 @@ class User extends DBInterface{
     phoneNumber = m['phone_number'];
     userName = m['user_name'];
   }
-
-  // int get id => id;
-  //
-  // String get email => email;
-  //
-  // String get password => password;
 
   Map<String, dynamic> toJson() => {
     '_id': id,
@@ -73,6 +53,23 @@ class User extends DBInterface{
   // Map<String, dynamic> toMap() {
   //   return {'user_id': id, 'user_email': email, 'user_password': password};
   // }
+  // User(int id, String email, String password){
+  //   this.id = id;
+  //   this.email = email;
+  //   this.password = password;
+  // }
+
+  // User.fromJson(Map<String, dynamic> m) {
+  //   id = m['user_id'];
+  //   email = m['user_email'];
+  //   password = m['user_password'];
+  // }
+
+  // int get id => id;
+  //
+  // String get email => email;
+  //
+  // String get password => password;
 
   @override
   Future<void> onCreate(Database db, int version) async {
