@@ -3,6 +3,7 @@ import 'package:streamer_review/helper/database_helper.dart';
 import 'package:streamer_review/repository/broadcaster_repository.dart';
 import 'package:streamer_review/repository/user_favorites_repository.dart';
 import 'package:streamer_review/repository/user_repository.dart';
+import 'package:streamer_review/widgets/anotherMain.dart';
 
 import 'model/user.dart';
 
@@ -170,10 +171,12 @@ class _MyHomePageState extends State<AaronsMain> {
                 child: Text('Insert a user object')),
             FlatButton(
                 onPressed: () async {
-                  List<Map<String, dynamic >> user = await DatabaseHelper2.instance.retrieveUserById(1);
-                  print(user.toString());
+                  secureStorage.deleteSecureData('email');
+                  secureStorage.deleteSecureData('password');
+                  // List<Map<String, dynamic >> user = await DatabaseHelper2.instance.retrieveUserById(1);
+                  // print(user.toString());
                 },
-                child: Text('retrieving user object, id 1')),
+                child: Text('Clear Secure Data')),
             FlatButton(
                 onPressed: () async {
                   User newUser = new User();

@@ -15,7 +15,7 @@ import 'DatabaseCreator.dart';
 class DatabaseHelper2 {
   //These are not given a type because it will automatically take the type that it is given first to it
   //we need to have a database name and database version
-  static final _dbName = 'myDatabase22.db';
+  static final _dbName = 'myDatabase24.db';
   static final _dbVersion = 1;
   static final _tableName = '_user_table';
   static final _reviewTable = 'reviews';
@@ -64,6 +64,9 @@ class DatabaseHelper2 {
   //returns 2 parameters (database, version)
   // create the database if it doesnt exist
   Future _onCreate(Database db, int version) {
+
+    secureStorage.deleteSecureData('email');
+    secureStorage.deleteSecureData('password');
     //write the query that creates the database
     //3 single quotes allows us to write the lines as a single string (command)
 
@@ -123,10 +126,10 @@ class DatabaseHelper2 {
       )
       ''');
 
-    db.execute(
-        ''' INSERT INTO _user_table (email, password, phone_number, user_name)
-    VALUES('Gooby@gmail.com', 'gooby4ever', '708-843-6969', 'GoobyChan')
-    ''');
+    // db.execute(
+    //     ''' INSERT INTO _user_table (email, password, phone_number, user_name)
+    // VALUES('gooby@gmail.com', 'gooby4ever', '708-843-6969', 'goobychan')
+    // ''');
     db.execute(
         ''' INSERT INTO broadcaster_table (broadcaster_id, broadcaster_name)
     VALUES(229729353, 'criticalrole')
@@ -476,7 +479,7 @@ class DatabaseHelper2 {
     return result;
   }
 
- 
+
   Future<int> insertReview(satisfaction_rating, entertainment_rating,
       interactiveness_rating, skill_rating, broadcaster_id, user_id, login) async {
     // get a reference to the database
