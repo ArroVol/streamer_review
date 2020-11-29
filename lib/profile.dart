@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:streamer_review/widgets/anotherMain.dart';
+
+import 'custom_route.dart';
+import 'login.dart';
 
 class Profile extends StatefulWidget {
   @override
@@ -63,6 +67,22 @@ class _ProfileState extends State<Profile> {
                 ),
               ],
             ),
+            SizedBox(height: 30),
+            OutlineButton(onPressed: () {
+              secureStorage.deleteSecureData('email');
+              secureStorage.deleteSecureData('password');
+
+              Navigator.of(context).pushReplacement(FadePageRoute(
+                builder: (context) => LoginScreen(),
+              ));
+            },
+            child: Text('Logout',
+            style: TextStyle(
+                color: Colors.lightGreenAccent[100],
+                fontSize: 18,
+                letterSpacing: 1
+            )),
+            )
           ],
         ),
       ),

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:streamer_review/streamer_thumb.dart';
+import 'file:///C:/Users/Brendan/AndroidStudioProjects/lab4/streamer_review/lib/widgets/streamer_thumb.dart';
 import 'package:streamer_review/helper/database_helper.dart' as DBHelper;
 import 'helper/database_helper.dart';
 

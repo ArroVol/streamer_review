@@ -4,7 +4,7 @@ import 'package:sqflite/sqflite.dart';
 import 'package:streamer_review/model/broadcaster_tag.dart';
 import 'package:streamer_review/model/user.dart';
 import 'package:streamer_review/streamer.dart';
-import 'package:streamer_review/streamer_thumb.dart';
+import 'file:///C:/Users/Brendan/AndroidStudioProjects/lab4/streamer_review/lib/widgets/streamer_thumb.dart';
 import 'dart:convert';
 import 'package:streamer_review/secure_storage/secure_storage.dart';
 

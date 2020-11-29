@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:streamer_review/expansion_row_container.dart';
-import 'package:streamer_review/streamer_thumb.dart';
+import 'file:///C:/Users/Brendan/AndroidStudioProjects/lab4/streamer_review/lib/widgets/streamer_thumb.dart';
 import 'package:streamer_review/push_notifications.dart';
 import 'package:streamer_review/temp_search.dart';
 import 'package:streamer_review/widgets/anotherMain.dart';
@@ -20,25 +20,6 @@ class HomeScreen extends StatelessWidget {
               TextStyle(color: Colors.lightGreenAccent, letterSpacing: 1.5),
             ),
             actions: <Widget>[
-              IconButton(
-                icon: Icon(Icons.logout),
-                alignment: Alignment.centerLeft,
-                onPressed: () {
-                  secureStorage.deleteSecureData('email');
-                  secureStorage.deleteSecureData('password');
-
-                  Navigator.of(context).pushReplacement(FadePageRoute(
-                    builder: (context) => LoginScreen(),
-                  ));
-                },
-              ),
-              IconButton(
-                icon: Icon(Icons.person),
-                alignment: Alignment.centerLeft,
-                onPressed: () {
-                  Navigator.pushNamed(context, '/profile');
-                },
-              ),
               IconButton(
                   icon: Icon(Icons.search),
                   onPressed: () {

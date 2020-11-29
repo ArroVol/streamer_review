@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:streamer_review/streamer_screen.dart';
 
@@ -19,9 +21,9 @@ class _StreamerThumb extends State<StreamerThumb> {
   Widget build(BuildContext context) {
     return Card(
       color: Colors.transparent,
-      elevation: 50,
-      shadowColor: Colors.lightGreenAccent[100],
-      shape: CircleBorder(),
+      elevation: 7,
+      shadowColor: Colors.lightGreenAccent,
+      shape: RoundedRectangleBorder(),
       child: new InkWell(
         onTap: () {
           print("Streamer card clicked");
@@ -34,7 +36,7 @@ class _StreamerThumb extends State<StreamerThumb> {
             children: <Widget>[
               CircleAvatar(
                 backgroundImage: AssetImage('assets/example.jpg'),
-                backgroundColor: Colors.lightGreenAccent,
+                backgroundColor: Colors.black,
                 radius: 35,
               ),
               Text(streamerName),
