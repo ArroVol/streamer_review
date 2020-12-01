@@ -3,6 +3,7 @@ import 'package:streamer_review/profile.dart';
 
 
 import 'login.dart';
+import 'main_screen.dart';
 
 
 void main() => runApp(MaterialApp(

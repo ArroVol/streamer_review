@@ -642,7 +642,7 @@ class DatabaseHelper2 {
     // `conflictAlgorithm` to use in case the same user is inserted twice.
     // In this case, replace any previous data.
     await db.rawQuery(
-        'INSERT INTO user_favorites (fk_broadcaster_id, fk_user_id) VALUES(?, ?)',
+        'INSERT OR IGNORE INTO user_favorites (fk_broadcaster_id, fk_user_id) VALUES(?, ?)',
         [broadcasterId, userId]);
   }
   Future<int> deleteFavorite(int broadcasterId) async {
@@ -654,6 +654,52 @@ class DatabaseHelper2 {
     int deletedRow = await db.delete('user_favorites', where: 'fk_broadcaster_id = ?', whereArgs: [broadcasterId]);
     return deletedRow;
   }
+
+  Future<bool> isFavorite(int broadcasterId) async {
+    Database db = await DatabaseHelper2.instance.database;
+    String userEmail = await secureStorage.readSecureData("email");
+    int userId = await DatabaseHelper2.instance.getUserIdByEmail(userEmail);
+    //
+    // List<Map<String, dynamic>> isFav = await db
+    //     .query('_user_favorites', where: '(k_broadcaster_id = ?,  fk_user_id = ?', whereArgs: [broadcasterId, userId]);
+
+
+    var isFav = await db.rawQuery(
+        'SELECT * FROM user_favorites WHERE fk_broadcaster_id = ? AND fk_user_id = ?',
+        [broadcasterId, userId]);
+    // print(isFav);
+
+    if (isFav.length != 0) {
+      // print('is favorite');
+      return true;
+    } else {
+      // print('is not favorite');
+      return false;
+    }
+  }
+
+
+  Future<List> getFavorites() async {
+    Database db = await DatabaseHelper2.instance.database;
+    String userEmail = await secureStorage.readSecureData("email");
+    int userId = await DatabaseHelper2.instance.getUserIdByEmail(userEmail);
+
+    var favorites = await db.rawQuery(
+        'SELECT * FROM user_favorites WHERE fk_user_id = ?',
+        [userId]);
+    // print(isFav);
+print(favorites);
+    return favorites;
+    // if (isFav.length != 0) {
+    //   // print('is favorite');
+    //   return favorites;
+    // } else {
+    //   // print('is not favorite');
+    //   return false;
+    // }
+  }
+
+
 
   // int is used to make all id values unique since they are auto incremented by 1
   Future<int> insert(Map<String, dynamic> row) async {

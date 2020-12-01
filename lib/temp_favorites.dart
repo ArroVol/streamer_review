@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'favorite_card.dart';
+import 'favorites_container.dart';
 
 class FavoritesPage extends StatefulWidget {
   @override
@@ -20,23 +21,14 @@ class _FavoritesPage extends State<FavoritesPage> {
               stops: [0.2, 1],
             )),
         child: Container(
-          child: ListView(
-            scrollDirection: Axis.vertical,
-            children: <Widget>[
-              FavoriteCard(),
-              FavoriteCard(),
-              FavoriteCard(),
-              FavoriteCard(),
-              FavoriteCard(),
-              FavoriteCard(),
-              FavoriteCard(),
-              FavoriteCard(),
-              FavoriteCard(),
-              FavoriteCard(),
-            ],
+          // child: ListView(
+          //   scrollDirection: Axis.vertical,
+          //   children: <Widget>[
+              child: FavoritesContainer(),
+            // ],
           ),
         ),
-      ),
+      // ),
     );
   }
 }

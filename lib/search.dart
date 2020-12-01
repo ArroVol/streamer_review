@@ -82,8 +82,14 @@ class SearchPage extends SearchDelegate<String> {
   @override
   // ignore: missing_return
   Widget buildResults(BuildContext context) {
-    // print("building===========================================");
-    // getStreamers();
+    return Container(
+      height: 150.0,
+      child: Card(
+        color: Colors.red,
+        shape: StadiumBorder(),
+        child: Text(query),
+      ),
+    );
   }
 
   @override
