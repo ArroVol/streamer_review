@@ -3,12 +3,16 @@ import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:streamer_review/model/broadcaster_tag.dart';
 import 'package:streamer_review/model/user.dart';
+import 'package:streamer_review/streamer.dart';
+import 'package:streamer_review/streamer_thumb.dart';
+import 'dart:convert';
 import 'package:streamer_review/secure_storage/secure_storage.dart';
 
 // library for input and output
 import 'dart:io';
 import 'DatabaseCreator.dart';
-
+///
+///
 class DatabaseHelper2 {
   //These are not given a type because it will automatically take the type that it is given first to it
   //we need to have a database name and database version
@@ -131,6 +135,7 @@ class DatabaseHelper2 {
         ''' INSERT INTO broadcaster_table (broadcaster_id, broadcaster_name)
     VALUES(229729353, 'criticalrole')
     ''');
+    // addDummyData();
   }
 
   Future<void> insertUser(User user) async {
@@ -163,6 +168,7 @@ class DatabaseHelper2 {
     //
     // List<Map<String, dynamic >> user = await db.query('_user_table', where: '_id = ?', whereArgs: [id]);
     // return user.isNotEmpty ? User.fromMap(user.first): Null;
+
   }
 
   //Query returns a list of map (must be passed as a type)
@@ -174,6 +180,7 @@ class DatabaseHelper2 {
 
   Future<List<User>> getUserByUserName(String userName) async {
     Database db = await instance.database;
+
     List<Map<String, dynamic>> user = await db
         .query('_user_table', where: 'user_name = ?', whereArgs: [userName]);
     final userMap = user.asMap();
@@ -595,7 +602,7 @@ class DatabaseHelper2 {
           'INSERT INTO broadcaster_table (broadcaster_id, broadcaster_name, overall_satisfaction, overall_entertainment, overall_interactiveness, overall_skill) VALUES(?, ?, ?, ?, ?, ?)',
           [
             broadcaster_id,
-            'login',
+            login,
             temp_satisfaction_rating,
             temp_skill_rating,
             temp_entertainment_rating,
@@ -620,6 +627,12 @@ class DatabaseHelper2 {
     db.rawQuery('DELETE FROM reviews WHERE reviews_id >= 0');
   }
 
+  // Future addDummyData(){
+  //   // db.execute(''' INSERT INTO _user_table (EMAIL, PASSWORD, PHONE_NUMBER, USERNAME)
+  //   // VALUES('Gooby@gmail.com', 'gooby4ever', '708-843-6969', 'GoobyChan')
+  //   // '''
+  //   // );
+  // }
   Future<void> insertFavorite(int broadcasterId) async {
     Database db = await DatabaseHelper2.instance.database;
     String userEmail = await secureStorage.readSecureData("email");
@@ -657,6 +670,16 @@ class DatabaseHelper2 {
 
   //Query returns a list of map (must be passed as a type)
   //All data will be in the form of map, so it returns a list of map
+  Future<List<Map<String, dynamic>>> queryAll() async {
+    Database db = await instance.database;
+    return await db.query("_user_table");
+
+    // return await db.query(_tableName);
+  }
+
+  //Query returns a list of map (must be passed as a type)
+  //All data will be in the form of map, so it returns a list of map
+
   Future<List<Map<String, dynamic>>> queryAllStreamers() async {
     Database db = await instance.database;
     return await db.query("broadcaster_table");
@@ -701,7 +724,6 @@ class DatabaseHelper2 {
   }
 
   Future resetBroadcasters() async {
-
     Database db = await instance.database;
     db.execute("DELETE FROM broadcaster_table");
     db.execute("DROP TABLE broadcaster_table");

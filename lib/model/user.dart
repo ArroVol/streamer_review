@@ -3,7 +3,8 @@ import 'dart:async' show Future;
 import 'package:sqflite/sqflite.dart' show Database;
 
 import 'package:dbutils/sqllitedb.dart' show DBInterface;
-
+///
+///
 class User extends DBInterface{
   int id;
   String email;
@@ -13,9 +14,16 @@ class User extends DBInterface{
 
   static const String TABLENAME = "_user_table";
 
-  // User(this.id, this.email, this.password, {id, password, email});
+  /// The User constructor.
+  ///
+  /// [id], the user's unique id.
+  /// [email], the user's email address.
+  /// [password], the user's password.
+  /// [phoneNumber], the user's phone number.
+  /// [userName], the user's unique user name.
   User({this.id, this.email, this.password, this.userName, this.phoneNumber});
 
+  /// Converts from JSON to a broadcaster object.
   User.fromJson(Map<String, dynamic> m) {
     id = m['_id'];
     email = m['email'];
@@ -23,7 +31,7 @@ class User extends DBInterface{
     phoneNumber = m['phone_number'];
     userName = m['user_name'];
   }
-
+  /// Maps the broadcaster object to a Json object.
   Map<String, dynamic> toJson() => {
     '_id': id,
     'email': email,
@@ -31,11 +39,12 @@ class User extends DBInterface{
     'phone_number': phoneNumber,
     'user_name': userName,
   };
-
+  /// Maps the broadcaster object to a map object.
   Map<String, dynamic> toMap() {
     return {'_id': id, 'email': email, 'password': password, 'phone_number': phoneNumber, 'user_name':userName};
   }
 
+  /// Converts from a map to a broadcaster tag object.
   User.fromMap(Map<String, dynamic> m) {
     id = m['_id'];
     email = m['email'];
