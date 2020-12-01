@@ -26,7 +26,7 @@ class _FavoriteCard extends State<FavoriteCard> {
 
   _FavoriteCard(String streamerId) {
     this.streamerId = streamerId;
-    print("int _FavoriteCard========================================================");
+    print("in _FavoriteCard========================================================");
     getData();
   }
 
@@ -48,8 +48,6 @@ class _FavoriteCard extends State<FavoriteCard> {
         "in getData in favorite card++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
 
     var url = "https://api.twitch.tv/helix/users?id=" + streamerId;
-    print('HERE2');
-    print(url);
 
     http.Response channelInformation =
         await http.get(Uri.encodeFull(url), headers: {
@@ -58,6 +56,8 @@ class _FavoriteCard extends State<FavoriteCard> {
     });
 
     data = json.decode(channelInformation.body);
+    print('DATA IS');
+    print(data);
     if(data!= null) {
       var login = data['data'][0]['login'];
       var description = data['data'][0]['description'];
@@ -68,6 +68,8 @@ class _FavoriteCard extends State<FavoriteCard> {
       DatabaseHelper2 d = DBHelper.DatabaseHelper2.instance;
 
       await d.selectBroadcaster(streamerId).then((value) {
+        print('VALUE IS');
+        print(value);
         if (value.isNotEmpty) {
           b = new BroadcasterFromDB(
               value[0]['overall_satisfaction'],
@@ -99,59 +101,14 @@ class _FavoriteCard extends State<FavoriteCard> {
           average_entertainment_rating = broadcasterFromDB.overall_entertainment;
           average_interaction_rating = broadcasterFromDB.overall_interactiveness;
           average_skill_rating = broadcasterFromDB.overall_skill;
+          calcScore();
         } else {
           broadcasterFromDB = new BroadcasterFromDB(0, 0, 0, 0);
         }
       });
-      calcScore();
+      // calcScore();
       return streamer;
     }
-
-    // var login = data['data'][0]['login'];
-    // var description = data['data'][0]['description'];
-    // var profilePictureUrl = data['data'][0]['profile_image_url'];
-    // var viewCount = data['data'][0]['view_count'];
-    // var streamer =
-    //     new Streamer(login, description, profilePictureUrl, viewCount);
-    // DatabaseHelper2 d = DBHelper.DatabaseHelper2.instance;
-    //
-    // await d.selectBroadcaster(streamerId).then((value) {
-    //   if (value.isNotEmpty) {
-    //     b = new BroadcasterFromDB(
-    //         value[0]['overall_satisfaction'],
-    //         value[0]['overall_skill'],
-    //         value[0]['overall_entertainment'],
-    //         value[0]['overall_interactiveness']);
-    //   }
-    // }, onError: (error) {
-    //   print(error);
-    // });
-    // await d.updateBroadcaster(broadcaster_id, user_id, login);
-    //
-    // var url2 = "https://api.twitch.tv/helix/search/channels?query=" + login;
-    //
-    // http.Response channelInformation2 =
-    //     await http.get(Uri.encodeFull(url2), headers: {
-    //   "Authorization": "Bearer 5e46v0tks21zqvnloyua8e76bcsui9",
-    //   "Client-Id": "874uve10v0bcn3rmp2bq4cvz8fb5wj"
-    // });
-    //
-    // data = json.decode(channelInformation2.body);
-    // offline = data['data'][0]['is_live'];
-    //
-    // setState(() {
-    //   topStreamer = streamer;
-    //   if (b != null) {
-    //     broadcasterFromDB = b;
-    //     average_satisfaction_rating = broadcasterFromDB.overall_satisfaction;
-    //     average_entertainment_rating = broadcasterFromDB.overall_entertainment;
-    //     average_interaction_rating = broadcasterFromDB.overall_interactiveness;
-    //     average_skill_rating = broadcasterFromDB.overall_skill;
-    //   } else {
-    //     broadcasterFromDB = new BroadcasterFromDB(0, 0, 0, 0);
-    //   }
-    // });
-    // calcScore();
     print(
         "got the streamer data in favorite card++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
     // return streamer;

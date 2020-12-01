@@ -560,26 +560,32 @@ class DatabaseHelper2 {
   Future<void> updateBroadcaster(broadcaster_id, user_id, login) async {
     // get a reference to the database
     Database db = await DatabaseHelper2.instance.database;
-    List<Map> result = await db.rawQuery(
-      'SELECT * FROM reviews WHERE fk_user_id=? AND fk_broadcaster_id=?',
-      [user_id, broadcaster_id],
-    );
+    List<Map> result;
+    if(broadcaster_id != null) {
+      result = await db.rawQuery(
+        'SELECT * FROM reviews WHERE fk_user_id=? AND fk_broadcaster_id=?',
+        [user_id, broadcaster_id],
+      );
+    }
+
     double temp_satisfaction_rating = 0;
     double temp_entertainment_rating = 0;
     double temp_interaction_rating = 0;
     double temp_skill_rating = 0;
-    for (var i = 0; i < result.length; i++) {
-      temp_satisfaction_rating += result[i]['satisfaction_rating'];
-      temp_entertainment_rating += result[i]['entertainment_rating'];
-      temp_interaction_rating += result[i]['interactiveness_rating'];
-      temp_skill_rating += result[i]['skill_rating'];
+    if(result!=null) {
+      for (var i = 0; i < result.length; i++) {
+        temp_satisfaction_rating += result[i]['satisfaction_rating'];
+        temp_entertainment_rating += result[i]['entertainment_rating'];
+        temp_interaction_rating += result[i]['interactiveness_rating'];
+        temp_skill_rating += result[i]['skill_rating'];
+      }
+      temp_satisfaction_rating /= result.length;
+      temp_entertainment_rating /= result.length;
+      temp_interaction_rating /= result.length;
+      temp_skill_rating /= result.length;
+      await insertBroadcaster(temp_satisfaction_rating, temp_skill_rating,
+          temp_entertainment_rating, temp_interaction_rating, broadcaster_id, login);
     }
-    temp_satisfaction_rating /= result.length;
-    temp_entertainment_rating /= result.length;
-    temp_interaction_rating /= result.length;
-    temp_skill_rating /= result.length;
-    await insertBroadcaster(temp_satisfaction_rating, temp_skill_rating,
-        temp_entertainment_rating, temp_interaction_rating, broadcaster_id, login);
     return 0;
   }
 

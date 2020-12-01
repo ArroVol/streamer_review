@@ -18,7 +18,7 @@ class _FavoritesContainer extends State<FavoritesContainer> {
   Widget build(BuildContext context) {
     getStreamerList();
     return Container(
-      height: 150,
+      height: 500,
       child: ListView(
         scrollDirection: Axis.vertical,
         children: favList,
@@ -64,25 +64,25 @@ class _FavoritesContainer extends State<FavoritesContainer> {
     }
     print('HERE');
     print(favList.length);
-    return favList;
+    return streamerList;
   }
 
   var temp;
   List<String> idList = new List<String>();
 
-  void getFavStreamers() async {
-    DatabaseHelper2 d = DBHelper.DatabaseHelper2.instance;
-    var getStreamerList = await d.getFavorites();
-    if (getStreamerList != null) {
-      for (int i = 0; i < getStreamerList.length; i++) {
-        temp = getStreamerList[i]["fk_broadcaster_id"];
-        print("Temp: " +
-            temp.toString() +
-            "-------------------------------------------------------------------------------------------------------------------");
-        idList.add(temp.toString());
-      }
-    }
-  }
+  // void getFavStreamers() async {
+  //   DatabaseHelper2 d = DBHelper.DatabaseHelper2.instance;
+  //   var getStreamerList = await d.getFavorites();
+  //   if (getStreamerList != null) {
+  //     for (int i = 0; i < getStreamerList.length; i++) {
+  //       temp = getStreamerList[i]["fk_broadcaster_id"];
+  //       print("Temp: " +
+  //           temp.toString() +
+  //           "-------------------------------------------------------------------------------------------------------------------");
+  //       idList.add(temp.toString());
+  //     }
+  //   }
+  // }
 
   @override
   void initState() {
