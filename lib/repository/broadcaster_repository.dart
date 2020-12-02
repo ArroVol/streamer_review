@@ -1,37 +1,43 @@
 import 'package:sqflite/sqflite.dart';
 import 'package:streamer_review/helper/database_helper.dart';
-
+///
+/// The repository class for accessing broadcaster data from the database
 class BroadcasterRepository  {
 
   static final _dbVersion = 1;
   static final _tableName = 'broadcaster_table';
 
 
+  /// This method selects a broadcaster from the database by the broadcaster's id.
+  ///
+  /// [broadcaster_id], the broadcaster's id from twitch.
+  /// returns a list of map objects.
   Future<List<Map<String, dynamic>>> selectBroadcaster(broadcaster_id) async {
     // get a reference to the database
-
     Database db = await DatabaseHelper2.instance.database;
-
     // raw query
     List<Map> result = await db.rawQuery(
         'SELECT * FROM broadcaster_table WHERE broadcaster_id=?',
         [broadcaster_id]);
-    // List<Map> result2 = await db.rawQuery('SELECT * FROM broadcaster_table WHERE broadcaster_id=?', [broadcaster_id]);
-    // List<Map> result = await db.rawQuery('SELECT * FROM broadcaster_table WHERE user_id=?', [1]);
-    // print('WE ARE HERE');
-    // print(broadcaster_id);
-    // print(result2);
-
     return result;
   }
 
-  //Query returns a list of map (must be passed as a type)
-  //All data will be in the form of map, so it returns a list of map
-  Future<List<Map<String, dynamic>>> queryAll() async {
+  /// This method returns all data within a specified table.
+  ///
+  /// Query returns a list of map (must be passed as a type).
+  /// All data will be in the form of map, so it returns a list of map.
+  ///
+  /// [_tableName], the name of the table being queried.
+  Future<List<Map<String, dynamic>>> queryAll(String _tableName) async {
     Database db = await DatabaseHelper2.instance.database;
     return await db.query(_tableName);
   }
 
+  /// This method updates the broadcaster.
+  ///
+  /// [broadcaster_id], the unique broadcaster id assigned to the broadcaster by twitch.
+  /// [user_id], the id generated for the user when they create their account.
+  ///
   Future<void> updateBroadcaster(broadcaster_id, user_id) async {
     // get a reference to the database
     Database db = await DatabaseHelper2.instance.database;
@@ -97,11 +103,10 @@ class BroadcasterRepository  {
   }
 
   // int is used to make all id values unique since they are auto incremented by 1
-  Future<int> insert(Map<String, dynamic> row) async {
+  Future<int> insert(Map<String, dynamic> row, String _tableName) async {
     //we need to get the database first
     // calls the get database method above
     Database db = await DatabaseHelper2.instance.database;
-
     return await db.insert(_tableName, row);
   }
 

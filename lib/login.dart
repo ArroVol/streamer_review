@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_login/flutter_login.dart';
 import 'package:streamer_review/helper/database_helper.dart';
+import 'package:streamer_review/register.dart';
 import 'package:streamer_review/secure_storage/secure_storage.dart';
 import 'package:streamer_review/users.dart';
 import 'custom_route.dart';
@@ -29,6 +30,7 @@ class LoginScreen extends StatelessWidget {
   String _email = "";
   String _password = "";
   static const routeName = '/auth';
+  bool signedUp = false;
 
   Duration get loginTime => Duration(milliseconds: timeDilation.ceil() * 2250);
 
@@ -40,29 +42,11 @@ class LoginScreen extends StatelessWidget {
   Future<String> _loginUser(LoginData data) {
 
     return Future.delayed(loginTime).then((_) async {
-        // User user = loadUsers();
-      // bool match = false;
-      // User newUser = new User();
       if(!await DatabaseHelper2.instance.checkEmailByEmail(data.name.toLowerCase())){
-        // newUser.userName = data.name;
-        // newUser.email = data.name;
         return 'Username not exists';
-
       }
-     // bool match = DatabaseHelper2.instance.checkEmailByEmail(_email);
-     // if(!match){
-     //     return 'Username not exists';
-     // }
-      // if (!mockUsers.containsKey(data.name)) {
-      //   return 'Username not exists';
-      // }
-      // if (mockUsers[data.name] != data.password) {
-      //   return 'Password does not match';
-      // }
       if(!await DatabaseHelper2.instance.checkPasswordByPassword(data.password)){
-
         return 'Password does not match';
-
       }
       return null;
     });
@@ -88,12 +72,14 @@ class LoginScreen extends StatelessWidget {
       title: 'Streview',
       logo: 'assets/logo2.png',
       messages: LoginMessages(
-        usernameHint: 'Username',
+        usernameHint: 'Email',
         passwordHint: 'Password',
       //   confirmPasswordHint: 'Confirm',
         loginButton: 'LOGIN',
-      //   signupButton: 'REGISTER',
-      //   forgotPasswordButton: 'Forgot huh?',
+        // signupButton: 'REGISTER',
+        // confirmPasswordError: 'REGISTER',
+
+        //   forgotPasswordButton: 'Forgot huh?',
       //   recoverPasswordButton: 'HELP ME',
       //   goBackButton: 'GO BACK',
       //   confirmPasswordError: 'Not match!',
@@ -112,7 +98,9 @@ class LoginScreen extends StatelessWidget {
           fontFamily: 'Quicksand',
           letterSpacing: 4,
         ),
-      //   // beforeHeroFontSize: 50,
+
+
+      //   // be,foreHeroFontSize: 50,
       //   // afterHeroFontSize: 20,
       //   bodyStyle: TextStyle(
       //     fontStyle: FontStyle.italic,
@@ -192,7 +180,6 @@ class LoginScreen extends StatelessWidget {
         }
         _password = value;
         secureStorage.writeSecureData("password", _password);
-
         return null;
       },
       onLogin: (loginData) {
@@ -207,6 +194,20 @@ class LoginScreen extends StatelessWidget {
         print('Name: ${loginData.name}');
         print('Password: ${loginData.password}');
         User newUser = new User();
+        messages: LoginMessages(
+          usernameHint: 'Email',
+          passwordHint: 'Password',
+          //   confirmPasswordHint: 'Confirm',
+          loginButton: 'LOGIN',
+          signupButton: 'REGISTER',
+          //   forgotPasswordButton: 'Forgot huh?',
+          //   recoverPasswordButton: 'HELP ME',
+          //   goBackButton: 'GO BACK',
+          //   confirmPasswordError: 'Not match!',
+          //   recoverPasswordIntro: 'Don\'t feel bad. Happens all the time.',
+          //   recoverPasswordDescription: 'Lorem Ipsum is simply dummy text of the printing and typesetting industry',
+          //   recoverPasswordSuccess: 'Password rescued successfully',
+        );
 
         if(!await DatabaseHelper2.instance.checkEmailByEmail(loginData.name.toLowerCase())){
         newUser.userName = loginData.name.toLowerCase();
@@ -216,15 +217,25 @@ class LoginScreen extends StatelessWidget {
         print(newUser.userName);
         print(newUser.email);
         DatabaseHelper2.instance.insertUser(newUser);
+        signedUp = true;
         return _loginUser(loginData);
-
         }
         return 'Email already in use';
       },
       onSubmitAnimationCompleted: () {
+        if(signedUp){
+          print("user has first time sign up");
+          // Navigator.pushReplacementNamed(context, '/main_screen');
+
         Navigator.of(context).pushReplacement(FadePageRoute(
-          builder: (context) => MainScreen(),
-        ));
+            builder: (context) => Register(),
+          )
+        );
+        } else {
+    Navigator.of(context).pushReplacement(FadePageRoute(
+    builder: (context) => MainScreen(),
+    ));
+    }
       },
       onRecoverPassword: (name) {
         print('Recover password info');
@@ -234,5 +245,6 @@ class LoginScreen extends StatelessWidget {
       },
       showDebugButtons: false,
     );
+
   }
 }
