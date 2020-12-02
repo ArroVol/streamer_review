@@ -1,15 +1,28 @@
+import 'package:dev_test/dev_test.dart';
 import 'package:flutter/material.dart';
+import 'package:sqflite/sqflite.dart';
 import 'package:streamer_review/helper/database_helper.dart';
+import 'package:streamer_review/model/user.dart';
 import 'package:streamer_review/repository/broadcaster_repository.dart';
 import 'package:streamer_review/repository/user_favorites_repository.dart';
 import 'package:streamer_review/repository/user_repository.dart';
 import 'package:streamer_review/widgets/anotherMain.dart';
 
-import 'model/user.dart';
 
 void main() {
   runApp(MyApp());
-  print(DatabaseHelper2.directoryPath);
+
+  // test('return the database', () async {
+  //
+  //   // TestWidgetsFlutterBinding.ensureInitialized();
+  //   // final result = EmailFieldValidator.validate('');
+  //   // expect(result, 'Email can\'t be empty');
+  //   Database db = await DatabaseHelper2.instance.database;
+  //   List<Map> result = await db.rawQuery(
+  //       'SELECT * FROM broadcaster_table WHERE broadcaster_id=?',
+  //       [2224]);
+  //   // print(db.path);
+  // });
 }
 
 class MyApp extends StatelessWidget {
@@ -24,8 +37,8 @@ class MyApp extends StatelessWidget {
         ),
         home: AaronsMain()
 
-        // home: ColorCircle(title: 'Color Circle',),
-        );
+      // home: ColorCircle(title: 'Color Circle',),
+    );
   }
 }
 
@@ -59,7 +72,7 @@ class _MyHomePageState extends State<AaronsMain> {
           children: <Widget>[
             new TextField(
               decoration:
-                  new InputDecoration.collapsed(hintText: "input email"),
+              new InputDecoration.collapsed(hintText: "input email"),
               // onChanged: (String text) {
               // print("Text => $text");
               // },
@@ -70,7 +83,7 @@ class _MyHomePageState extends State<AaronsMain> {
             ),
             new TextField(
               decoration:
-                  new InputDecoration.collapsed(hintText: "input password"),
+              new InputDecoration.collapsed(hintText: "input password"),
               // onChanged: (String text) {
               // print("Text => $text");
               // },
@@ -91,10 +104,8 @@ class _MyHomePageState extends State<AaronsMain> {
             FlatButton(
                 onPressed: () async {
                   List<Map<String, dynamic>> queryRows =
-                      await DatabaseHelper2.instance.queryAllUsers();
+                  await DatabaseHelper2.instance.queryAllUsers();
                   print(queryRows);
-                  print(DatabaseHelper2.directoryPath);
-
                 },
                 child: Text('query all users')),
             FlatButton(
@@ -163,13 +174,13 @@ class _MyHomePageState extends State<AaronsMain> {
                 child: Text('Insert specified email and pass')),
             FlatButton(
                 onPressed: () async {;
-                  User newUser = new User();
-                  newUser.email = 'newEmail@gmail.com';
-                  newUser.phoneNumber = '7777777777';
-                  newUser.userName = 'new user guy';
-                  newUser.password = 'password123';
-                 // User returnedUser =
-                  DatabaseHelper2.instance.insertUser(newUser);
+                User newUser = new User();
+                newUser.email = 'newEmail@gmail.com';
+                newUser.phoneNumber = '7777777777';
+                newUser.userName = 'new user guy';
+                newUser.password = 'password123';
+                // User returnedUser =
+                DatabaseHelper2.instance.insertUser(newUser);
                 },
                 child: Text('Insert a user object')),
             FlatButton(
@@ -198,9 +209,9 @@ class _MyHomePageState extends State<AaronsMain> {
                 child: Text('get id by username')),
             FlatButton(
                 onPressed: () async {
-                 List<User> pulledUser = await DatabaseHelper2.instance.getUserByUserName("new user guy2");
+                  List<User> pulledUser = await DatabaseHelper2.instance.getUserByUserName("new user guy2");
                   print(pulledUser.first.phoneNumber);
-                 print(pulledUser.first.id);
+                  print(pulledUser.first.id);
                 },
                 child: Text('get user by username')),
             FlatButton(
@@ -232,82 +243,5 @@ class _MyHomePageState extends State<AaronsMain> {
     });
   }
 
-// _openPopup(context) {
-//   Alert(
-//       context: context,
-//       title: "LOGIN",
-//       content: Column(
-//         children: <Widget>[
-//           TextField(
-//             decoration: InputDecoration(
-//               icon: Icon(Icons.account_circle),
-//               labelText: 'Username',
-//             ),
-//           ),
-//           TextField(
-//             obscureText: true,
-//             decoration: InputDecoration(
-//               icon: Icon(Icons.lock),
-//               labelText: 'Password',
-//             ),
-//           ),
-//         ],
-//       ),
-//       buttons: [
-//         DialogButton(
-//           onPressed: () => Navigator.pop(context),
-//           child: Text(
-//             "LOGIN",
-//             style: TextStyle(color: Colors.white, fontSize: 20),
-//           ),
-//         )
-//       ]).show();
-// }
 
-// class MyApp extends StatelessWidget {
-//   // This widget is the root of your application.
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       appBar: AppBar(
-//         title: Text('Streamer Review'),
-//       ),
-//       body: Center(
-//         child: Column(
-//           mainAxisAlignment: MainAxisAlignment.center,
-//           children: <Widget>[
-//             FlatButton(
-//                 onPressed: () async {
-//                   int i = await DatabaseHelper2.instance
-//                       .insert({DatabaseHelper2.columnName: 'Saheb'});
-//                   print('the inserted id is $i');
-//                 },
-//                 child: Text('insert')),
-//             FlatButton(
-//                 onPressed: () async {
-//                   List<Map<String, dynamic>> queryRows =
-//                   await DatabaseHelper2.instance.queryAll();
-//                   print(queryRows);
-//                 },
-//                 child: Text('query')),
-//             FlatButton(
-//                 onPressed: () async {
-//                   int updatedId = await DatabaseHelper2.instance.update({
-//                     DatabaseHelper2.columnId: 12,
-//                     DatabaseHelper2.columnName: 'Mark'
-//                   });
-//                   //returns the number of rows affected
-//                   print(updatedId);
-//                 },
-//                 child: Text('update')),
-//             FlatButton(onPressed: () async {
-//               int rowsAffected = await DatabaseHelper2.instance.delete(13);
-//               print(rowsAffected);
-//                   }, child: Text('delete')),
-//           ],
-//         ),
-//       ),
-//     );
-//   }
-// }
 }

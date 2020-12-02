@@ -5,6 +5,8 @@ import 'package:streamer_review/main_screen.dart';
 import 'package:streamer_review/profile.dart';
 import 'package:streamer_review/secure_storage/secure_storage.dart';
 
+import '../register.dart';
+
 final SecureStorage secureStorage = SecureStorage();
 final FlutterSecureStorage _secureStorage = FlutterSecureStorage();
 
@@ -22,6 +24,7 @@ Future<void> main() async {
       runApp(MaterialApp(
         initialRoute: '/main_screen',
         routes: {
+          '/register': (context) => Register(),
           '/login': (context) => LoginScreen(),
           '/main_screen': (context) => MainScreen(),
         },
@@ -33,24 +36,11 @@ Future<void> main() async {
         initialRoute: '/login',
         routes: {
           '/login': (context) => LoginScreen(),
+          '/register': (context) => Register(),
           '/profile': (context) => Profile(),
         },
       ));
     }
-    // runApp(MaterialApp(
-    //   initialRoute: '/login',
-    //
-    //   routes: {
-    //     // '/': (context) => Loading(),
-    //     // '/home': (context) => Home(),
-    //
-    //     '/login': (context) => LoginScreen(),
-    //     // '/registration': (context) => Registration(),
-    //     '/profile': (context) => Profile(),
-    //
-    //
-    //   },
-    // ));
   }
 }
 
@@ -69,3 +59,18 @@ class MyApp extends StatelessWidget {
     );
   }
 }
+
+// runApp(MaterialApp(
+//   initialRoute: '/login',
+//
+//   routes: {
+//     // '/': (context) => Loading(),
+//     // '/home': (context) => Home(),
+//
+//     '/login': (context) => LoginScreen(),
+//     // '/registration': (context) => Registration(),
+//     '/profile': (context) => Profile(),
+//
+//
+//   },
+// ));
