@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:streamer_review/login.dart';
-import 'package:streamer_review/main_screen.dart';
+import 'package:streamer_review/bottomNavigationBar.dart';
 import 'package:streamer_review/profile.dart';
 import 'package:streamer_review/secure_storage/secure_storage.dart';
 

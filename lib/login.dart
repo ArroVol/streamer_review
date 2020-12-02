@@ -10,7 +10,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 
-import 'main_screen.dart';
+import 'bottomNavigationBar.dart';
 import 'model/user.dart';
 
 
@@ -85,7 +85,7 @@ class LoginScreen extends StatelessWidget {
     );
 
     return FlutterLogin(
-      title: 'Streview',
+      title: 'STREVIEW',
       logo: 'assets/logo2.png',
       messages: LoginMessages(
         usernameHint: 'Username',
@@ -95,7 +95,6 @@ class LoginScreen extends StatelessWidget {
       //   signupButton: 'REGISTER',
       //   forgotPasswordButton: 'Forgot huh?',
       //   recoverPasswordButton: 'HELP ME',
-      //   goBackButton: 'GO BACK',
       //   confirmPasswordError: 'Not match!',
       //   recoverPasswordIntro: 'Don\'t feel bad. Happens all the time.',
       //   recoverPasswordDescription: 'Lorem Ipsum is simply dummy text of the printing and typesetting industry',
@@ -103,7 +102,7 @@ class LoginScreen extends StatelessWidget {
       ),
       theme: LoginTheme(
         primaryColor: Colors.lightGreenAccent,
-        accentColor: Colors.yellow,
+        accentColor: Colors.grey,
         errorColor: Colors.deepOrange,
         pageColorLight: Colors.black12,
         pageColorDark: Colors.black87,

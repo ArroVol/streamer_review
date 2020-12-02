@@ -1,7 +1,11 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:palette_generator/palette_generator.dart';
 import 'file:///C:/Users/Brendan/AndroidStudioProjects/lab4/streamer_review/lib/widgets/streamer_thumb.dart';
 import 'package:streamer_review/helper/database_helper.dart' as DBHelper;
 import 'helper/database_helper.dart';
+import 'package:http/http.dart' as http;
 
 class ExpansionRowContainer extends StatefulWidget {
   @override
@@ -10,6 +14,7 @@ class ExpansionRowContainer extends StatefulWidget {
 
 class _ExpansionRowContainerState extends State<ExpansionRowContainer> {
   List<StreamerThumb> streamerThumb = [];
+  String imageURL;
 
   @override
   Widget build(BuildContext context) {
@@ -45,21 +50,47 @@ class _ExpansionRowContainerState extends State<ExpansionRowContainer> {
     var streamerMap = await d.selectAllBroadcasters();
     List<StreamerThumb> streamerList = new List<StreamerThumb>();
 
-    for(int i = 0; i < streamerMap.length; i++){
-      StreamerThumb streamerThumb = new StreamerThumb(streamerMap[i]['broadcaster_name']);
+    for (int i = 0; i < streamerMap.length; i++) {
+      var streamerImageURL = await updateImage(streamerMap[i]['broadcaster_id'].toString());
+      Color ambientColor = await getImagePalette(streamerImageURL);
+      print('Color is');
+      print(ambientColor.toString());
+
+      StreamerThumb streamerThumb =
+          new StreamerThumb(streamerMap[i]['broadcaster_name'], streamerImageURL, ambientColor);
       streamerList.add(streamerThumb);
     }
     print(streamerList.length);
-    if (streamerList != null){
+    if (streamerList != null) {
       setState(() {
         streamerThumb = streamerList;
       });
     }
     return streamerList;
   }
+
   @override
   void initState() {
     getStreamerList();
     super.initState();
+  }
+
+  Future<String> updateImage(String id) async {
+    String url = "https://api.twitch.tv/helix/users?id=" + id;
+
+    // print(url);
+
+    http.Response channelInformation =
+        await http.get(Uri.encodeFull(url), headers: {
+      "Authorization": "Bearer 5e46v0tks21zqvnloyua8e76bcsui9",
+      "Client-Id": "874uve10v0bcn3rmp2bq4cvz8fb5wj"
+    });
+    var data = json.decode(channelInformation.body);
+    return data['data'][0]['profile_image_url'];
+  }
+
+  Future<Color> getImagePalette (String streamerImageURL) async {
+    final PaletteGenerator paletteGenerator = await PaletteGenerator.fromImageProvider(NetworkImage(streamerImageURL));
+    return paletteGenerator.dominantColor.color;
   }
 }

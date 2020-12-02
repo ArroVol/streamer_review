@@ -15,7 +15,7 @@ class _ProfileState extends State<Profile> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.black54,
-        title: Text('User'),
+        title: Text('Settings'),
         centerTitle: true,
         elevation: 0,
       ),
@@ -69,11 +69,10 @@ class _ProfileState extends State<Profile> {
             ),
             SizedBox(height: 30),
             OutlineButton(onPressed: () {
-              secureStorage.deleteSecureData('email');
-              secureStorage.deleteSecureData('password');
+              secureStorage.clearSecureData();
 
-              Navigator.of(context).pushReplacement(FadePageRoute(
-                builder: (context) => LoginScreen(),
+              Navigator.of(context, rootNavigator: true).pushReplacement(FadePageRoute(
+                builder: (context) => new LoginScreen(),
               ));
             },
             child: Text('Logout',

@@ -28,8 +28,9 @@ class _MainScreenState extends State<MainScreen> {
   Widget build(BuildContext context) {
 
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Colors.grey[850],
       bottomNavigationBar: BottomNavigationBar(
+        backgroundColor: Colors.grey[850],
         type: BottomNavigationBarType.fixed,
         currentIndex: _selectedIndex,
         showSelectedLabels: false,
@@ -41,12 +42,11 @@ class _MainScreenState extends State<MainScreen> {
             icon: Icon(
               Icons.home,
               color: Colors.grey,
-
             ),
             title: Text('HOME'),
             activeIcon: Icon(
               Icons.home,
-              color: Colors.deepPurple[800],
+              color: Colors.lightGreenAccent,
             ),
           ),
           // BottomNavigationBarItem(
@@ -68,7 +68,7 @@ class _MainScreenState extends State<MainScreen> {
             title: Text('FAVORITES'),
             activeIcon: Icon(
               Icons.favorite,
-              color: Colors.deepPurple[800],
+              color: Colors.lightGreenAccent,
             ),
           ),
           BottomNavigationBarItem(
@@ -79,7 +79,7 @@ class _MainScreenState extends State<MainScreen> {
             title: Text('SETTINGS'),
             activeIcon: Icon(
               Icons.settings,
-              color: Colors.deepPurple[800],
+              color: Colors.lightGreenAccent,
             ),
           ),
         ],
@@ -109,7 +109,7 @@ class _MainScreenState extends State<MainScreen> {
           // StreamerPage(),
           // HomePage(),
           FavoritesPage(),
-          Profile()
+          Profile(),
           // SettingsPage(),
         ].elementAt(index);
       },

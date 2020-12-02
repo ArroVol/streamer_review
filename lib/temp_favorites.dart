@@ -16,7 +16,7 @@ class _FavoritesPage extends State<FavoritesPage> {
             gradient: LinearGradient(
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
-              colors: [Colors.purple[900], Colors.white],
+              colors: [Colors.black, Colors.lightGreenAccent],
               stops: [0.2, 1],
             )),
         child: Container(

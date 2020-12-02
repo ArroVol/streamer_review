@@ -39,11 +39,12 @@ class _FavoriteCard extends State<FavoriteCard> {
                   "SlyFoxHound",
                   textAlign: TextAlign.center,
                   style: TextStyle(
-                    color: Colors.deepPurple,
+                    color: Colors.lightGreenAccent,
                     fontSize: 22.0,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
+                tileColor: Colors.black54,
                 subtitle: Column(
                   children: <Widget>[
                     Align(
@@ -71,7 +72,7 @@ class _FavoriteCard extends State<FavoriteCard> {
                 trailing: Icon(
                   Icons.favorite,
                   size: 35.0,
-                  color: Colors.deepPurple[800],
+                  color: Colors.lightGreenAccent,
                 ),
               ),
               // Column(
