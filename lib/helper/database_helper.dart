@@ -383,7 +383,7 @@ class DatabaseHelper2 {
 
     // raw query
     List<Map> result = await db.rawQuery(
-        'SELECT * FROM broadcaster_tags WHERE broadcaster_id=?',
+        'SELECT * FROM broadcaster_tags WHERE fk_broadcaster_id=?',
         [broadcasterId]);
     await db.rawQuery(
         'INSERT INTO broadcaster_tags (tag_name, fk_broadcaster_id) VALUES(?, ?)',
@@ -395,12 +395,12 @@ class DatabaseHelper2 {
   }
 
   Future<List<Map<String, dynamic>>> selectAllBroadcasterTagsByBroadcaster(
-      broadcasterId, tagName) async {
+      broadcasterId) async {
     // get a reference to the database
     Database db = await DatabaseHelper2.instance.database;
     // raw query
     List<Map> result = await db.rawQuery(
-        'SELECT * FROM broadcaster_tags WHERE broadcaster_id=?',
+        'SELECT * FROM broadcaster_tags WHERE fk_broadcaster_id=?',
         [broadcasterId]);
     return result;
   }

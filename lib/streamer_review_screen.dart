@@ -65,24 +65,42 @@ class StreamerReview extends State<ReviewPage> {
     this.broadcaster_id = broadcaster_id;
   }
 
-  Future<void> submitReview() async {
 
-    String url = "https://api.twitch.tv/helix/users?id=" + broadcaster_id;
+  Future<void> submitReview(var context) async {
+    if(satisfaction_rating == 0 || entertainment_rating == 0 || interaction_rating == 0 || skill_rating == 0) {
+      Scaffold.of(context).showSnackBar(new SnackBar(
+          content: new Text('ERROR')
+      ));
 
-    // print(url);
+    } else {
+      DatabaseHelper2 d = DBHelper.DatabaseHelper2.instance;
 
-    http.Response channelInformation =
-    await http.get(Uri.encodeFull(url), headers: {
-      "Authorization": "Bearer 5e46v0tks21zqvnloyua8e76bcsui9",
-      "Client-Id": "874uve10v0bcn3rmp2bq4cvz8fb5wj"
-    });
+      for (var tag in tags) {
+        print(tag);
+        await d.insertBroadcasterTag(broadcaster_id, tag);
+      }
 
-    var data = json.decode(channelInformation.body);
-    var login = data['data'][0]['login'];
-    print(login);
-    DatabaseHelper2 d = DBHelper.DatabaseHelper2.instance;
-    await d.insertReview(satisfaction_rating, entertainment_rating, interaction_rating, skill_rating, broadcaster_id, user_id, login);
-    await d.updateBroadcaster(broadcaster_id, user_id, login);
+      var x = await d.selectAllBroadcasterTagsByBroadcaster(broadcaster_id);
+      print(x);
+
+
+      String url = "https://api.twitch.tv/helix/users?id=" + broadcaster_id;
+
+      // print(url);
+
+      http.Response channelInformation =
+      await http.get(Uri.encodeFull(url), headers: {
+        "Authorization": "Bearer 5e46v0tks21zqvnloyua8e76bcsui9",
+        "Client-Id": "874uve10v0bcn3rmp2bq4cvz8fb5wj"
+      });
+
+      var data = json.decode(channelInformation.body);
+      var login = data['data'][0]['login'];
+      print(login);
+      await d.insertReview(satisfaction_rating, entertainment_rating, interaction_rating, skill_rating, broadcaster_id, user_id, login);
+      await d.updateBroadcaster(broadcaster_id, user_id, login);
+    }
+
   }
 
   void getOldReview() async {
@@ -97,14 +115,22 @@ class StreamerReview extends State<ReviewPage> {
     setState(() {
       if(oldReview != null) {
         old_satisfaction_rating = oldReview[0]['satisfaction_rating'];
+        satisfaction_rating = oldReview[0]['satisfaction_rating'].toDouble();
         old_entertainment_rating = oldReview[0]['entertainment_rating'];
+        entertainment_rating = oldReview[0]['entertainment_rating'].toDouble();
         old_interaction_rating = oldReview[0]['interactiveness_rating'];
+        interaction_rating = oldReview[0]['interactiveness_rating'].toDouble();
         old_skill_rating = oldReview[0]['skill_rating'];
+        skill_rating = oldReview[0]['skill_rating'].toDouble();
       } else{
         old_satisfaction_rating = 1;
+        satisfaction_rating = 1;
         old_entertainment_rating = 1;
+        entertainment_rating = 1;
         old_interaction_rating = 1;
+        interaction_rating = 1;
         old_skill_rating = 1;
+        skill_rating = 1;
       }
 
     });
@@ -159,480 +185,1068 @@ class StreamerReview extends State<ReviewPage> {
     }
   }
 
-
-  @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Column(
-        children: <Widget>[
-          Container(
-            decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                  colors: [Colors.purple[900], Colors.white],
-                  stops: [0.2, 1],
-                )),
-            child: Container(
-              width: double.infinity,
-              height: MediaQuery
-                  .of(context)
-                  .size
-                  .height * .9,
-              child: Center(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.center,
+      body: SingleChildScrollView(
+        physics: NeverScrollableScrollPhysics(),
+        child: ConstrainedBox(
+          constraints: BoxConstraints(
+            minWidth: MediaQuery.of(context).size.width,
+            minHeight: MediaQuery.of(context).size.height,
+          ),
+          child: IntrinsicHeight(
+            child: Column(
+              mainAxisSize: MainAxisSize.max,
+              children: <Widget>[
+                Column(
                   children: <Widget>[
-                    Text(
-                      "Reviewing " + username,
-                      style: TextStyle(
-                        fontSize: 22.0,
-                        color: Colors.white,
-                      ),
-                    ),
-                    SizedBox(
-                      height: 10.0,
-                    ),
-                    Card(
-                      margin:
-                      EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
-                      clipBehavior: Clip.antiAlias,
-                      color: Colors.white,
-                      elevation: 5.0,
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 8.0, vertical: 12.0),
-                        child: Row(
+                    Container(
+                      decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            begin: Alignment.topCenter,
+                            end: Alignment.bottomCenter,
+                            colors: [Colors.purple[900], Colors.white],
+                            stops: [0.2, 1],
+                          )),
+                      child: Container(
+                        width: double.infinity,
+                        height: MediaQuery
+                            .of(context)
+                            .size
+                            .height * .9,
+                        child: ListView(
+                          scrollDirection: Axis.vertical,
                           children: <Widget>[
-                            Expanded(
+                            Center(
                               child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                mainAxisAlignment: MainAxisAlignment.center,
                                 children: <Widget>[
                                   Text(
-                                    "Category",
+                                    "Reviewing " + username,
                                     style: TextStyle(
-                                      color: Colors.deepPurple,
                                       fontSize: 22.0,
-                                      fontWeight: FontWeight.bold,
+                                      color: Colors.white,
                                     ),
                                   ),
                                   SizedBox(
-                                    height: 5.0,
+                                    height: 10.0,
                                   ),
-                                  RaisedButton(
-                                    child: Text("Show Categories"),
-                                    onPressed: () => _showMultiSelect(context),
-                                  ),
+                                  Card(
+                                    margin: EdgeInsets.symmetric(
+                                        horizontal: 20.0, vertical: 10.0),
+                                    clipBehavior: Clip.antiAlias,
+                                    color: Colors.white,
+                                    elevation: 5.0,
+                                    child: Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 8.0, vertical: 12.0),
+                                      child: Row(
+                                        children: <Widget>[
+                                          Expanded(
+                                            child: Column(
+                                              children: <Widget>[
+                                                Text(
+                                                  "Category",
+                                                  style: TextStyle(
+                                                    color: Colors.deepPurple,
+                                                    fontSize: 22.0,
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
+                                                ),
+                                                SizedBox(
+                                                  height: 5.0,
+                                                ),
+                                                RaisedButton(
+                                                  child: Text("Show Categories"),
+                                                  onPressed: () =>
+                                                      _showMultiSelect(context),
+                                                ),
 
-                                  // DropdownButton<String>(
-                                  //   value: dropdownValue,
-                                  //   icon: Icon(Icons.arrow_downward),
-                                  //   iconSize: 24,
-                                  //   elevation: 16,
-                                  //   style: TextStyle(color: Colors.deepPurple),
-                                  //   underline: Container(
-                                  //     height: 2,
-                                  //     color: Colors.deepPurpleAccent,
-                                  //   ),
-                                  //   onChanged: (String newValue) {
-                                  //     setState(() {
-                                  //       dropdownValue = newValue;
-                                  //     });
-                                  //   },
-                                  //   items: <String>[
-                                  //     'Gaming',
-                                  //     'Food & Drinks',
-                                  //     'Sports & Fitness',
-                                  //     'Talk Shows & Podcasts',
-                                  //     'Just Chatting',
-                                  //     'Makers & Crafting',
-                                  //     'Tabletop RPGs',
-                                  //     'Science & Technologies',
-                                  //     'Music & Performing Arts',
-                                  //     'Beauty & Body Art',
-                                  //     'Travel & Outdoors',
-                                  //     'ASMR',
-                                  //   ].map<DropdownMenuItem<String>>(
-                                  //           (String value) {
-                                  //         return DropdownMenuItem<String>(
-                                  //           value: value,
-                                  //           child: Text(value),
-                                  //         );
-                                  //       }).toList(),
-                                  // ),
+                                                // DropdownButton<String>(
+                                                //   value: dropdownValue,
+                                                //   icon: Icon(Icons.arrow_downward),
+                                                //   iconSize: 24,
+                                                //   elevation: 16,
+                                                //   style: TextStyle(color: Colors.deepPurple),
+                                                //   underline: Container(
+                                                //     height: 2,
+                                                //     color: Colors.deepPurpleAccent,
+                                                //   ),
+                                                //   onChanged: (String newValue) {
+                                                //     setState(() {
+                                                //       dropdownValue = newValue;
+                                                //     });
+                                                //   },
+                                                //   items: <String>[
+                                                //     'Gaming',
+                                                //     'Food & Drinks',
+                                                //     'Sports & Fitness',
+                                                //     'Talk Shows & Podcasts',
+                                                //     'Just Chatting',
+                                                //     'Makers & Crafting',
+                                                //     'Tabletop RPGs',
+                                                //     'Science & Technologies',
+                                                //     'Music & Performing Arts',
+                                                //     'Beauty & Body Art',
+                                                //     'Travel & Outdoors',
+                                                //     'ASMR',
+                                                //   ].map<DropdownMenuItem<String>>(
+                                                //           (String value) {
+                                                //         return DropdownMenuItem<String>(
+                                                //           value: value,
+                                                //           child: Text(value),
+                                                //         );
+                                                //       }).toList(),
+                                                // ),
 
-                                  SizedBox(
-                                    height: 5.0,
+                                                SizedBox(
+                                                  height: 5.0,
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                  Card(
+                                    margin: EdgeInsets.symmetric(
+                                        horizontal: 20.0, vertical: 2.0),
+                                    clipBehavior: Clip.antiAlias,
+                                    color: Colors.white,
+                                    elevation: 5.0,
+                                    child: Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 8.0, vertical: 12.0),
+                                      child: Row(
+                                        children: <Widget>[
+                                          Expanded(
+                                            child: Column(
+                                              children: <Widget>[
+                                                Text(
+                                                  "Overall Satisfaction",
+                                                  style: TextStyle(
+                                                    color: Colors.deepPurple,
+                                                    fontSize: 22.0,
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
+                                                ),
+                                                SizedBox(
+                                                  height: 5.0,
+                                                ),
+                                                RatingBar.builder(
+                                                  initialRating:
+                                                  old_satisfaction_rating.toDouble(),
+                                                  itemCount: 5,
+                                                  itemPadding: EdgeInsets.symmetric(
+                                                      horizontal: 4.0),
+                                                  itemBuilder: (context, index) {
+                                                    switch (index) {
+                                                      case 0:
+                                                        return Icon(
+                                                          Icons
+                                                              .sentiment_very_dissatisfied,
+                                                          color: Colors.red,
+                                                        );
+                                                      case 1:
+                                                        return Icon(
+                                                          Icons.sentiment_dissatisfied,
+                                                          color: Colors.yellow[900],
+                                                        );
+                                                      case 2:
+                                                        return Icon(
+                                                          Icons.sentiment_neutral,
+                                                          color: Colors.amber[700],
+                                                        );
+                                                      case 3:
+                                                        return Icon(
+                                                          Icons.sentiment_satisfied,
+                                                          color: Colors.limeAccent[700],
+                                                        );
+                                                      case 4:
+                                                        return Icon(
+                                                          Icons.sentiment_very_satisfied,
+                                                          color: Colors.greenAccent[700],
+                                                        );
+                                                    }
+                                                  },
+                                                  onRatingUpdate: (rating) {
+                                                    satisfaction_rating = rating;
+                                                    print(rating);
+                                                  },
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                  Card(
+                                    margin: EdgeInsets.symmetric(
+                                        horizontal: 20.0, vertical: 2.0),
+                                    clipBehavior: Clip.antiAlias,
+                                    color: Colors.white,
+                                    elevation: 5.0,
+                                    child: Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 8.0, vertical: 15.0),
+                                      child: Row(
+                                        children: <Widget>[
+                                          Expanded(
+                                            child: Column(
+                                              children: <Widget>[
+                                                Text(
+                                                  "Entertainment Value",
+                                                  style: TextStyle(
+                                                    color: Colors.deepPurple,
+                                                    fontSize: 22.0,
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
+                                                ),
+                                                SizedBox(
+                                                  height: 5.0,
+                                                ),
+                                                RatingBar.builder(
+                                                  initialRating:
+                                                  old_entertainment_rating.toDouble(),
+                                                  minRating: 1,
+                                                  direction: Axis.horizontal,
+                                                  allowHalfRating: false,
+                                                  itemCount: 5,
+                                                  itemPadding: EdgeInsets.symmetric(
+                                                      horizontal: 4.0),
+                                                  itemBuilder: (context, _) => Icon(
+                                                    Icons.star,
+                                                    color: Colors.amber,
+                                                  ),
+                                                  onRatingUpdate: (rating) {
+                                                    entertainment_rating = rating;
+                                                    print(rating);
+                                                  },
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                  Card(
+                                    margin: EdgeInsets.symmetric(
+                                        horizontal: 20.0, vertical: 2.0),
+                                    clipBehavior: Clip.antiAlias,
+                                    color: Colors.white,
+                                    elevation: 5.0,
+                                    child: Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 8.0, vertical: 15.0),
+                                      child: Row(
+                                        children: <Widget>[
+                                          Expanded(
+                                            child: Column(
+                                              children: <Widget>[
+                                                Text(
+                                                  "Viewer Interaction",
+                                                  style: TextStyle(
+                                                    color: Colors.deepPurple,
+                                                    fontSize: 22.0,
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
+                                                ),
+                                                SizedBox(
+                                                  height: 5.0,
+                                                ),
+                                                RatingBar.builder(
+                                                  initialRating:
+                                                  old_interaction_rating.toDouble(),
+                                                  minRating: 1,
+                                                  direction: Axis.horizontal,
+                                                  allowHalfRating: false,
+                                                  itemCount: 5,
+                                                  itemPadding: EdgeInsets.symmetric(
+                                                      horizontal: 4.0),
+                                                  itemBuilder: (context, _) => Icon(
+                                                    Icons.star,
+                                                    color: Colors.amber,
+                                                  ),
+                                                  onRatingUpdate: (rating) {
+                                                    interaction_rating = rating;
+                                                    print(rating);
+                                                  },
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                  Card(
+                                    margin: EdgeInsets.symmetric(
+                                        horizontal: 20.0, vertical: 2.0),
+                                    clipBehavior: Clip.antiAlias,
+                                    color: Colors.white,
+                                    elevation: 5.0,
+                                    child: Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 8.0, vertical: 15.0),
+                                      child: Row(
+                                        children: <Widget>[
+                                          Expanded(
+                                            child: Column(
+                                              children: <Widget>[
+                                                Text(
+                                                  "Skill Level",
+                                                  style: TextStyle(
+                                                    color: Colors.deepPurple,
+                                                    fontSize: 22.0,
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
+                                                ),
+                                                SizedBox(
+                                                  height: 5.0,
+                                                ),
+                                                RatingBar.builder(
+                                                  initialRating:
+                                                  old_skill_rating.toDouble(),
+                                                  minRating: 1,
+                                                  direction: Axis.horizontal,
+                                                  allowHalfRating: false,
+                                                  itemCount: 5,
+                                                  itemPadding: EdgeInsets.symmetric(
+                                                      horizontal: 4.0),
+                                                  itemBuilder: (context, _) => Icon(
+                                                    Icons.star,
+                                                    color: Colors.amber,
+                                                  ),
+                                                  onRatingUpdate: (rating) {
+                                                    skill_rating = rating;
+                                                    print(rating);
+                                                  },
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                  Card(
+                                    margin: EdgeInsets.symmetric(
+                                        horizontal: 20.0, vertical: 2.0),
+                                    clipBehavior: Clip.antiAlias,
+                                    color: Colors.white,
+                                    elevation: 5.0,
+                                    child: Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 8.0, vertical: 15.0),
+                                      child: Row(
+                                        children: <Widget>[
+                                          Expanded(
+                                            child: Column(
+                                              children: <Widget>[
+                                                Text(
+                                                  "Skill Level",
+                                                  style: TextStyle(
+                                                    color: Colors.deepPurple,
+                                                    fontSize: 22.0,
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
+                                                ),
+                                                SizedBox(
+                                                  height: 5.0,
+                                                ),
+                                                TextField(
+                                                  maxLines: 8,
+                                                  decoration: InputDecoration.collapsed(hintText: "Enter your text here"),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                  Card(
+                                    margin: EdgeInsets.symmetric(
+                                        horizontal: 20.0, vertical: 2.0),
+                                    clipBehavior: Clip.antiAlias,
+                                    color: Colors.white,
+                                    elevation: 5.0,
+                                    child: Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 8.0, vertical: 15.0),
+                                      child: new ButtonBar(
+                                        alignment: MainAxisAlignment.spaceBetween,
+                                        children: <Widget>[
+                                          RaisedButton(
+                                              onPressed: () {
+                                                Navigator.pop(context);
+                                              },
+                                              shape: RoundedRectangleBorder(
+                                                  borderRadius:
+                                                  BorderRadius.circular(80.0)),
+                                              elevation: 0.0,
+                                              padding: EdgeInsets.all(0.0),
+                                              child: Ink(
+                                                decoration: BoxDecoration(
+                                                  gradient: LinearGradient(
+                                                      begin: Alignment.centerRight,
+                                                      end: Alignment.centerLeft,
+                                                      colors: [
+                                                        Colors.deepPurpleAccent,
+                                                        Colors.deepPurple[700]
+                                                      ]),
+                                                  borderRadius:
+                                                  BorderRadius.circular(30.0),
+                                                ),
+                                                child: Container(
+                                                  constraints: BoxConstraints(
+                                                      maxWidth: 125.0, minHeight: 50.0),
+                                                  alignment: Alignment.center,
+                                                  child: Text(
+                                                    "BACK",
+                                                    style: TextStyle(
+                                                        color: Colors.white,
+                                                        fontSize: 22.0,
+                                                        fontWeight: FontWeight.bold),
+                                                  ),
+                                                ),
+                                              )),
+                                          RaisedButton(
+                                              onPressed: () {
+                                                submitReview(context);
+                                                Navigator.pop(context);
+                                              },
+                                              shape: RoundedRectangleBorder(
+                                                  borderRadius:
+                                                  BorderRadius.circular(80.0)),
+                                              elevation: 0.0,
+                                              padding: EdgeInsets.all(0.0),
+                                              child: Ink(
+                                                decoration: BoxDecoration(
+                                                  gradient: LinearGradient(
+                                                      begin: Alignment.centerRight,
+                                                      end: Alignment.centerLeft,
+                                                      colors: [
+                                                        Colors.deepPurpleAccent,
+                                                        Colors.deepPurple[700]
+                                                      ]),
+                                                  borderRadius:
+                                                  BorderRadius.circular(30.0),
+                                                ),
+                                                child: Container(
+                                                  constraints: BoxConstraints(
+                                                      maxWidth: 125.0, minHeight: 50.0),
+                                                  alignment: Alignment.center,
+                                                  child: Text(
+                                                    "SUBMIT",
+                                                    style: TextStyle(
+                                                        color: Colors.white,
+                                                        fontSize: 22.0,
+                                                        fontWeight: FontWeight.bold),
+                                                  ),
+                                                ),
+                                              )),
+                                        ],
+                                      ),
+                                      // child: Row(
+                                      //   children: <Widget>[
+                                      //     Expanded(
+                                      //       child: Column(
+                                      //         children: <Widget>[
+                                      //           SizedBox(
+                                      //             height: 5.0,
+                                      //           ),
+                                      //           RaisedButton(
+                                      //               onPressed: () {
+                                      //                 Navigator.pop(context);
+                                      //               },
+                                      //               shape: RoundedRectangleBorder(
+                                      //                   borderRadius:
+                                      //                   BorderRadius.circular(80.0)),
+                                      //               elevation: 0.0,
+                                      //               padding: EdgeInsets.all(0.0),
+                                      //               child: Ink(
+                                      //                 decoration: BoxDecoration(
+                                      //                   gradient: LinearGradient(
+                                      //                       begin: Alignment.centerRight,
+                                      //                       end: Alignment.centerLeft,
+                                      //                       colors: [
+                                      //                         Colors.deepPurpleAccent,
+                                      //                         Colors.deepPurple[700]
+                                      //                       ]),
+                                      //                   borderRadius:
+                                      //                   BorderRadius.circular(30.0),
+                                      //                 ),
+                                      //                 child: Container(
+                                      //                   constraints: BoxConstraints(
+                                      //                       maxWidth: 150.0, minHeight: 50.0),
+                                      //                   alignment: Alignment.center,
+                                      //                   child: Text(
+                                      //                     "RETURN",
+                                      //                     style: TextStyle(
+                                      //                         color: Colors.white,
+                                      //                         fontSize: 22.0,
+                                      //                         fontWeight: FontWeight.bold),
+                                      //                   ),
+                                      //                 ),
+                                      //               )),
+                                      //         ],
+                                      //       ),
+                                      //     ),
+                                      //   ],
+                                      // ),
+                                    ),
                                   ),
                                 ],
                               ),
                             ),
                           ],
                         ),
-                      ),
-                    ),
-                    Card(
-                      margin:
-                      EdgeInsets.symmetric(horizontal: 20.0, vertical: 2.0),
-                      clipBehavior: Clip.antiAlias,
-                      color: Colors.white,
-                      elevation: 5.0,
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 8.0, vertical: 12.0),
-                        child: Row(
-                          children: <Widget>[
-                            Expanded(
-                              child: Column(
-                                children: <Widget>[
-                                  Text(
-                                    "Overall Satisfaction",
-                                    style: TextStyle(
-                                      color: Colors.deepPurple,
-                                      fontSize: 22.0,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                  SizedBox(
-                                    height: 5.0,
-                                  ),
-                                  RatingBar.builder(
-                                    initialRating: old_satisfaction_rating.toDouble(),
-                                    itemCount: 5,
-                                    itemPadding:
-                                    EdgeInsets.symmetric(horizontal: 4.0),
-                                    itemBuilder: (context, index) {
-                                      switch (index) {
-                                        case 0:
-                                          return Icon(
-                                            Icons.sentiment_very_dissatisfied,
-                                            color: Colors.red,
-                                          );
-                                        case 1:
-                                          return Icon(
-                                            Icons.sentiment_dissatisfied,
-                                            color: Colors.yellow[900],
-                                          );
-                                        case 2:
-                                          return Icon(
-                                            Icons.sentiment_neutral,
-                                            color: Colors.amber[700],
-                                          );
-                                        case 3:
-                                          return Icon(
-                                            Icons.sentiment_satisfied,
-                                            color: Colors.limeAccent[700],
-                                          );
-                                        case 4:
-                                          return Icon(
-                                            Icons.sentiment_very_satisfied,
-                                            color: Colors.greenAccent[700],
-                                          );
-                                      }
-                                    },
-                                    onRatingUpdate: (rating) {
-                                      satisfaction_rating = rating;
-                                      print(rating);
-                                    },
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                    Card(
-                      margin:
-                      EdgeInsets.symmetric(horizontal: 20.0, vertical: 2.0),
-                      clipBehavior: Clip.antiAlias,
-                      color: Colors.white,
-                      elevation: 5.0,
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 8.0, vertical: 15.0),
-                        child: Row(
-                          children: <Widget>[
-                            Expanded(
-                              child: Column(
-                                children: <Widget>[
-                                  Text(
-                                    "Entertainment Value",
-                                    style: TextStyle(
-                                      color: Colors.deepPurple,
-                                      fontSize: 22.0,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                  SizedBox(
-                                    height: 5.0,
-                                  ),
-                                  RatingBar.builder(
-                                    initialRating: old_entertainment_rating.toDouble(),
-                                    minRating: 1,
-                                    direction: Axis.horizontal,
-                                    allowHalfRating: false,
-                                    itemCount: 5,
-                                    itemPadding:
-                                    EdgeInsets.symmetric(horizontal: 4.0),
-                                    itemBuilder: (context, _) =>
-                                        Icon(
-                                          Icons.star,
-                                          color: Colors.amber,
-                                        ),
-                                    onRatingUpdate: (rating) {
-                                      entertainment_rating = rating;
-                                      print(rating);
-                                    },
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                    Card(
-                      margin:
-                      EdgeInsets.symmetric(horizontal: 20.0, vertical: 2.0),
-                      clipBehavior: Clip.antiAlias,
-                      color: Colors.white,
-                      elevation: 5.0,
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 8.0, vertical: 15.0),
-                        child: Row(
-                          children: <Widget>[
-                            Expanded(
-                              child: Column(
-                                children: <Widget>[
-                                  Text(
-                                    "Viewer Interaction",
-                                    style: TextStyle(
-                                      color: Colors.deepPurple,
-                                      fontSize: 22.0,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                  SizedBox(
-                                    height: 5.0,
-                                  ),
-                                  RatingBar.builder(
-                                    initialRating: old_interaction_rating.toDouble(),
-                                    minRating: 1,
-                                    direction: Axis.horizontal,
-                                    allowHalfRating: false,
-                                    itemCount: 5,
-                                    itemPadding:
-                                    EdgeInsets.symmetric(horizontal: 4.0),
-                                    itemBuilder: (context, _) =>
-                                        Icon(
-                                          Icons.star,
-                                          color: Colors.amber,
-                                        ),
-                                    onRatingUpdate: (rating) {
-                                      interaction_rating = rating;
-                                      print(rating);
-                                    },
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                    Card(
-                      margin:
-                      EdgeInsets.symmetric(horizontal: 20.0, vertical: 2.0),
-                      clipBehavior: Clip.antiAlias,
-                      color: Colors.white,
-                      elevation: 5.0,
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 8.0, vertical: 15.0),
-                        child: Row(
-                          children: <Widget>[
-                            Expanded(
-                              child: Column(
-                                children: <Widget>[
-                                  Text(
-                                    "Skill Level",
-                                    style: TextStyle(
-                                      color: Colors.deepPurple,
-                                      fontSize: 22.0,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                  SizedBox(
-                                    height: 5.0,
-                                  ),
-                                  RatingBar.builder(
-                                    initialRating: old_skill_rating.toDouble(),
-                                    minRating: 1,
-                                    direction: Axis.horizontal,
-                                    allowHalfRating: false,
-                                    itemCount: 5,
-                                    itemPadding:
-                                    EdgeInsets.symmetric(horizontal: 4.0),
-                                    itemBuilder: (context, _) =>
-                                        Icon(
-                                          Icons.star,
-                                          color: Colors.amber,
-                                        ),
-                                    onRatingUpdate: (rating) {
-                                      skill_rating = rating;
-                                      print(rating);
-                                    },
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                    Card(
-                      margin:
-                      EdgeInsets.symmetric(horizontal: 20.0, vertical: 2.0),
-                      clipBehavior: Clip.antiAlias,
-                      color: Colors.white,
-                      elevation: 5.0,
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 8.0, vertical: 15.0),
-                        child: new ButtonBar(
-                          alignment: MainAxisAlignment.spaceBetween,
-                          children: <Widget>[
-                            RaisedButton(
-                                onPressed: () {
-                                  Navigator.pop(context);
-                                },
-                                shape: RoundedRectangleBorder(
-                                    borderRadius:
-                                    BorderRadius.circular(80.0)),
-                                elevation: 0.0,
-                                padding: EdgeInsets.all(0.0),
-                                child: Ink(
-                                  decoration: BoxDecoration(
-                                    gradient: LinearGradient(
-                                        begin: Alignment.centerRight,
-                                        end: Alignment.centerLeft,
-                                        colors: [
-                                          Colors.deepPurpleAccent,
-                                          Colors.deepPurple[700]
-                                        ]),
-                                    borderRadius:
-                                    BorderRadius.circular(30.0),
-                                  ),
-                                  child: Container(
-                                    constraints: BoxConstraints(
-                                        maxWidth: 150.0, minHeight: 50.0),
-                                    alignment: Alignment.center,
-                                    child: Text(
-                                      "BACK",
-                                      style: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 22.0,
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                  ),
-                                )),
-                            RaisedButton(
-                                onPressed: () {
-                                  submitReview();
-                                  Navigator.pop(context);
-                                },
-                                shape: RoundedRectangleBorder(
-                                    borderRadius:
-                                    BorderRadius.circular(80.0)),
-                                elevation: 0.0,
-                                padding: EdgeInsets.all(0.0),
-                                child: Ink(
-                                  decoration: BoxDecoration(
-                                    gradient: LinearGradient(
-                                        begin: Alignment.centerRight,
-                                        end: Alignment.centerLeft,
-                                        colors: [
-                                          Colors.deepPurpleAccent,
-                                          Colors.deepPurple[700]
-                                        ]),
-                                    borderRadius:
-                                    BorderRadius.circular(30.0),
-                                  ),
-                                  child: Container(
-                                    constraints: BoxConstraints(
-                                        maxWidth: 150.0, minHeight: 50.0),
-                                    alignment: Alignment.center,
-                                    child: Text(
-                                      "SUBMIT",
-                                      style: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 22.0,
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                  ),
-                                )),
-                          ],
-                        ),
-                        // child: Row(
-                        //   children: <Widget>[
-                        //     Expanded(
-                        //       child: Column(
-                        //         children: <Widget>[
-                        //           SizedBox(
-                        //             height: 5.0,
-                        //           ),
-                        //           RaisedButton(
-                        //               onPressed: () {
-                        //                 Navigator.pop(context);
-                        //               },
-                        //               shape: RoundedRectangleBorder(
-                        //                   borderRadius:
-                        //                   BorderRadius.circular(80.0)),
-                        //               elevation: 0.0,
-                        //               padding: EdgeInsets.all(0.0),
-                        //               child: Ink(
-                        //                 decoration: BoxDecoration(
-                        //                   gradient: LinearGradient(
-                        //                       begin: Alignment.centerRight,
-                        //                       end: Alignment.centerLeft,
-                        //                       colors: [
-                        //                         Colors.deepPurpleAccent,
-                        //                         Colors.deepPurple[700]
-                        //                       ]),
-                        //                   borderRadius:
-                        //                   BorderRadius.circular(30.0),
-                        //                 ),
-                        //                 child: Container(
-                        //                   constraints: BoxConstraints(
-                        //                       maxWidth: 150.0, minHeight: 50.0),
-                        //                   alignment: Alignment.center,
-                        //                   child: Text(
-                        //                     "RETURN",
-                        //                     style: TextStyle(
-                        //                         color: Colors.white,
-                        //                         fontSize: 22.0,
-                        //                         fontWeight: FontWeight.bold),
-                        //                   ),
-                        //                 ),
-                        //               )),
-                        //         ],
-                        //       ),
-                        //     ),
-                        //   ],
-                        // ),
                       ),
                     ),
                   ],
                 ),
-              ),
+                // CONTENT HERE
+
+
+
+
+
+
+
+
+
+
+              ],
             ),
           ),
-        ],
+        ),
       ),
     );
   }
+
+
+  // @override
+  // Widget build(BuildContext context) {
+  //   return Scaffold(
+  //     body: Column(
+  //       children: <Widget>[
+  //         Container(
+  //           decoration: BoxDecoration(
+  //               gradient: LinearGradient(
+  //                 begin: Alignment.topCenter,
+  //                 end: Alignment.bottomCenter,
+  //                 colors: [Colors.purple[900], Colors.white],
+  //                 stops: [0.2, 1],
+  //               )),
+  //           child: Container(
+  //             width: double.infinity,
+  //             height: MediaQuery
+  //                 .of(context)
+  //                 .size
+  //                 .height * .9,
+  //             child: ListView(
+  //               scrollDirection: Axis.vertical,
+  //               children: <Widget>[
+  //                 Center(
+  //                   child: Column(
+  //                     crossAxisAlignment: CrossAxisAlignment.center,
+  //                     mainAxisAlignment: MainAxisAlignment.center,
+  //                     children: <Widget>[
+  //                       Text(
+  //                         "Reviewing " + username,
+  //                         style: TextStyle(
+  //                           fontSize: 22.0,
+  //                           color: Colors.white,
+  //                         ),
+  //                       ),
+  //                       SizedBox(
+  //                         height: 10.0,
+  //                       ),
+  //                       Card(
+  //                         margin: EdgeInsets.symmetric(
+  //                             horizontal: 20.0, vertical: 10.0),
+  //                         clipBehavior: Clip.antiAlias,
+  //                         color: Colors.white,
+  //                         elevation: 5.0,
+  //                         child: Padding(
+  //                           padding: const EdgeInsets.symmetric(
+  //                               horizontal: 8.0, vertical: 12.0),
+  //                           child: Row(
+  //                             children: <Widget>[
+  //                               Expanded(
+  //                                 child: Column(
+  //                                   children: <Widget>[
+  //                                     Text(
+  //                                       "Category",
+  //                                       style: TextStyle(
+  //                                         color: Colors.deepPurple,
+  //                                         fontSize: 22.0,
+  //                                         fontWeight: FontWeight.bold,
+  //                                       ),
+  //                                     ),
+  //                                     SizedBox(
+  //                                       height: 5.0,
+  //                                     ),
+  //                                     RaisedButton(
+  //                                       child: Text("Show Categories"),
+  //                                       onPressed: () =>
+  //                                           _showMultiSelect(context),
+  //                                     ),
+  //
+  //                                     // DropdownButton<String>(
+  //                                     //   value: dropdownValue,
+  //                                     //   icon: Icon(Icons.arrow_downward),
+  //                                     //   iconSize: 24,
+  //                                     //   elevation: 16,
+  //                                     //   style: TextStyle(color: Colors.deepPurple),
+  //                                     //   underline: Container(
+  //                                     //     height: 2,
+  //                                     //     color: Colors.deepPurpleAccent,
+  //                                     //   ),
+  //                                     //   onChanged: (String newValue) {
+  //                                     //     setState(() {
+  //                                     //       dropdownValue = newValue;
+  //                                     //     });
+  //                                     //   },
+  //                                     //   items: <String>[
+  //                                     //     'Gaming',
+  //                                     //     'Food & Drinks',
+  //                                     //     'Sports & Fitness',
+  //                                     //     'Talk Shows & Podcasts',
+  //                                     //     'Just Chatting',
+  //                                     //     'Makers & Crafting',
+  //                                     //     'Tabletop RPGs',
+  //                                     //     'Science & Technologies',
+  //                                     //     'Music & Performing Arts',
+  //                                     //     'Beauty & Body Art',
+  //                                     //     'Travel & Outdoors',
+  //                                     //     'ASMR',
+  //                                     //   ].map<DropdownMenuItem<String>>(
+  //                                     //           (String value) {
+  //                                     //         return DropdownMenuItem<String>(
+  //                                     //           value: value,
+  //                                     //           child: Text(value),
+  //                                     //         );
+  //                                     //       }).toList(),
+  //                                     // ),
+  //
+  //                                     SizedBox(
+  //                                       height: 5.0,
+  //                                     ),
+  //                                   ],
+  //                                 ),
+  //                               ),
+  //                             ],
+  //                           ),
+  //                         ),
+  //                       ),
+  //                       Card(
+  //                         margin: EdgeInsets.symmetric(
+  //                             horizontal: 20.0, vertical: 2.0),
+  //                         clipBehavior: Clip.antiAlias,
+  //                         color: Colors.white,
+  //                         elevation: 5.0,
+  //                         child: Padding(
+  //                           padding: const EdgeInsets.symmetric(
+  //                               horizontal: 8.0, vertical: 12.0),
+  //                           child: Row(
+  //                             children: <Widget>[
+  //                               Expanded(
+  //                                 child: Column(
+  //                                   children: <Widget>[
+  //                                     Text(
+  //                                       "Overall Satisfaction",
+  //                                       style: TextStyle(
+  //                                         color: Colors.deepPurple,
+  //                                         fontSize: 22.0,
+  //                                         fontWeight: FontWeight.bold,
+  //                                       ),
+  //                                     ),
+  //                                     SizedBox(
+  //                                       height: 5.0,
+  //                                     ),
+  //                                     RatingBar.builder(
+  //                                       initialRating:
+  //                                       old_satisfaction_rating.toDouble(),
+  //                                       itemCount: 5,
+  //                                       itemPadding: EdgeInsets.symmetric(
+  //                                           horizontal: 4.0),
+  //                                       itemBuilder: (context, index) {
+  //                                         switch (index) {
+  //                                           case 0:
+  //                                             return Icon(
+  //                                               Icons
+  //                                                   .sentiment_very_dissatisfied,
+  //                                               color: Colors.red,
+  //                                             );
+  //                                           case 1:
+  //                                             return Icon(
+  //                                               Icons.sentiment_dissatisfied,
+  //                                               color: Colors.yellow[900],
+  //                                             );
+  //                                           case 2:
+  //                                             return Icon(
+  //                                               Icons.sentiment_neutral,
+  //                                               color: Colors.amber[700],
+  //                                             );
+  //                                           case 3:
+  //                                             return Icon(
+  //                                               Icons.sentiment_satisfied,
+  //                                               color: Colors.limeAccent[700],
+  //                                             );
+  //                                           case 4:
+  //                                             return Icon(
+  //                                               Icons.sentiment_very_satisfied,
+  //                                               color: Colors.greenAccent[700],
+  //                                             );
+  //                                         }
+  //                                       },
+  //                                       onRatingUpdate: (rating) {
+  //                                         satisfaction_rating = rating;
+  //                                         print(rating);
+  //                                       },
+  //                                     ),
+  //                                   ],
+  //                                 ),
+  //                               ),
+  //                             ],
+  //                           ),
+  //                         ),
+  //                       ),
+  //                       Card(
+  //                         margin: EdgeInsets.symmetric(
+  //                             horizontal: 20.0, vertical: 2.0),
+  //                         clipBehavior: Clip.antiAlias,
+  //                         color: Colors.white,
+  //                         elevation: 5.0,
+  //                         child: Padding(
+  //                           padding: const EdgeInsets.symmetric(
+  //                               horizontal: 8.0, vertical: 15.0),
+  //                           child: Row(
+  //                             children: <Widget>[
+  //                               Expanded(
+  //                                 child: Column(
+  //                                   children: <Widget>[
+  //                                     Text(
+  //                                       "Entertainment Value",
+  //                                       style: TextStyle(
+  //                                         color: Colors.deepPurple,
+  //                                         fontSize: 22.0,
+  //                                         fontWeight: FontWeight.bold,
+  //                                       ),
+  //                                     ),
+  //                                     SizedBox(
+  //                                       height: 5.0,
+  //                                     ),
+  //                                     RatingBar.builder(
+  //                                       initialRating:
+  //                                       old_entertainment_rating.toDouble(),
+  //                                       minRating: 1,
+  //                                       direction: Axis.horizontal,
+  //                                       allowHalfRating: false,
+  //                                       itemCount: 5,
+  //                                       itemPadding: EdgeInsets.symmetric(
+  //                                           horizontal: 4.0),
+  //                                       itemBuilder: (context, _) => Icon(
+  //                                         Icons.star,
+  //                                         color: Colors.amber,
+  //                                       ),
+  //                                       onRatingUpdate: (rating) {
+  //                                         entertainment_rating = rating;
+  //                                         print(rating);
+  //                                       },
+  //                                     ),
+  //                                   ],
+  //                                 ),
+  //                               ),
+  //                             ],
+  //                           ),
+  //                         ),
+  //                       ),
+  //                       Card(
+  //                         margin: EdgeInsets.symmetric(
+  //                             horizontal: 20.0, vertical: 2.0),
+  //                         clipBehavior: Clip.antiAlias,
+  //                         color: Colors.white,
+  //                         elevation: 5.0,
+  //                         child: Padding(
+  //                           padding: const EdgeInsets.symmetric(
+  //                               horizontal: 8.0, vertical: 15.0),
+  //                           child: Row(
+  //                             children: <Widget>[
+  //                               Expanded(
+  //                                 child: Column(
+  //                                   children: <Widget>[
+  //                                     Text(
+  //                                       "Viewer Interaction",
+  //                                       style: TextStyle(
+  //                                         color: Colors.deepPurple,
+  //                                         fontSize: 22.0,
+  //                                         fontWeight: FontWeight.bold,
+  //                                       ),
+  //                                     ),
+  //                                     SizedBox(
+  //                                       height: 5.0,
+  //                                     ),
+  //                                     RatingBar.builder(
+  //                                       initialRating:
+  //                                       old_interaction_rating.toDouble(),
+  //                                       minRating: 1,
+  //                                       direction: Axis.horizontal,
+  //                                       allowHalfRating: false,
+  //                                       itemCount: 5,
+  //                                       itemPadding: EdgeInsets.symmetric(
+  //                                           horizontal: 4.0),
+  //                                       itemBuilder: (context, _) => Icon(
+  //                                         Icons.star,
+  //                                         color: Colors.amber,
+  //                                       ),
+  //                                       onRatingUpdate: (rating) {
+  //                                         interaction_rating = rating;
+  //                                         print(rating);
+  //                                       },
+  //                                     ),
+  //                                   ],
+  //                                 ),
+  //                               ),
+  //                             ],
+  //                           ),
+  //                         ),
+  //                       ),
+  //                       Card(
+  //                         margin: EdgeInsets.symmetric(
+  //                             horizontal: 20.0, vertical: 2.0),
+  //                         clipBehavior: Clip.antiAlias,
+  //                         color: Colors.white,
+  //                         elevation: 5.0,
+  //                         child: Padding(
+  //                           padding: const EdgeInsets.symmetric(
+  //                               horizontal: 8.0, vertical: 15.0),
+  //                           child: Row(
+  //                             children: <Widget>[
+  //                               Expanded(
+  //                                 child: Column(
+  //                                   children: <Widget>[
+  //                                     Text(
+  //                                       "Skill Level",
+  //                                       style: TextStyle(
+  //                                         color: Colors.deepPurple,
+  //                                         fontSize: 22.0,
+  //                                         fontWeight: FontWeight.bold,
+  //                                       ),
+  //                                     ),
+  //                                     SizedBox(
+  //                                       height: 5.0,
+  //                                     ),
+  //                                     RatingBar.builder(
+  //                                       initialRating:
+  //                                       old_skill_rating.toDouble(),
+  //                                       minRating: 1,
+  //                                       direction: Axis.horizontal,
+  //                                       allowHalfRating: false,
+  //                                       itemCount: 5,
+  //                                       itemPadding: EdgeInsets.symmetric(
+  //                                           horizontal: 4.0),
+  //                                       itemBuilder: (context, _) => Icon(
+  //                                         Icons.star,
+  //                                         color: Colors.amber,
+  //                                       ),
+  //                                       onRatingUpdate: (rating) {
+  //                                         skill_rating = rating;
+  //                                         print(rating);
+  //                                       },
+  //                                     ),
+  //                                   ],
+  //                                 ),
+  //                               ),
+  //                             ],
+  //                           ),
+  //                         ),
+  //                       ),
+  //                       Card(
+  //                         margin: EdgeInsets.symmetric(
+  //                             horizontal: 20.0, vertical: 2.0),
+  //                         clipBehavior: Clip.antiAlias,
+  //                         color: Colors.white,
+  //                         elevation: 5.0,
+  //                         child: Padding(
+  //                           padding: const EdgeInsets.symmetric(
+  //                               horizontal: 8.0, vertical: 15.0),
+  //                           child: Row(
+  //                             children: <Widget>[
+  //                               Expanded(
+  //                                 child: Column(
+  //                                   children: <Widget>[
+  //                                     Text(
+  //                                       "Skill Level",
+  //                                       style: TextStyle(
+  //                                         color: Colors.deepPurple,
+  //                                         fontSize: 22.0,
+  //                                         fontWeight: FontWeight.bold,
+  //                                       ),
+  //                                     ),
+  //                                     SizedBox(
+  //                                       height: 5.0,
+  //                                     ),
+  //                                     TextField(
+  //                                       maxLines: 8,
+  //                                       decoration: InputDecoration.collapsed(hintText: "Enter your text here"),
+  //                                     ),
+  //                                   ],
+  //                                 ),
+  //                               ),
+  //                             ],
+  //                           ),
+  //                         ),
+  //                       ),
+  //                       Card(
+  //                         margin: EdgeInsets.symmetric(
+  //                             horizontal: 20.0, vertical: 2.0),
+  //                         clipBehavior: Clip.antiAlias,
+  //                         color: Colors.white,
+  //                         elevation: 5.0,
+  //                         child: Padding(
+  //                           padding: const EdgeInsets.symmetric(
+  //                               horizontal: 8.0, vertical: 15.0),
+  //                           child: new ButtonBar(
+  //                             alignment: MainAxisAlignment.spaceBetween,
+  //                             children: <Widget>[
+  //                               RaisedButton(
+  //                                   onPressed: () {
+  //                                     Navigator.pop(context);
+  //                                   },
+  //                                   shape: RoundedRectangleBorder(
+  //                                       borderRadius:
+  //                                       BorderRadius.circular(80.0)),
+  //                                   elevation: 0.0,
+  //                                   padding: EdgeInsets.all(0.0),
+  //                                   child: Ink(
+  //                                     decoration: BoxDecoration(
+  //                                       gradient: LinearGradient(
+  //                                           begin: Alignment.centerRight,
+  //                                           end: Alignment.centerLeft,
+  //                                           colors: [
+  //                                             Colors.deepPurpleAccent,
+  //                                             Colors.deepPurple[700]
+  //                                           ]),
+  //                                       borderRadius:
+  //                                       BorderRadius.circular(30.0),
+  //                                     ),
+  //                                     child: Container(
+  //                                       constraints: BoxConstraints(
+  //                                           maxWidth: 125.0, minHeight: 50.0),
+  //                                       alignment: Alignment.center,
+  //                                       child: Text(
+  //                                         "BACK",
+  //                                         style: TextStyle(
+  //                                             color: Colors.white,
+  //                                             fontSize: 22.0,
+  //                                             fontWeight: FontWeight.bold),
+  //                                       ),
+  //                                     ),
+  //                                   )),
+  //                               RaisedButton(
+  //                                   onPressed: () {
+  //                                     submitReview();
+  //                                     Navigator.pop(context);
+  //                                   },
+  //                                   shape: RoundedRectangleBorder(
+  //                                       borderRadius:
+  //                                       BorderRadius.circular(80.0)),
+  //                                   elevation: 0.0,
+  //                                   padding: EdgeInsets.all(0.0),
+  //                                   child: Ink(
+  //                                     decoration: BoxDecoration(
+  //                                       gradient: LinearGradient(
+  //                                           begin: Alignment.centerRight,
+  //                                           end: Alignment.centerLeft,
+  //                                           colors: [
+  //                                             Colors.deepPurpleAccent,
+  //                                             Colors.deepPurple[700]
+  //                                           ]),
+  //                                       borderRadius:
+  //                                       BorderRadius.circular(30.0),
+  //                                     ),
+  //                                     child: Container(
+  //                                       constraints: BoxConstraints(
+  //                                           maxWidth: 125.0, minHeight: 50.0),
+  //                                       alignment: Alignment.center,
+  //                                       child: Text(
+  //                                         "SUBMIT",
+  //                                         style: TextStyle(
+  //                                             color: Colors.white,
+  //                                             fontSize: 22.0,
+  //                                             fontWeight: FontWeight.bold),
+  //                                       ),
+  //                                     ),
+  //                                   )),
+  //                             ],
+  //                           ),
+  //                           // child: Row(
+  //                           //   children: <Widget>[
+  //                           //     Expanded(
+  //                           //       child: Column(
+  //                           //         children: <Widget>[
+  //                           //           SizedBox(
+  //                           //             height: 5.0,
+  //                           //           ),
+  //                           //           RaisedButton(
+  //                           //               onPressed: () {
+  //                           //                 Navigator.pop(context);
+  //                           //               },
+  //                           //               shape: RoundedRectangleBorder(
+  //                           //                   borderRadius:
+  //                           //                   BorderRadius.circular(80.0)),
+  //                           //               elevation: 0.0,
+  //                           //               padding: EdgeInsets.all(0.0),
+  //                           //               child: Ink(
+  //                           //                 decoration: BoxDecoration(
+  //                           //                   gradient: LinearGradient(
+  //                           //                       begin: Alignment.centerRight,
+  //                           //                       end: Alignment.centerLeft,
+  //                           //                       colors: [
+  //                           //                         Colors.deepPurpleAccent,
+  //                           //                         Colors.deepPurple[700]
+  //                           //                       ]),
+  //                           //                   borderRadius:
+  //                           //                   BorderRadius.circular(30.0),
+  //                           //                 ),
+  //                           //                 child: Container(
+  //                           //                   constraints: BoxConstraints(
+  //                           //                       maxWidth: 150.0, minHeight: 50.0),
+  //                           //                   alignment: Alignment.center,
+  //                           //                   child: Text(
+  //                           //                     "RETURN",
+  //                           //                     style: TextStyle(
+  //                           //                         color: Colors.white,
+  //                           //                         fontSize: 22.0,
+  //                           //                         fontWeight: FontWeight.bold),
+  //                           //                   ),
+  //                           //                 ),
+  //                           //               )),
+  //                           //         ],
+  //                           //       ),
+  //                           //     ),
+  //                           //   ],
+  //                           // ),
+  //                         ),
+  //                       ),
+  //                     ],
+  //                   ),
+  //                 ),
+  //               ],
+  //             ),
+  //           ),
+  //         ),
+  //       ],
+  //     ),
+  //   );
+  // }
 }
 
 class MultiSelectDialogItem<V> {
