@@ -2,9 +2,23 @@
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:async';
 
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:streamer_review/model/user.dart';
 
 class UserPreferences {
+
+  void userPref() async{
+    final prefs = await SharedPreferences.getInstance();
+
+    if (prefs.getBool('first_run') ?? true) {
+      FlutterSecureStorage storage = FlutterSecureStorage();
+
+      await storage.deleteAll();
+
+      prefs.setBool('first_run', false);
+  }
+
+  }
   Future<bool> saveUser(User user) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
 
@@ -60,4 +74,6 @@ class UserPreferences {
     String token = prefs.getString("token");
     return token;
   }
+
+
 }

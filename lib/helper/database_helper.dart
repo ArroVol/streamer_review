@@ -3,6 +3,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:streamer_review/model/broadcaster_tag.dart';
 import 'package:streamer_review/model/user.dart';
+import 'package:streamer_review/repository/broadcaster_repository.dart';
 import 'package:streamer_review/streamer.dart';
 import 'package:streamer_review/streamer_thumb.dart';
 import 'dart:convert';
@@ -15,20 +16,24 @@ import 'DatabaseCreator.dart';
 ///
 class DatabaseHelper2 {
   //These are not given a type because it will automatically take the type that it is given first to it
-  //we need to have a database name and database version
+  // Database name and database version are specified.
   static final _dbName = 'myDatabase24.db';
   static final _dbVersion = 1;
   static final _tableName = '_user_table';
   static final _reviewTable = 'reviews';
+
+  // The secure storage that holds the user logged in.
   final SecureStorage secureStorage = SecureStorage();
 
+  BroadcasterRepository broadcasterRepository = new BroadcasterRepository();
 
-  //Fields given to the table
+  //Fields given to the user table
   static final columnId = '_id';
   static final columnEmail = 'email';
   static final columnPassword = 'password';
   static final columnUserName = 'user_name';
   static final columnPhoneNumber = 'phone_number';
+  static String directoryPath = '';
 
   //making it a singleton class
   DatabaseHelper2._privateConstructor();
@@ -56,6 +61,7 @@ class DatabaseHelper2 {
     Directory directory = await getApplicationDocumentsDirectory();
     //join the file name and the path
     String path = join(directory.path, _dbName);
+    directoryPath = path;
     // to open the database in SQlite
     // await is used since these functions take time to execute
     return await openDatabase(path, version: _dbVersion, onCreate: _onCreate);
@@ -138,6 +144,11 @@ class DatabaseHelper2 {
     // addDummyData();
   }
 
+
+  // Future<void> deleteDb() async {
+  //   final Database db = await _holder.db;
+  //   // delete database
+  // }
   Future<void> insertUser(User user) async {
     // Get a reference to the database.
     final Database db = await instance.database;
