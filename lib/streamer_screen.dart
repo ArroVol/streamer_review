@@ -9,6 +9,7 @@ import 'package:streamer_review/helper/database_helper.dart' as DBHelper;
 import 'helper/database_helper.dart';
 import 'model/broadcaster_from_db.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 
 // void main() {
 //   runApp(new MaterialApp(
@@ -150,7 +151,7 @@ class StreamerProfile extends State<StreamerPage> {
     //   // streamers2.putIfAbsent(streamer.username, () => streamer);
     // }
     // print(streamers.length);
-     isFavorite = await d.isFavorite(int.parse(broadcaster_id));
+    isFavorite = await d.isFavorite(int.parse(broadcaster_id));
     setState(() {
       topStreamer = streamer;
       // print(b);
@@ -161,6 +162,14 @@ class StreamerProfile extends State<StreamerPage> {
         average_entertainment_rating = broadcasterFromDB.overall_entertainment;
         average_interaction_rating = broadcasterFromDB.overall_interactiveness;
         average_skill_rating = broadcasterFromDB.overall_skill;
+
+        if( average_satisfaction_rating == "NaN"){
+          average_satisfaction_rating = 0;
+          average_entertainment_rating =0;
+          average_interaction_rating = 0;
+          average_skill_rating = 0;
+        }
+
         // print(broadcasterFromDB.overall_skill);
       } else {
         broadcasterFromDB = new BroadcasterFromDB(0, 0, 0, 0);
@@ -212,10 +221,11 @@ class StreamerProfile extends State<StreamerPage> {
   }
 
   static const String audience = "PG-13";
-  static const String overallRating = "4/5";
-  static const String satisfaction = "4/5";
-  static const String interaction = "4/5";
-  static const String entertainment = "4/5";
+
+  // static const String overallRating = "4/5";
+  // static const String satisfaction = "4/5";
+  // static const String interaction = "4/5";
+  // static const String entertainment = "4/5";
 
   @override
   Widget build(BuildContext context) {
@@ -252,7 +262,7 @@ class StreamerProfile extends State<StreamerPage> {
                 icon: isFavorite
                     ? Icon(Icons.favorite)
                     : Icon(
-                  Icons.favorite_border,
+                        Icons.favorite_border,
                       ),
                 onPressed: () {
                   favorite();
@@ -302,7 +312,7 @@ class StreamerProfile extends State<StreamerPage> {
                 )),
                 child: Container(
                   width: double.infinity,
-                  height: MediaQuery.of(context).size.height * .9,
+                  height: MediaQuery.of(context).size.height,
                   child: topStreamer == null
                       ? new Container(
                           child: new Center(
@@ -437,7 +447,20 @@ class StreamerProfile extends State<StreamerPage> {
                                 child: Row(
                                   children: <Widget>[
                                     Expanded(
-                                      child: Column(
+                                      child:
+                                      topStreamer == null
+                                          ? new Container(
+                                        child: new Center(
+                                          child: new SizedBox(
+                                            width: 100,
+                                            height: 100,
+                                            child: CircularProgressIndicator(
+                                                valueColor:
+                                                AlwaysStoppedAnimation(Colors.white)),
+                                          ),
+                                        ),
+                                      )
+                                          : Column(
                                         children: <Widget>[
                                           Text(
                                             "Audience Ratings",
@@ -451,7 +474,7 @@ class StreamerProfile extends State<StreamerPage> {
                                             height: 5,
                                           ),
                                           Text(
-                                            "Overall Rating: " + overallRating,
+                                            "Overall Rating",
                                             textAlign: TextAlign.left,
                                             style: TextStyle(
                                               fontSize: 20.0,
@@ -459,11 +482,43 @@ class StreamerProfile extends State<StreamerPage> {
                                               fontWeight: FontWeight.w500,
                                             ),
                                           ),
+                                         average_satisfaction_rating == 0
+                                              ? Text(
+                                                  "n/a",
+                                                  textAlign: TextAlign.left,
+                                                  style: TextStyle(
+                                                    fontSize: 20.0,
+                                                    color: Colors.deepPurple,
+                                                    fontWeight: FontWeight.w500,
+                                                  ),
+                                                )
+                                              : Column(
+                                                  children: <Widget>[
+                                                    Align(
+                                                      alignment:
+                                                          Alignment.topLeft,
+                                                    ),
+                                                    RatingBar.builder(
+                                                      initialRating:
+                                                          average_satisfaction_rating,
+                                                      minRating: 1,
+                                                      direction:
+                                                          Axis.horizontal,
+                                                      allowHalfRating: true,
+                                                      itemCount: 5,
+                                                      itemSize: 30.0,
+                                                      // itemPadding: EdgeInsets.symmetric(horizontal: 4.0),
+                                                      itemBuilder:
+                                                          (context, _) => Icon(
+                                                        Icons.star,
+                                                        color: Colors.amber,
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
                                           Text(
                                             // "General Satisfaction: " + broadcasterFromDB.overall_satisfaction.toString(),
-                                            "General Satisfaction: " +
-                                                average_satisfaction_rating
-                                                    .toString(),
+                                            "General Satisfaction",
                                             textAlign: TextAlign.left,
                                             style: TextStyle(
                                               fontSize: 20.0,
@@ -471,11 +526,42 @@ class StreamerProfile extends State<StreamerPage> {
                                               fontWeight: FontWeight.w500,
                                             ),
                                           ),
+                                          average_satisfaction_rating == 0
+                                              ? Text(
+                                                  "n/a",
+                                                  textAlign: TextAlign.left,
+                                                  style: TextStyle(
+                                                    fontSize: 20.0,
+                                                    color: Colors.deepPurple,
+                                                    fontWeight: FontWeight.w500,
+                                                  ),
+                                                )
+                                              : Column(
+                                                  children: <Widget>[
+                                                    Align(
+                                                      alignment:
+                                                          Alignment.topLeft,
+                                                    ),
+                                                    RatingBar.builder(
+                                                      initialRating: average_satisfaction_rating,
+                                                      minRating: 1,
+                                                      direction:
+                                                          Axis.horizontal,
+                                                      allowHalfRating: true,
+                                                      itemCount: 5,
+                                                      itemSize: 30.0,
+                                                      // itemPadding: EdgeInsets.symmetric(horizontal: 4.0),
+                                                      itemBuilder:
+                                                          (context, _) => Icon(
+                                                        Icons.star,
+                                                        color: Colors.amber,
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
                                           Text(
                                             // "Interaction: " + broadcasterFromDB.overall_interactiveness.toString(),
-                                            "Interaction: " +
-                                                average_interaction_rating
-                                                    .toString(),
+                                            "Interaction",
                                             textAlign: TextAlign.left,
                                             style: TextStyle(
                                               fontSize: 20.0,
@@ -483,11 +569,43 @@ class StreamerProfile extends State<StreamerPage> {
                                               fontWeight: FontWeight.w500,
                                             ),
                                           ),
+                                          average_satisfaction_rating == 0
+                                              ? Text(
+                                                  "n/a",
+                                                  textAlign: TextAlign.left,
+                                                  style: TextStyle(
+                                                    fontSize: 20.0,
+                                                    color: Colors.deepPurple,
+                                                    fontWeight: FontWeight.w500,
+                                                  ),
+                                                )
+                                              : Column(
+                                                  children: <Widget>[
+                                                    Align(
+                                                      alignment:
+                                                          Alignment.topLeft,
+                                                    ),
+                                                    RatingBar.builder(
+
+                                                      initialRating: average_interaction_rating,
+                                                      minRating: 1,
+                                                      direction:
+                                                          Axis.horizontal,
+                                                      allowHalfRating: true,
+                                                      itemCount: 5,
+                                                      itemSize: 30.0,
+                                                      // itemPadding: EdgeInsets.symmetric(horizontal: 4.0),
+                                                      itemBuilder:
+                                                          (context, _) => Icon(
+                                                        Icons.star,
+                                                        color: Colors.amber,
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
                                           Text(
                                             // "Entertainment: " + broadcasterFromDB.overall_entertainment.toString(),
-                                            "Entertainment: " +
-                                                average_entertainment_rating
-                                                    .toString(),
+                                            "Entertainment",
                                             textAlign: TextAlign.left,
                                             style: TextStyle(
                                               fontSize: 20.0,
@@ -495,10 +613,43 @@ class StreamerProfile extends State<StreamerPage> {
                                               fontWeight: FontWeight.w500,
                                             ),
                                           ),
+                                          average_satisfaction_rating == 0
+                                              ? Text(
+                                                  "n/a",
+                                                  textAlign: TextAlign.left,
+                                                  style: TextStyle(
+                                                    fontSize: 20.0,
+                                                    color: Colors.deepPurple,
+                                                    fontWeight: FontWeight.w500,
+                                                  ),
+                                                )
+                                              : Column(
+                                                  children: <Widget>[
+                                                    Align(
+                                                      alignment:
+                                                          Alignment.topLeft,
+                                                    ),
+                                                    RatingBar.builder(
+
+                                                      initialRating: average_entertainment_rating,
+                                                      minRating: 1,
+                                                      direction:
+                                                          Axis.horizontal,
+                                                      allowHalfRating: true,
+                                                      itemCount: 5,
+                                                      itemSize: 30.0,
+                                                      // itemPadding: EdgeInsets.symmetric(horizontal: 4.0),
+                                                      itemBuilder:
+                                                          (context, _) => Icon(
+                                                        Icons.star,
+                                                        color: Colors.amber,
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
                                           Text(
                                             // "Skill Level: " + broadcasterFromDB.overall_skill.toString(),
-                                            "Skill Level: " +
-                                                average_skill_rating.toString(),
+                                            "Skill Level",
                                             textAlign: TextAlign.left,
                                             style: TextStyle(
                                               fontSize: 20.0,
@@ -506,6 +657,40 @@ class StreamerProfile extends State<StreamerPage> {
                                               fontWeight: FontWeight.w500,
                                             ),
                                           ),
+                                          average_satisfaction_rating == 0
+                                              ? Text(
+                                                  "n/a",
+                                                  textAlign: TextAlign.left,
+                                                  style: TextStyle(
+                                                    fontSize: 20.0,
+                                                    color: Colors.deepPurple,
+                                                    fontWeight: FontWeight.w500,
+                                                  ),
+                                                )
+                                              : Column(
+                                                  children: <Widget>[
+                                                    Align(
+                                                      alignment:
+                                                          Alignment.topLeft,
+                                                    ),
+                                                    RatingBar.builder(
+
+                                                      initialRating: average_skill_rating,
+                                                      minRating: 1,
+                                                      direction:
+                                                          Axis.horizontal,
+                                                      allowHalfRating: true,
+                                                      itemCount: 5,
+                                                      itemSize: 30.0,
+                                                      // itemPadding: EdgeInsets.symmetric(horizontal: 4.0),
+                                                      itemBuilder:
+                                                          (context, _) => Icon(
+                                                        Icons.star,
+                                                        color: Colors.amber,
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
                                           SizedBox(
                                             height: 10,
                                           ),

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:streamer_review/favorite_card.dart';
 import 'package:streamer_review/streamer.dart';
-import 'package:streamer_review/streamer_thumb.dart';
 import 'package:streamer_review/helper/database_helper.dart' as DBHelper;
 import 'helper/database_helper.dart';
 
@@ -33,21 +32,21 @@ class _FavoritesContainer extends State<FavoritesContainer> {
 
     DatabaseHelper2 d = DBHelper.DatabaseHelper2.instance;
     var getStreamerList = await d.getFavorites();
-    print("got streamer list from db");
+    // print("got streamer list from db");
 
 
     if (getStreamerList != null) {
       print(getStreamerList.length);
       for (int i = 0; i < getStreamerList.length; i++) {
         temp = getStreamerList[i]["fk_broadcaster_id"];
-        print("Temp: " +
-            temp.toString() +
-            "-------------------------------------------------------------------------------------------------------------------");
+        // print("Temp: " +
+        //     temp.toString() +
+        //     "-------------------------------------------------------------------------------------------------------------------");
         FavoriteCard favCard = new FavoriteCard(temp.toString());
-        print(
-            "new card was supposedly made?----------------------------------------------------------------------------------");
+        // print(
+        //     "new card was supposedly made?----------------------------------------------------------------------------------");
         streamerList.add(favCard);
-        print("favCard added to list");
+        // print("favCard added to list");
       }
     }
     // if (idList != null) {

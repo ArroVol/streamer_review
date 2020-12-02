@@ -26,7 +26,6 @@ class _FavoriteCard extends State<FavoriteCard> {
 
   _FavoriteCard(String streamerId) {
     this.streamerId = streamerId;
-    print("in _FavoriteCard========================================================");
     getData();
   }
 
@@ -44,9 +43,6 @@ class _FavoriteCard extends State<FavoriteCard> {
   bool offline = false;
 
   Future<Streamer> getData() async {
-    print(
-        "in getData in favorite card++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
-
     var url = "https://api.twitch.tv/helix/users?id=" + streamerId;
 
     http.Response channelInformation =
@@ -54,10 +50,7 @@ class _FavoriteCard extends State<FavoriteCard> {
       "Authorization": "Bearer 5e46v0tks21zqvnloyua8e76bcsui9",
       "Client-Id": "874uve10v0bcn3rmp2bq4cvz8fb5wj"
     });
-
     data = json.decode(channelInformation.body);
-    print('DATA IS');
-    print(data);
     if(data!= null) {
       var login = data['data'][0]['login'];
       var description = data['data'][0]['description'];
@@ -68,8 +61,6 @@ class _FavoriteCard extends State<FavoriteCard> {
       DatabaseHelper2 d = DBHelper.DatabaseHelper2.instance;
 
       await d.selectBroadcaster(streamerId).then((value) {
-        print('VALUE IS');
-        print(value);
         if (value.isNotEmpty) {
           b = new BroadcasterFromDB(
               value[0]['overall_satisfaction'],
@@ -106,12 +97,9 @@ class _FavoriteCard extends State<FavoriteCard> {
           broadcasterFromDB = new BroadcasterFromDB(0, 0, 0, 0);
         }
       });
-      // calcScore();
+
       return streamer;
     }
-    print(
-        "got the streamer data in favorite card++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
-    // return streamer;
   }
 
   var averageScore;
@@ -181,7 +169,7 @@ class _FavoriteCard extends State<FavoriteCard> {
                             initialRating: averageScore,
                             minRating: 1,
                             direction: Axis.horizontal,
-                            allowHalfRating: false,
+                            allowHalfRating: true,
                             itemCount: 5,
                             itemSize: 30.0,
                             // itemPadding: EdgeInsets.symmetric(horizontal: 4.0),
@@ -189,39 +177,10 @@ class _FavoriteCard extends State<FavoriteCard> {
                               Icons.star,
                               color: Colors.amber,
                             ),
-                            // onRatingUpdate: (rating) {
-                            //   // entertainment_rating = rating;
-                            //   // print(rating);
-                            // },
                           ),
                         ],
                       ),
-                      trailing: Icon(
-                        Icons.favorite,
-                        size: 35.0,
-                        color: Colors.deepPurple[800],
-                      ),
                     ),
-                    // Column(
-                    //     children: <Widget>[
-                    //       RatingBar.builder(
-                    //         initialRating: 3,
-                    //         minRating: 1,
-                    //         direction: Axis.horizontal,
-                    //         allowHalfRating: false,
-                    //         itemCount: 5,
-                    //         itemPadding: EdgeInsets.symmetric(horizontal: 4.0),
-                    //         itemBuilder: (context, _) => Icon(
-                    //           Icons.star,
-                    //           color: Colors.amber,
-                    //         ),
-                    //         onRatingUpdate: (rating) {
-                    //           // entertainment_rating = rating;
-                    //           // print(rating);
-                    //         },
-                    //       ),
-                    //     ],
-                    //   ),
                   ],
                 ),
               ),

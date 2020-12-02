@@ -4,6 +4,7 @@ import 'package:streamer_review/temp_favorites.dart';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:streamer_review/temp_settings.dart';
 
 import 'home.dart';
 
@@ -19,8 +20,8 @@ class _MainScreenState extends State<MainScreen> {
     HomeScreen(),
     // StreamerPage(),
     // HomePage(),
-    FavoritesPage(),
-    // SettingsPage(),
+    // FavoritesPage(),
+    SettingsPage(),
     Profile(),
   ];
 
@@ -108,9 +109,10 @@ class _MainScreenState extends State<MainScreen> {
           HomeScreen(),
           // StreamerPage(),
           // HomePage(),
-          FavoritesPage(),
+          // FavoritesPage(),
+          SettingsPage(),
           Profile()
-          // SettingsPage(),
+
         ].elementAt(index);
       },
     };
