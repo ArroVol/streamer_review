@@ -213,10 +213,6 @@ class DatabaseHelper2 {
 
     final user1 = userMap[0];
 
-    for (var i = 0; i < 1; i++) {
-      user[i];
-    }
-
     // for (String key in user.keys){
     //   print(key);
     //   print(testMap[key]);
@@ -383,8 +379,18 @@ class DatabaseHelper2 {
     print(user.toMap());
     Database db = await instance.database;
     String userName = user.userName;
-    List<User> newUser = await getUserByUserName(user.userName);
+    print("this is the username: $userName");
+    print("this is the email: $user.email");
+
+    List<User> newUser = await getUserByEmail(user.email);
+
+    // List<User> newUser = await getUserByUserName(user.userName);
+    // List<Map<String, dynamic>> newUser = await getUserByUserName(user.userName);
+    print(newUser);
+    print(newUser.first);
     int id = newUser.first.id;
+    print("printing ID");
+    print(id);
     // List<Map<String, dynamic >> user = await db.query('_user_table', where: '_id = ?', whereArgs: []);
 
     int updatedCount = await db.rawUpdate('''
@@ -796,7 +802,47 @@ class DatabaseHelper2 {
       $columnPassword TEXT )
       ''');
   }
+
+  Future<List<User>> getUserByEmail(String email) async {
+    Database db = await DatabaseHelper2.instance.database;
+    List<Map<String, dynamic>> user = await db
+        .query('_user_table', where: 'email = ?', whereArgs: [email]);
+    return List.generate(user.length, (i) {
+      return User(
+        id: user[i]['_id'],
+        email: user[i]['email'],
+        password: user[i]['password'],
+        userName: user[i]['user_name'],
+        phoneNumber: user[i]['phone_number'],
+      );
+    });
+  }
+  Future<String> getPhoneNumber(String phoneNumber) async {
+    Database db = await DatabaseHelper2.instance.database;
+    List<Map<String, dynamic>> user = await db
+        .query('_user_table', where: 'phone_number = ?', whereArgs: [phoneNumber]);
+    List<User> userList = [];
+    List.generate(user.length, (i) {
+      userList.add(User(
+        // id: user[i]['_id'],
+        // email: user[i]['email'],
+        // password: user[i]['password'],
+        // userName: user[i]['user_name'],
+        phoneNumber: user[i]['phone_number'],
+      ));
+    });
+    print("the length of the user list");
+    print(userList.length);
+    if(userList.length > 0) {
+      String phoneNumberRet = userList.first.phoneNumber;
+      return phoneNumberRet;
+    }
+    return null;
+  }
+
 }
+
+
 
 // List<Map<String, dynamic >> mPeople = user.map((m) => Map.of(m)).toList();
 // user.indexOf();

@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:streamer_review/helper/database_helper.dart';
@@ -55,6 +56,21 @@ class UserRepository {
       );
     });
   }
+
+  Future<List<User>> getUserByEmail(String email) async {
+    Database db = await DatabaseHelper2.instance.database;
+    List<Map<String, dynamic>> user = await db
+        .query('_user_table', where: 'email = ?', whereArgs: [email]);
+    return List.generate(user.length, (i) {
+      return User(
+        id: user[i]['_id'],
+        email: user[i]['email'],
+        password: user[i]['password'],
+        userName: user[i]['user_name'],
+        phoneNumber: user[i]['phone_number'],
+      );
+    });
+  }
   Future<int> getUserIdByUserName(String userName) async {
     Database db = await DatabaseHelper2.instance.database;
     List<Map<String, dynamic>> user = await db
@@ -71,6 +87,24 @@ class UserRepository {
     });
     int id = userList.first.id;
     return id;
+  }
+
+  Future<String> getPhoneNumber(String phoneNumber) async {
+    Database db = await DatabaseHelper2.instance.database;
+    List<Map<String, dynamic>> user = await db
+        .query('_user_table', where: 'phone_number = ?', whereArgs: [phoneNumber]);
+    List<User> userList = [];
+    List.generate(user.length, (i) {
+      userList.add(User(
+        // id: user[i]['_id'],
+        // email: user[i]['email'],
+        // password: user[i]['password'],
+        // userName: user[i]['user_name'],
+        phoneNumber: user[i]['phone_number'],
+      ));
+    });
+    String phoneNumberRet = userList.first.phoneNumber;
+    return phoneNumberRet;
   }
 
   Future<int> getUserIdByEmail(String email) async {

@@ -1,16 +1,27 @@
 import 'package:flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
 import 'package:path/path.dart';
+import 'package:streamer_review/helper/database_helper.dart' as DBHelper;
 
 import 'package:provider/provider.dart';
+import 'package:streamer_review/secure_storage/secure_storage.dart';
 
 import 'custom_route.dart';
+import 'helper/database_helper.dart';
 import 'main_screen.dart';
 import 'model/user.dart';
 
 class Register extends StatelessWidget {
   static const routeName = '/auth';
   bool verifiedRegistration = false;
+
+  final SecureStorage secureStorage = SecureStorage();
+  User updatedUser = new User();
+
+  bool phoneVerified = false;
+  bool userNameVerified = false;
+
+  // Register({this.email});
 
   @override
   Widget build(BuildContext context) {
@@ -24,6 +35,8 @@ class Register extends StatelessWidget {
       onSubmitted: (value) {
         print("search");
         print(value);
+        DatabaseHelper2 d = DBHelper.DatabaseHelper2.instance;
+      checkUserName(value);
       },
       decoration: const InputDecoration(
         icon: Icon(Icons.person),
@@ -56,7 +69,6 @@ class Register extends StatelessWidget {
     );
 
 
-
     final usernameField2 = TextFormField(
 
       textInputAction: TextInputAction.go,
@@ -72,8 +84,8 @@ class Register extends StatelessWidget {
         // This optional block of code can be used to run
         // code when the user saves the form.
       },
-      validator: (String value){
-          return value.contains('@') ? 'Do not use the @ char.' : null;
+      validator: (String value) {
+        return value.contains('@') ? 'Do not use the @ char.' : null;
       },
       // validator: (String value) {
       //   if (value.isEmpty) {
@@ -91,12 +103,6 @@ class Register extends StatelessWidget {
       //   return value.contains('@') ? 'Do not use the @ char.' : null;
       // },
     );
-
-
-
-
-
-
 
 
     final phoneNumberField = TextFormField(
@@ -130,36 +136,58 @@ class Register extends StatelessWidget {
     //   decoration: InputDecoration(),
     //
     // );
-    final confirmPhoneNumber = TextFormField(
+
+    final confirmPhoneNumber = TextField(
+      textInputAction: TextInputAction.go,
+      onSubmitted: (value) {
+        print("search");
+        print(value);
+        DatabaseHelper2 d = DBHelper.DatabaseHelper2.instance;
+        checkPhoneNumber(value);
+      },
       decoration: const InputDecoration(
-        icon: Icon(Icons.phone_android),
-        hintText: 'Verify phone number',
-        // labelText: 'Name *',
+        icon: Icon(Icons.person),
+        hintText: 'Enter a username',
       ),
-      onSaved: (String value) {
-        // This optional block of code can be used to run
-        // code when the user saves the form.
-      },
-      validator: (String value) {
-        if (value.isEmpty) {
-          return "Please enter a username..";
-        }
-        // validator: (value) => value.isEmpty ? "Please enter a username" : null;
-        // onSaved: (value) => _password = value,
-        return value.contains('@') ? 'Do not use the @ char.' : null;
-      },
+      autofocus: true,
     );
+
+    // final confirmPhoneNumber = TextFormField(
+    //   decoration: const InputDecoration(
+    //     icon: Icon(Icons.phone_android),
+    //     hintText: 'Verify phone number',
+    //     // labelText: 'Name *',
+    //   ),
+    //   onSaved: (String value) {
+    //     // This optional block of code can be used to run
+    //     // code when the user saves the form.
+    //   },
+    //   validator: (String value) {
+    //     if (value.isEmpty) {
+    //       return "Please enter a username..";
+    //     }
+    //     // validator: (value) => value.isEmpty ? "Please enter a username" : null;
+    //     // onSaved: (value) => _password = value,
+    //     return value.contains('@') ? 'Do not use the @ char.' : null;
+    //   },
+    // );
     final loginButon = Material(
       elevation: 5.0,
       borderRadius: BorderRadius.circular(30.0),
       color: Color(0xff01A0C7),
       child: MaterialButton(
-        minWidth: MediaQuery.of(context).size.width,
+        minWidth: MediaQuery
+            .of(context)
+            .size
+            .width,
         padding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
         onPressed: () {
           print('pressed');
           // Navigator.pushReplacementNamed(context, '/main_screen');
-          if (verifiedRegistration) {
+          print(userNameVerified);
+          print(phoneVerified);
+          if (userNameVerified && phoneVerified) {
+            print("verified");
             Navigator.of(context).pushReplacement(FadePageRoute(
               builder: (context) => MainScreen(),
             ));
@@ -260,5 +288,44 @@ class Register extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  Future<bool> checkUserName(String userName) async {
+    String email = await secureStorage.readSecureData("email");
+    print("in check");
+    if (!await DatabaseHelper2.instance.checkByUserName(userName)) {
+      print("the user name doesnt exist");
+      List<User> pulledUser = await DatabaseHelper2.instance.getUserByEmail(
+          email);
+      print(pulledUser.first.phoneNumber);
+      print(pulledUser.first.id);
+      updatedUser.email = pulledUser.first.email;
+      updatedUser.password = pulledUser.first.password;
+      updatedUser.userName = userName;
+      updatedUser.id = pulledUser.first.id;
+      await DatabaseHelper2.instance.updateUser(updatedUser);
+      userNameVerified = true;
+      print("done");
+    }
+    }
+
+  Future<bool> checkPhoneNumber(String phoneNumber) async {
+    String email = await secureStorage.readSecureData("email");
+    print("in check");
+    if (await DatabaseHelper2.instance.getPhoneNumber(phoneNumber) == null) {
+      print("the phone Number doesnt exist");
+      List<User> pulledUser = await DatabaseHelper2.instance.getUserByEmail(
+          email);
+      print(pulledUser.first.phoneNumber);
+      print(pulledUser.first.id);
+      // updatedUser.email = pulledUser.first.email;
+      // updatedUser.password = pulledUser.first.password;
+      // updatedUser.userName = userName;
+      // updatedUser.id = pulledUser.first.id;
+      updatedUser.phoneNumber = phoneNumber;
+      await DatabaseHelper2.instance.updateUser(updatedUser);
+      phoneVerified = true;
+      print("done again ");
+    }
   }
 }

@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:streamer_review/expansion_row_container.dart';
-import 'package:streamer_review/streamer_thumb.dart';
-import 'package:streamer_review/push_notifications.dart';
 import 'package:streamer_review/temp_search.dart';
 import 'package:streamer_review/widgets/anotherMain.dart';
 
