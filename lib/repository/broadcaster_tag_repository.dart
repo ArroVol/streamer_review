@@ -3,9 +3,14 @@ import 'package:streamer_review/helper/DatabaseCreator.dart';
 import 'package:streamer_review/helper/database_helper.dart';
 import 'package:streamer_review/model/broadcaster_tag.dart';
 
+///
+/// The broadcaster tag repository class contains all basic CRUD methods.
 class BroadcasterTagRepository {
   static final _TABLENAME = 'broadcaster_tags';
 
+  /// This method adds a broadcaster tag to the database.
+  ///
+  /// [broadcasterTag], the specific name of the tag.
   Future<void> addBroadcasterTag(BroadcasterTag broadcasterTag) async {
     Database db = await DatabaseHelper2.instance.database;
     return await db.insert(

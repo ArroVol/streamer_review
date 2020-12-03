@@ -64,6 +64,13 @@ class BroadcasterRepository  {
     return 0;
   }
 
+  /// Thiis method inserts a broadcaster into the database.
+  ///
+  /// [temp_satisfaction_rating], the users satisfaction rating given to the specific broadcaster.
+  /// [temp_skill_rating], the users skill rating given to the specific broadcaster.
+  /// [temp_entertainment_rating], the users entertainment rating given to the specific broadcaster.
+  /// [temp_interaction_rating], the users interaction rating given to the specific broadcaster.
+  /// [broadcaster_id], the broadcaster's id from the twitch api.
   Future<int> insertBroadcaster(
       temp_satisfaction_rating,
       temp_skill_rating,

@@ -14,7 +14,9 @@ import 'package:streamer_review/secure_storage/secure_storage.dart';
 import 'dart:io';
 import 'DatabaseCreator.dart';
 ///
+///The class that creates the database.
 ///
+/// Serves to contain all the information about the database as well as instantiation of the tables.
 class DatabaseHelper2 {
   //These are not given a type because it will automatically take the type that it is given first to it
   // Database name and database version are specified.
@@ -56,7 +58,7 @@ class DatabaseHelper2 {
 
     return _database;
   }
-
+  //Initiates the database and gets the directory path and db version.
   _initiateDatabase() async {
     //default documents directory, just like in your local machine documents
     Directory directory = await getApplicationDocumentsDirectory();
@@ -797,6 +799,11 @@ class DatabaseHelper2 {
     }
     return null;
   }
+  Future<List<Map<String, dynamic>>> queryAllFavorites() async {
+    Database db = await DatabaseHelper2.instance.database;
+    return await db.query("user_favorites");
+  }
+
 
 }
 

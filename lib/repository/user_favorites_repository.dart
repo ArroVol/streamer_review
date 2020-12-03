@@ -1,14 +1,19 @@
 import 'package:sqflite/sqflite.dart';
 import 'package:streamer_review/helper/database_helper.dart';
-import 'package:streamer_review/model/user.dart';
 import 'package:streamer_review/secure_storage/secure_storage.dart';
 
+/// The repository for the data for the user's favorite broadcasters
 class UserFavoritesRepository {
   static final _TABLENAME = "user_favorites";
   final SecureStorage secureStorage = SecureStorage();
 
+  /// This method inserts the data for a favorite broadcaster into the database.
+  ///
+  /// [broadcaster_id], the broadcasters id from twitch.
+  /// [async], synchronizes with the database.
   Future<void> insertFavorite(int broadcasterId) async {
     Database db = await DatabaseHelper2.instance.database;
+    // Gets the user's email that is logged in from the phone's storage.
     String userEmail = await secureStorage.readSecureData("email");
     int userId = await DatabaseHelper2.instance.getUserIdByEmail(userEmail);
     print("**inserting favorite: $userId**");
@@ -18,6 +23,10 @@ class UserFavoritesRepository {
         [broadcasterId, userId]);
   }
 
+  /// This method inserts the data for a favorite broadcaster into the database.
+  ///
+  /// [broadcaster_id], the broadcasters id from twitch.
+  /// [async], synchronizes with the database.
   Future<int> deleteFavorite(int broadcasterId) async {
     print("in the delete method for favorite in the database");
     Database db = await DatabaseHelper2.instance.database;
@@ -29,15 +38,7 @@ class UserFavoritesRepository {
     return deletedRow;
   }
 
-  //Query returns a list of map (must be passed as a type)
-  //All data will be in the form of map, so it returns a list of map
-  Future<List<Map<String, dynamic>>> queryAllFavorites() async {
-    Database db = await DatabaseHelper2.instance.database;
-    return await db.query("user_favorites");
-  }
-
-  //Query returns a list of map (must be passed as a type)
-  //All data will be in the form of map, so it returns a list of map
+  /// This method queries all favorites by the user who is currently logged in.
   Future<List<Map<String, dynamic>>> queryAllFavoritesByUser() async {
     Database db = await DatabaseHelper2.instance.database;
     String userEmail = await secureStorage.readSecureData("email");
@@ -45,6 +46,15 @@ class UserFavoritesRepository {
     return await db
         .query('user_favorites', where: 'fk_user_id = ?', whereArgs: [userId]);
   }
+
+  //Query returns a list of map (must be passed as a type)
+  //All data will be in the form of map, so it returns a list of map
+  /// This method queries all favorites from the favorites table in the database.
+  Future<List<Map<String, dynamic>>> queryAllFavorites() async {
+    Database db = await DatabaseHelper2.instance.database;
+    return await db.query("user_favorites");
+  }
+
 
 // //to update you need to pass the id of which will be updated as well as pass the value
 // // takes in a map type parameter

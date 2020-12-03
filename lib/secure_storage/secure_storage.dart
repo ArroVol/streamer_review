@@ -1,5 +1,6 @@
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
+/// This class contains the file that creates the secure storage on the user's device.
 class SecureStorage{
   final _storage = FlutterSecureStorage();
 
