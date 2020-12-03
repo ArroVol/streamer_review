@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:streamer_review/expansion_row_container.dart';
+import 'package:streamer_review/featuredStreamer.dart';
 import 'file:///C:/Users/Brendan/AndroidStudioProjects/lab4/streamer_review/lib/widgets/streamer_thumb.dart';
 import 'package:streamer_review/push_notifications.dart';
 import 'package:streamer_review/temp_search.dart';
@@ -33,18 +34,7 @@ class HomeScreen extends StatelessWidget {
           child: ListView(
             scrollDirection: Axis.vertical,
             children: <Widget>[
-              Center(
-                child: Container(
-                  child: Column(
-                    children: <Widget>[
-                      // StreamerThumb(),
-                      Text(
-                        'Featured Streamer',
-                      ),
-                    ],
-                  ),
-                ),
-              ),
+              FeaturedStreamer(),
               Divider(
                 height: 10,
                 color: Colors.black38,

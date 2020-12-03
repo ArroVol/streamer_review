@@ -18,13 +18,20 @@ class _ExpansionRowContainerState extends State<ExpansionRowContainer> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height: 150,
-      child: ListView(
-        scrollDirection: Axis.horizontal,
-        children: streamerThumb,
-      ),
-    );
+    return FutureBuilder(
+        future: getStreamerList(),
+        builder: (context, data) {
+          if (data.hasData) {
+            return Container(
+                height: 150,
+                child: ListView(
+                  scrollDirection: Axis.horizontal,
+                  children: streamerThumb,
+                ));
+          } else {
+            return Center(child: CircularProgressIndicator());
+          }
+        });
   }
 
 //   @override
@@ -51,16 +58,19 @@ class _ExpansionRowContainerState extends State<ExpansionRowContainer> {
     List<StreamerThumb> streamerList = new List<StreamerThumb>();
 
     for (int i = 0; i < streamerMap.length; i++) {
-      var streamerImageURL = await updateImage(streamerMap[i]['broadcaster_id'].toString());
+      // var streamerOverallRating = await streamerMap
+      var streamerImageURL =
+          await updateImage(streamerMap[i]['broadcaster_id'].toString());
       Color ambientColor = await getImagePalette(streamerImageURL);
-      print('Color is');
-      print(ambientColor.toString());
-
-      StreamerThumb streamerThumb =
-          new StreamerThumb(streamerMap[i]['broadcaster_name'], streamerImageURL, ambientColor);
+      var numberOfViewers = await getStreamerCurrentViewers(
+          streamerMap[i]['broadcaster_id'].toString());
+      StreamerThumb streamerThumb = new StreamerThumb(
+          streamerMap[i]['broadcaster_name'],
+          streamerImageURL,
+          ambientColor,
+          numberOfViewers);
       streamerList.add(streamerThumb);
     }
-    print(streamerList.length);
     if (streamerList != null) {
       setState(() {
         streamerThumb = streamerList;
@@ -89,8 +99,32 @@ class _ExpansionRowContainerState extends State<ExpansionRowContainer> {
     return data['data'][0]['profile_image_url'];
   }
 
-  Future<Color> getImagePalette (String streamerImageURL) async {
-    final PaletteGenerator paletteGenerator = await PaletteGenerator.fromImageProvider(NetworkImage(streamerImageURL));
+  Future<Color> getImagePalette(String streamerImageURL) async {
+    final PaletteGenerator paletteGenerator =
+        await PaletteGenerator.fromImageProvider(
+            NetworkImage(streamerImageURL));
     return paletteGenerator.dominantColor.color;
+  }
+
+  Future<int> getStreamerCurrentViewers(String id) async {
+    String url = 'https://api.twitch.tv/helix/streams?user_id=' + id;
+
+    // print(url);
+
+    http.Response channelInformation =
+        await http.get(Uri.encodeFull(url), headers: {
+      "Authorization": "Bearer 5e46v0tks21zqvnloyua8e76bcsui9",
+      "Client-Id": "874uve10v0bcn3rmp2bq4cvz8fb5wj"
+    });
+    var data = json.decode(channelInformation.body);
+    print(data);
+    if (data['data'].isNotEmpty) {
+      print('was not null');
+      return (data['data'][0]['viewer_count']);
+    } else {
+      print('was null');
+      return -1;
+    }
+    return 10;
   }
 }
