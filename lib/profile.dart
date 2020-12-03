@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:streamer_review/secure_storage/secure_storage.dart';
+
+import 'custom_route.dart';
+import 'login.dart';
 
 class Profile extends StatefulWidget {
   @override
@@ -6,6 +10,8 @@ class Profile extends StatefulWidget {
 }
 
 class _ProfileState extends State<Profile> {
+  final SecureStorage secureStorage = SecureStorage();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -63,6 +69,21 @@ class _ProfileState extends State<Profile> {
                 ),
               ],
             ),
+            OutlineButton(onPressed: () {
+              secureStorage.deleteSecureData('email');
+              secureStorage.deleteSecureData('password');
+
+              Navigator.of(context, rootNavigator: true).pushReplacement(FadePageRoute(
+                builder: (context) => new LoginScreen(),
+              ));
+            },
+              child: Text('Logout',
+                  style: TextStyle(
+                      color: Colors.lightGreenAccent[100],
+                      fontSize: 18,
+                      letterSpacing: 1
+                  )),
+            )
           ],
         ),
       ),
