@@ -1,5 +1,6 @@
 
 import 'package:streamer_review/profile.dart';
+import 'package:streamer_review/register.dart';
 import 'package:streamer_review/temp_favorites.dart';
 
 import 'package:flutter/cupertino.dart';
@@ -23,6 +24,7 @@ class _MainScreenState extends State<MainScreen> {
     FavoritesPage(),
     // SettingsPage(),
     Profile(),
+    Register(),
   ];
 
   @override
@@ -110,9 +112,9 @@ class _MainScreenState extends State<MainScreen> {
           // StreamerPage(),
           // HomePage(),
           FavoritesPage(),
+          Profile(),
+          Register()
           // SettingsPage(),
-          Profile()
-
         ].elementAt(index);
       },
     };

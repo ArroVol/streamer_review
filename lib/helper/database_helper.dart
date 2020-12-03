@@ -3,6 +3,8 @@ import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:streamer_review/model/broadcaster_tag.dart';
 import 'package:streamer_review/model/user.dart';
+import 'package:streamer_review/repository/broadcaster_repository.dart';
+
 import 'package:streamer_review/streamer.dart';
 import 'package:streamer_review/streamer_thumb.dart';
 import 'dart:convert';
@@ -11,22 +13,27 @@ import 'package:streamer_review/secure_storage/secure_storage.dart';
 // library for input and output
 import 'dart:io';
 import 'DatabaseCreator.dart';
-
+///
+///
 class DatabaseHelper2 {
   //These are not given a type because it will automatically take the type that it is given first to it
-  //we need to have a database name and database version
+  // Database name and database version are specified.
   static final _dbName = 'myDatabase24.db';
   static final _dbVersion = 1;
   static final _tableName = '_user_table';
   static final _reviewTable = 'reviews';
+
+  // The secure storage that holds the user logged in.
   final SecureStorage secureStorage = SecureStorage();
 
-  //Fields given to the table
+  BroadcasterRepository broadcasterRepository = new BroadcasterRepository();
+
   static final columnId = '_id';
   static final columnEmail = 'email';
   static final columnPassword = 'password';
   static final columnUserName = 'user_name';
   static final columnPhoneNumber = 'phone_number';
+  static String directoryPath = '';
 
   //making it a singleton class
   DatabaseHelper2._privateConstructor();
@@ -54,6 +61,7 @@ class DatabaseHelper2 {
     Directory directory = await getApplicationDocumentsDirectory();
     //join the file name and the path
     String path = join(directory.path, _dbName);
+    directoryPath = path;
     // to open the database in SQlite
     // await is used since these functions take time to execute
     return await openDatabase(path, version: _dbVersion, onCreate: _onCreate);
@@ -124,6 +132,20 @@ class DatabaseHelper2 {
       )
       ''');
 
+    db.execute('''
+      CREATE TABLE text_reviews(
+      favorites_id INTEGER PRIMARY KEY AUTOINCREMENT, 
+      review_content TEXT,
+      submission_date TEXT,
+      fk_broadcaster_id INTEGER,
+      fk_user_id INTEGER,
+       FOREIGN KEY (fk_broadcaster_id)
+        REFERENCES broadcaster_table(broadcaster_id),
+       FOREIGN KEY (fk_user_id)
+         REFERENCES _user_table(_id)  
+        )
+      ''');
+
     // db.execute(
     //     ''' INSERT INTO _user_table (email, password, phone_number, user_name)
     // VALUES('gooby@gmail.com', 'gooby4ever', '708-843-6969', 'goobychan')
@@ -135,6 +157,11 @@ class DatabaseHelper2 {
     // addDummyData();
   }
 
+
+  // Future<void> deleteDb() async {
+  //   final Database db = await _holder.db;
+  //   // delete database
+  // }
   Future<void> insertUser(User user) async {
     // Get a reference to the database.
     final Database db = await instance.database;
@@ -381,7 +408,7 @@ class DatabaseHelper2 {
 
     // raw query
     List<Map> result = await db.rawQuery(
-        'SELECT * FROM broadcaster_tags WHERE broadcaster_id=?',
+        'SELECT * FROM broadcaster_tags WHERE fk_broadcaster_id=?',
         [broadcasterId]);
     await db.rawQuery(
         'INSERT INTO broadcaster_tags (tag_name, fk_broadcaster_id) VALUES(?, ?)',
@@ -392,12 +419,12 @@ class DatabaseHelper2 {
   }
 
   Future<List<Map<String, dynamic>>> selectAllBroadcasterTagsByBroadcaster(
-      broadcasterId, tagName) async {
+      broadcasterId) async {
     // get a reference to the database
     Database db = await DatabaseHelper2.instance.database;
     // raw query
     List<Map> result = await db.rawQuery(
-        'SELECT * FROM broadcaster_tags WHERE broadcaster_id=?',
+        'SELECT * FROM broadcaster_tags WHERE fk_broadcaster_id=?',
         [broadcasterId]);
     return result;
   }
@@ -426,6 +453,34 @@ class DatabaseHelper2 {
     // {_id: 1, name: Bob, age: 23}
     // {_id: 2, name: Mary, age: 32}
     // {_id: 3, name: Susan, age: 12}
+  }
+
+  Future<List<Map<String, dynamic>>> selectTextReviews(
+      broadcaster_id) async {
+    Database db = await DatabaseHelper2.instance.database;
+
+    // raw query
+    List<Map> result = await db.rawQuery(
+        'SELECT * FROM text_reviews WHERE fk_broadcaster_id=? ORDER BY datetime(submission_date) DESC',
+        [broadcaster_id]);
+
+    return result;
+  }
+
+  Future<void> insertTextReviews(
+      review_content, submission_date, broadcaster_id, user_id) async {
+    // get a reference to the database
+    int count = 0;
+    Database db = await DatabaseHelper2.instance.database;
+
+    await db.rawQuery(
+        'INSERT INTO text_reviews (review_content, submission_date, fk_broadcaster_id, fk_user_id) VALUES(?, ?, ?, ?)',
+        [
+          review_content,
+          submission_date,
+          broadcaster_id,
+          user_id
+        ]);
   }
 
   Future<List<Map<String, dynamic>>> selectReviews(

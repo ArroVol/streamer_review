@@ -36,6 +36,7 @@ class StreamerProfile extends State<StreamerPage> {
   StreamerProfile(String selection) {
     this.selection = selection;
   }
+  var text_reviews = [];
 
   var data;
   var topStreamerInfo;
@@ -122,6 +123,9 @@ class StreamerProfile extends State<StreamerPage> {
       print(error);
     });
     await d.updateBroadcaster(broadcaster_id, user_id, login);
+    var reviews = await d.selectTextReviews(broadcaster_id);
+    // print('REVIEWS');
+    // print(reviews);
 
     var url2 = "https://api.twitch.tv/helix/search/channels?query=" + login;
     // print(url);
@@ -154,6 +158,7 @@ class StreamerProfile extends State<StreamerPage> {
     isFavorite = await d.isFavorite(int.parse(broadcaster_id));
     setState(() {
       topStreamer = streamer;
+      text_reviews = reviews;
       // print(b);
       if (b != null) {
         // print('this is happening');
@@ -230,6 +235,7 @@ class StreamerProfile extends State<StreamerPage> {
   @override
   Widget build(BuildContext context) {
     getData();
+    final rev = text_reviews;
     return Scaffold(
       backgroundColor: Colors.grey[500],
       appBar: AppBar(
@@ -289,467 +295,296 @@ class StreamerProfile extends State<StreamerPage> {
               onPressed: openUrl,
               backgroundColor: Colors.green,
             ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerTop,
-      body: Container(
-        decoration: BoxDecoration(
-            gradient: LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          colors: [Colors.purple[900], Colors.white],
-          stops: [0.2, 1],
-        )),
-        child: Container(
-          child: ListView(
-            scrollDirection: Axis.vertical,
-            children: <Widget>[
-              Container(
-                decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                  colors: [Colors.purple[900], Colors.white],
-                  stops: [0.2, 1],
-                )),
-                child: Container(
-                  width: double.infinity,
-                  height: MediaQuery.of(context).size.height,
-                  child: topStreamer == null
-                      ? new Container(
-                          child: new Center(
-                            child: new SizedBox(
-                              width: 100,
-                              height: 100,
-                              child: CircularProgressIndicator(
-                                  valueColor:
-                                      AlwaysStoppedAnimation(Colors.white)),
-                            ),
-                          ),
-                        )
-                      : Column(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          mainAxisAlignment: MainAxisAlignment.center,
+
+            floatingActionButtonLocation: FloatingActionButtonLocation.endTop,
+      body: SingleChildScrollView(
+        physics: NeverScrollableScrollPhysics(),
+        child: ConstrainedBox(
+          constraints: BoxConstraints(
+            minWidth: MediaQuery.of(context).size.width,
+            minHeight: MediaQuery.of(context).size.height,
+          ),
+          child: IntrinsicHeight(
+            child: Column(
+              mainAxisSize: MainAxisSize.max,
+              children: <Widget>[
+                Column(
+                  children: <Widget>[
+                    Container(
+                      decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            begin: Alignment.topCenter,
+                            end: Alignment.bottomCenter,
+                            colors: [Colors.purple[900], Colors.white],
+                            stops: [0.2, 1],
+                          )),
+                      child: Container(
+                        width: double.infinity,
+                        height: MediaQuery
+                            .of(context)
+                            .size
+                            .height * .9,
+                        child: ListView(
+                          scrollDirection: Axis.vertical,
                           children: <Widget>[
-                            SizedBox(
-                              height: 10.0,
-                            ),
-                            Align(
-                              alignment: Alignment.centerLeft,
-                              // child: IconButton(
-                              //   icon: Icon(
-                              //     Icons.arrow_back,
-                              //   ),
-                              //   iconSize: 25,
-                              //   color: Colors.white,
-                              //   onPressed: () {
-                              //     Navigator.pop(context);
-                              //   },
-                              // ),
-                            ),
-                            CircleAvatar(
-                              backgroundImage: NetworkImage(
-                                topStreamer.profilePictureUrl,
-                              ),
-                              radius: 75.0,
-                            ),
-                            SizedBox(
-                              height: 10.0,
-                            ),
-                            Text(
-                              topStreamer.username,
-                              style: TextStyle(
-                                fontSize: 26.0,
-                                color: Colors.white,
-                              ),
-                            ),
-                            Container(
-                              child: Padding(
-                                padding: const EdgeInsets.symmetric(
-                                    vertical: 5.0, horizontal: 16.0),
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: <Widget>[
-                                    Text(
-                                      topStreamer.description,
-                                      maxLines: 3,
-                                      overflow: TextOverflow.ellipsis,
-                                      style: TextStyle(
-                                        fontSize: 16.0,
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.w500,
-                                      ),
+                            Center(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: <Widget>[
+                                    SizedBox(
+                                      height: 10.0,
                                     ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                            Card(
-                              margin: EdgeInsets.symmetric(
-                                  horizontal: 20.0, vertical: 5.0),
-                              clipBehavior: Clip.antiAlias,
-                              color: Colors.white,
-                              elevation: 5.0,
-                              child: Padding(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 8.0, vertical: 22.0),
-                                child: Row(
-                                  children: <Widget>[
-                                    Expanded(
-                                      child: Column(
-                                        children: <Widget>[
-                                          Text(
-                                            "Channel Views",
-                                            style: TextStyle(
-                                              color: Colors.deepPurple,
-                                              fontSize: 22.0,
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                          ),
-                                          SizedBox(
-                                            height: 5.0,
-                                          ),
-                                          Text(
-                                            topStreamer.viewCount.toString(),
-                                            style: TextStyle(
-                                              fontSize: 20.0,
-                                              color: Colors.deepPurple,
-                                              fontWeight: FontWeight.w500,
-                                            ),
-                                          )
-                                        ],
-                                      ),
-                                    ),
-                                    Expanded(
-                                      child: Column(
-                                        children: <Widget>[
-                                          RaisedButton(
-                                            child: Text('Open Url'),
-                                            onPressed: () {
-                                              openUrl();
-                                            },
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                            Card(
-                              margin: EdgeInsets.symmetric(
-                                  horizontal: 20.0, vertical: 5.0),
-                              clipBehavior: Clip.antiAlias,
-                              color: Colors.white,
-                              elevation: 5.0,
-                              child: Padding(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 8.0, vertical: 22.0),
-                                child: Row(
-                                  children: <Widget>[
-                                    Expanded(
-                                      child:
-                                      topStreamer == null
-                                          ? new Container(
-                                        child: new Center(
-                                          child: new SizedBox(
-                                            width: 100,
-                                            height: 100,
-                                            child: CircularProgressIndicator(
-                                                valueColor:
-                                                AlwaysStoppedAnimation(Colors.white)),
-                                          ),
+                                    Align(
+                                      alignment: Alignment.centerLeft,
+                                      child: IconButton(
+                                        icon: Icon(
+                                          Icons.arrow_back,
                                         ),
-                                      )
-                                          : Column(
-                                        children: <Widget>[
-                                          Text(
-                                            "Audience Ratings",
-                                            style: TextStyle(
-                                              color: Colors.deepPurple,
-                                              fontSize: 22.0,
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                          ),
-                                          SizedBox(
-                                            height: 5,
-                                          ),
-                                          Text(
-                                            "Overall Rating",
-                                            textAlign: TextAlign.left,
-                                            style: TextStyle(
-                                              fontSize: 20.0,
-                                              color: Colors.deepPurple,
-                                              fontWeight: FontWeight.w500,
-                                            ),
-                                          ),
-                                         average_satisfaction_rating == 0
-                                              ? Text(
-                                                  "n/a",
-                                                  textAlign: TextAlign.left,
-                                                  style: TextStyle(
-                                                    fontSize: 20.0,
-                                                    color: Colors.deepPurple,
-                                                    fontWeight: FontWeight.w500,
-                                                  ),
-                                                )
-                                              : Column(
-                                                  children: <Widget>[
-                                                    Align(
-                                                      alignment:
-                                                          Alignment.topLeft,
-                                                    ),
-                                                    RatingBar.builder(
-                                                      initialRating:
-                                                          average_satisfaction_rating,
-                                                      minRating: 1,
-                                                      direction:
-                                                          Axis.horizontal,
-                                                      allowHalfRating: true,
-                                                      itemCount: 5,
-                                                      itemSize: 30.0,
-                                                      // itemPadding: EdgeInsets.symmetric(horizontal: 4.0),
-                                                      itemBuilder:
-                                                          (context, _) => Icon(
-                                                        Icons.star,
-                                                        color: Colors.amber,
-                                                      ),
-                                                    ),
-                                                  ],
-                                                ),
-                                          Text(
-                                            // "General Satisfaction: " + broadcasterFromDB.overall_satisfaction.toString(),
-                                            "General Satisfaction",
-                                            textAlign: TextAlign.left,
-                                            style: TextStyle(
-                                              fontSize: 20.0,
-                                              color: Colors.deepPurple,
-                                              fontWeight: FontWeight.w500,
-                                            ),
-                                          ),
-                                          average_satisfaction_rating == 0
-                                              ? Text(
-                                                  "n/a",
-                                                  textAlign: TextAlign.left,
-                                                  style: TextStyle(
-                                                    fontSize: 20.0,
-                                                    color: Colors.deepPurple,
-                                                    fontWeight: FontWeight.w500,
-                                                  ),
-                                                )
-                                              : Column(
-                                                  children: <Widget>[
-                                                    Align(
-                                                      alignment:
-                                                          Alignment.topLeft,
-                                                    ),
-                                                    RatingBar.builder(
-                                                      initialRating: average_satisfaction_rating,
-                                                      minRating: 1,
-                                                      direction:
-                                                          Axis.horizontal,
-                                                      allowHalfRating: true,
-                                                      itemCount: 5,
-                                                      itemSize: 30.0,
-                                                      // itemPadding: EdgeInsets.symmetric(horizontal: 4.0),
-                                                      itemBuilder:
-                                                          (context, _) => Icon(
-                                                        Icons.star,
-                                                        color: Colors.amber,
-                                                      ),
-                                                    ),
-                                                  ],
-                                                ),
-                                          Text(
-                                            // "Interaction: " + broadcasterFromDB.overall_interactiveness.toString(),
-                                            "Interaction",
-                                            textAlign: TextAlign.left,
-                                            style: TextStyle(
-                                              fontSize: 20.0,
-                                              color: Colors.deepPurple,
-                                              fontWeight: FontWeight.w500,
-                                            ),
-                                          ),
-                                          average_satisfaction_rating == 0
-                                              ? Text(
-                                                  "n/a",
-                                                  textAlign: TextAlign.left,
-                                                  style: TextStyle(
-                                                    fontSize: 20.0,
-                                                    color: Colors.deepPurple,
-                                                    fontWeight: FontWeight.w500,
-                                                  ),
-                                                )
-                                              : Column(
-                                                  children: <Widget>[
-                                                    Align(
-                                                      alignment:
-                                                          Alignment.topLeft,
-                                                    ),
-                                                    RatingBar.builder(
-
-                                                      initialRating: average_interaction_rating,
-                                                      minRating: 1,
-                                                      direction:
-                                                          Axis.horizontal,
-                                                      allowHalfRating: true,
-                                                      itemCount: 5,
-                                                      itemSize: 30.0,
-                                                      // itemPadding: EdgeInsets.symmetric(horizontal: 4.0),
-                                                      itemBuilder:
-                                                          (context, _) => Icon(
-                                                        Icons.star,
-                                                        color: Colors.amber,
-                                                      ),
-                                                    ),
-                                                  ],
-                                                ),
-                                          Text(
-                                            // "Entertainment: " + broadcasterFromDB.overall_entertainment.toString(),
-                                            "Entertainment",
-                                            textAlign: TextAlign.left,
-                                            style: TextStyle(
-                                              fontSize: 20.0,
-                                              color: Colors.deepPurple,
-                                              fontWeight: FontWeight.w500,
-                                            ),
-                                          ),
-                                          average_satisfaction_rating == 0
-                                              ? Text(
-                                                  "n/a",
-                                                  textAlign: TextAlign.left,
-                                                  style: TextStyle(
-                                                    fontSize: 20.0,
-                                                    color: Colors.deepPurple,
-                                                    fontWeight: FontWeight.w500,
-                                                  ),
-                                                )
-                                              : Column(
-                                                  children: <Widget>[
-                                                    Align(
-                                                      alignment:
-                                                          Alignment.topLeft,
-                                                    ),
-                                                    RatingBar.builder(
-
-                                                      initialRating: average_entertainment_rating,
-                                                      minRating: 1,
-                                                      direction:
-                                                          Axis.horizontal,
-                                                      allowHalfRating: true,
-                                                      itemCount: 5,
-                                                      itemSize: 30.0,
-                                                      // itemPadding: EdgeInsets.symmetric(horizontal: 4.0),
-                                                      itemBuilder:
-                                                          (context, _) => Icon(
-                                                        Icons.star,
-                                                        color: Colors.amber,
-                                                      ),
-                                                    ),
-                                                  ],
-                                                ),
-                                          Text(
-                                            // "Skill Level: " + broadcasterFromDB.overall_skill.toString(),
-                                            "Skill Level",
-                                            textAlign: TextAlign.left,
-                                            style: TextStyle(
-                                              fontSize: 20.0,
-                                              color: Colors.deepPurple,
-                                              fontWeight: FontWeight.w500,
-                                            ),
-                                          ),
-                                          average_satisfaction_rating == 0
-                                              ? Text(
-                                                  "n/a",
-                                                  textAlign: TextAlign.left,
-                                                  style: TextStyle(
-                                                    fontSize: 20.0,
-                                                    color: Colors.deepPurple,
-                                                    fontWeight: FontWeight.w500,
-                                                  ),
-                                                )
-                                              : Column(
-                                                  children: <Widget>[
-                                                    Align(
-                                                      alignment:
-                                                          Alignment.topLeft,
-                                                    ),
-                                                    RatingBar.builder(
-
-                                                      initialRating: average_skill_rating,
-                                                      minRating: 1,
-                                                      direction:
-                                                          Axis.horizontal,
-                                                      allowHalfRating: true,
-                                                      itemCount: 5,
-                                                      itemSize: 30.0,
-                                                      // itemPadding: EdgeInsets.symmetric(horizontal: 4.0),
-                                                      itemBuilder:
-                                                          (context, _) => Icon(
-                                                        Icons.star,
-                                                        color: Colors.amber,
-                                                      ),
-                                                    ),
-                                                  ],
-                                                ),
-                                          SizedBox(
-                                            height: 10,
-                                          ),
-                                          RaisedButton(
-                                              onPressed: () {
-                                                Navigator.push(
-                                                    context,
-                                                    MaterialPageRoute(
-                                                        builder: (context) =>
-                                                            ReviewPage(
-                                                                broadcaster_id)));
-                                              },
-                                              shape: RoundedRectangleBorder(
-                                                  borderRadius:
-                                                      BorderRadius.circular(
-                                                          80.0)),
-                                              elevation: 0.0,
-                                              padding: EdgeInsets.all(0.0),
-                                              child: Ink(
-                                                decoration: BoxDecoration(
-                                                  gradient: LinearGradient(
-                                                      begin:
-                                                          Alignment.centerRight,
-                                                      end: Alignment.centerLeft,
-                                                      colors: [
-                                                        Colors.deepPurpleAccent,
-                                                        Colors.deepPurple[700]
-                                                      ]),
-                                                  borderRadius:
-                                                      BorderRadius.circular(
-                                                          30.0),
-                                                ),
-                                                child: Container(
-                                                  constraints: BoxConstraints(
-                                                      maxWidth: 150.0,
-                                                      minHeight: 50.0),
-                                                  alignment: Alignment.center,
-                                                  child: Text(
-                                                    "REVIEW",
-                                                    style: TextStyle(
-                                                        color: Colors.white,
-                                                        fontSize: 22.0,
-                                                        fontWeight:
-                                                            FontWeight.bold),
-                                                  ),
-                                                ),
-                                              )),
-                                        ],
+                                        iconSize: 25,
+                                        color: Colors.white,
+                                        onPressed: () {
+                                          Navigator.pop(context);
+                                        },
                                       ),
                                     ),
-                                  ],
-                                ),
+                                    CircleAvatar(
+                                      backgroundImage: NetworkImage(
+                                        topStreamer.profilePictureUrl,
+                                      ),
+                                      radius: 75.0,
+                                    ),
+                                    SizedBox(
+                                      height: 10.0,
+                                    ),
+                                    Text(
+                                      topStreamer.username,
+                                      style: TextStyle(
+                                        fontSize: 26.0,
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                    // RaisedButton(
+                                    //   child: Text('Open Url'),
+                                    //   onPressed: () {
+                                    //     openUrl();
+                                    //   },
+                                    // ),
+                                    Container(
+                                      child: Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                            vertical: 5.0, horizontal: 16.0),
+                                        child: Column(
+                                          mainAxisAlignment: MainAxisAlignment.center,
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          children: <Widget>[
+                                            Text(
+                                              topStreamer.description,
+                                              maxLines: 3,
+                                              overflow: TextOverflow.ellipsis,
+                                              style: TextStyle(
+                                                fontSize: 16.0,
+                                                color: Colors.white,
+                                                fontWeight: FontWeight.w500,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                    Card(
+                                      margin:
+                                      EdgeInsets.symmetric(horizontal: 20.0, vertical: 5.0),
+                                      clipBehavior: Clip.antiAlias,
+                                      color: Colors.white,
+                                      elevation: 5.0,
+                                      child: Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 8.0, vertical: 22.0),
+                                        child: Row(
+                                          children: <Widget>[
+                                            Expanded(
+                                              child: Column(
+                                                children: <Widget>[
+                                                  Text(
+                                                    "Channel Views",
+                                                    style: TextStyle(
+                                                      color: Colors.deepPurple,
+                                                      fontSize: 22.0,
+                                                      fontWeight: FontWeight.bold,
+                                                    ),
+                                                  ),
+                                                  SizedBox(
+                                                    height: 5.0,
+                                                  ),
+                                                  Text(
+                                                    topStreamer.viewCount.toString(),
+                                                    style: TextStyle(
+                                                      fontSize: 20.0,
+                                                      color: Colors.deepPurple,
+                                                      fontWeight: FontWeight.w500,
+                                                    ),
+                                                  )
+                                                ],
+                                              ),
+                                            ),
+                                            Expanded(
+                                              child: Column(
+                                                children: <Widget>[
+                                                  RaisedButton(
+                                                      onPressed: () {
+                                                        Navigator.push(
+                                                            context,
+                                                            MaterialPageRoute(
+                                                                builder: (context) =>
+                                                                    ReviewPage(broadcaster_id)));
+                                                      },
+                                                      shape: RoundedRectangleBorder(
+                                                          borderRadius:
+                                                          BorderRadius.circular(80.0)),
+                                                      elevation: 0.0,
+                                                      padding: EdgeInsets.all(0.0),
+                                                      child: Ink(
+                                                        decoration: BoxDecoration(
+                                                          gradient: LinearGradient(
+                                                              begin: Alignment.centerRight,
+                                                              end: Alignment.centerLeft,
+                                                              colors: [
+                                                                Colors.deepPurpleAccent,
+                                                                Colors.deepPurple[700]
+                                                              ]),
+                                                          borderRadius:
+                                                          BorderRadius.circular(30.0),
+                                                        ),
+                                                        child: Container(
+                                                          constraints: BoxConstraints(
+                                                              maxWidth: 125.0, minHeight: 40.0),
+                                                          alignment: Alignment.center,
+                                                          child: Text(
+                                                            "REVIEW",
+                                                            style: TextStyle(
+                                                                color: Colors.white,
+                                                                fontSize: 22.0,
+                                                                fontWeight: FontWeight.bold),
+                                                          ),
+                                                        ),
+                                                      )),
+
+                                                ],
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                    Card(
+                                      margin:
+                                      EdgeInsets.symmetric(horizontal: 20.0, vertical: 5.0),
+                                      clipBehavior: Clip.antiAlias,
+                                      color: Colors.white,
+                                      elevation: 5.0,
+                                      child: Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 8.0, vertical: 22.0),
+                                        child: Row(
+                                          children: <Widget>[
+                                            Expanded(
+                                              child: Column(
+                                                children: <Widget>[
+                                                  Text(
+                                                    "Audience Ratings",
+                                                    style: TextStyle(
+                                                      color: Colors.deepPurple,
+                                                      fontSize: 22.0,
+                                                      fontWeight: FontWeight.bold,
+                                                    ),
+                                                  ),
+                                                  SizedBox(
+                                                    height: 5,
+                                                  ),
+                                                  Text(
+                                                    "Overall Rating: " + overallRating,
+                                                    textAlign: TextAlign.left,
+                                                    style: TextStyle(
+                                                      fontSize: 20.0,
+                                                      color: Colors.deepPurple,
+                                                      fontWeight: FontWeight.w500,
+                                                    ),
+                                                  ),
+                                                  Text(
+                                                    // "General Satisfaction: " + broadcasterFromDB.overall_satisfaction.toString(),
+                                                    "General Satisfaction: " +
+                                                        average_satisfaction_rating.toString(),
+                                                    textAlign: TextAlign.left,
+                                                    style: TextStyle(
+                                                      fontSize: 20.0,
+                                                      color: Colors.deepPurple,
+                                                      fontWeight: FontWeight.w500,
+                                                    ),
+                                                  ),
+                                                  Text(
+                                                    // "Interaction: " + broadcasterFromDB.overall_interactiveness.toString(),
+                                                    "Interaction: " +
+                                                        average_interaction_rating.toString(),
+                                                    textAlign: TextAlign.left,
+                                                    style: TextStyle(
+                                                      fontSize: 20.0,
+                                                      color: Colors.deepPurple,
+                                                      fontWeight: FontWeight.w500,
+                                                    ),
+                                                  ),
+                                                  Text(
+                                                    // "Entertainment: " + broadcasterFromDB.overall_entertainment.toString(),
+                                                    "Entertainment: " +
+                                                        average_entertainment_rating.toString(),
+                                                    textAlign: TextAlign.left,
+                                                    style: TextStyle(
+                                                      fontSize: 20.0,
+                                                      color: Colors.deepPurple,
+                                                      fontWeight: FontWeight.w500,
+                                                    ),
+                                                  ),
+                                                  Text(
+                                                    // "Skill Level: " + broadcasterFromDB.overall_skill.toString(),
+                                                    "Skill Level: " +
+                                                        average_skill_rating.toString(),
+                                                    textAlign: TextAlign.left,
+                                                    style: TextStyle(
+                                                      fontSize: 20.0,
+                                                      color: Colors.deepPurple,
+                                                      fontWeight: FontWeight.w500,
+                                                    ),
+                                                  ),
+                                                  SizedBox(
+                                                    height: 10,
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                        ListView.builder(
+                          shrinkWrap: true,
+                          itemBuilder: (context, index) =>
+                              ListTile(
+                                leading: Icon(Icons.gamepad),
+                                title: Text(rev[index]['review_content']),
                               ),
-                            )
+                          itemCount: rev.length,
+                        ),
+                                  ],
+                              ),
+                            ),
                           ],
                         ),
+                      ),
+                    ),
+                  ],
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
