@@ -10,6 +10,13 @@ import 'helper/database_helper.dart';
 import 'model/broadcaster_from_db.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+// void main() {
+//   runApp(new MaterialApp(
+//     home: new StreamerPage(),
+//   ));
+// }
+
+
 class StreamerPage extends StatefulWidget {
   String selection;
 
