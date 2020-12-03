@@ -9,7 +9,6 @@ import 'package:streamer_review/helper/database_helper.dart' as DBHelper;
 import 'helper/database_helper.dart';
 import 'model/broadcaster_from_db.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 
 // void main() {
 //   runApp(new MaterialApp(
@@ -17,13 +16,13 @@ import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 //   ));
 // }
 
+
 class StreamerPage extends StatefulWidget {
   String selection;
 
   StreamerPage(String selection) {
     this.selection = selection;
   }
-
   // StreamerPage(selection, {Key key, @required this.selection}): super(key: key);
 
   @override
@@ -31,6 +30,7 @@ class StreamerPage extends StatefulWidget {
 }
 
 class StreamerProfile extends State<StreamerPage> {
+
   String selection;
 
   StreamerProfile(String selection) {
@@ -50,26 +50,28 @@ class StreamerProfile extends State<StreamerPage> {
   int user_id = 1;
   BroadcasterFromDB b;
   bool offline = false;
-  bool isFavorite = false;
+
+
 
   Future<Streamer> getData() async {
     // print('SELECTION = ' + selection);
 
-    var url = 'https://api.twitch.tv/helix/search/channels?query=' + selection;
+    var url = 'https://api.twitch.tv/helix/search/channels?query='+ selection;
     // print(url);
 
-    http.Response response = await http.get(Uri.encodeFull(url), headers: {
-      "Authorization": "Bearer 5e46v0tks21zqvnloyua8e76bcsui9",
-      "Client-Id": "874uve10v0bcn3rmp2bq4cvz8fb5wj"
-    });
+    http.Response response = await http.get(
+        Uri.encodeFull(url),
+        headers: {
+          "Authorization": "Bearer 5e46v0tks21zqvnloyua8e76bcsui9",
+          "Client-Id": "874uve10v0bcn3rmp2bq4cvz8fb5wj"
+        });
 
     topStreamerInfo = json.decode(response.body);
     // print('!!!!!!!!!!!!!!!!!!!!!!!');
     // print(topStreamerInfo['data']);
     var temp;
-    for (int i = 0; i < topStreamerInfo['data'].length; i++) {
-      if (topStreamerInfo['data'][i]['display_name'].toString().toLowerCase() ==
-          selection.toLowerCase()) {
+    for(int i = 0; i < topStreamerInfo['data'].length; i++) {
+      if (topStreamerInfo['data'][i]['display_name'].toString().toLowerCase() == selection.toLowerCase()) {
         temp = topStreamerInfo['data'][i];
         break;
       }
@@ -86,7 +88,7 @@ class StreamerProfile extends State<StreamerPage> {
     // print(url);
 
     http.Response channelInformation =
-        await http.get(Uri.encodeFull(url), headers: {
+    await http.get(Uri.encodeFull(url), headers: {
       "Authorization": "Bearer 5e46v0tks21zqvnloyua8e76bcsui9",
       "Client-Id": "874uve10v0bcn3rmp2bq4cvz8fb5wj"
     });
@@ -100,7 +102,7 @@ class StreamerProfile extends State<StreamerPage> {
     var profilePictureUrl = data['data'][0]['profile_image_url'];
     var viewCount = data['data'][0]['view_count'];
     var streamer =
-        new Streamer(login, description, profilePictureUrl, viewCount);
+    new Streamer(login, description, profilePictureUrl, viewCount);
     DatabaseHelper2 d = DBHelper.DatabaseHelper2.instance;
     // var x = await d.selectBroadcaster(broadcaster_id);
     // print(x);
@@ -131,7 +133,7 @@ class StreamerProfile extends State<StreamerPage> {
     // print(url);
 
     http.Response channelInformation2 =
-        await http.get(Uri.encodeFull(url2), headers: {
+    await http.get(Uri.encodeFull(url2), headers: {
       "Authorization": "Bearer 5e46v0tks21zqvnloyua8e76bcsui9",
       "Client-Id": "874uve10v0bcn3rmp2bq4cvz8fb5wj"
     });
@@ -155,7 +157,7 @@ class StreamerProfile extends State<StreamerPage> {
     //   // streamers2.putIfAbsent(streamer.username, () => streamer);
     // }
     // print(streamers.length);
-    isFavorite = await d.isFavorite(int.parse(broadcaster_id));
+
     setState(() {
       topStreamer = streamer;
       text_reviews = reviews;
@@ -167,14 +169,6 @@ class StreamerProfile extends State<StreamerPage> {
         average_entertainment_rating = broadcasterFromDB.overall_entertainment;
         average_interaction_rating = broadcasterFromDB.overall_interactiveness;
         average_skill_rating = broadcasterFromDB.overall_skill;
-
-        if( average_satisfaction_rating == "NaN"){
-          average_satisfaction_rating = 0;
-          average_entertainment_rating =0;
-          average_interaction_rating = 0;
-          average_skill_rating = 0;
-        }
-
         // print(broadcasterFromDB.overall_skill);
       } else {
         broadcasterFromDB = new BroadcasterFromDB(0, 0, 0, 0);
@@ -182,33 +176,7 @@ class StreamerProfile extends State<StreamerPage> {
       // print(topStreamerFromDB);
       // topStreamerFromDB = sfd;
     });
-    // bool isFav = await d.isFavorite(int.parse(broadcaster_id));
-    // if (isFav) {
-    //   toggle = false;
-    // } else {
-    //   toggle = true;
-    // }
     return streamer;
-  }
-
-  Future<void> favorite() async {
-    String url = "https://api.twitch.tv/helix/users?id=" + broadcaster_id;
-
-    http.Response channelInformation =
-        await http.get(Uri.encodeFull(url), headers: {
-      "Authorization": "Bearer 5e46v0tks21zqvnloyua8e76bcsui9",
-      "Client-Id": "874uve10v0bcn3rmp2bq4cvz8fb5wj"
-    });
-
-    var data = json.decode(channelInformation.body);
-    var login = data['data'][0]['login'];
-
-    DatabaseHelper2 d = DBHelper.DatabaseHelper2.instance;
-    if (!isFavorite) {
-      await d.insertFavorite(int.parse(broadcaster_id));
-    } else {
-      await d.deleteFavorite(int.parse(broadcaster_id));
-    }
   }
 
   void openUrl() {
@@ -226,76 +194,23 @@ class StreamerProfile extends State<StreamerPage> {
   }
 
   static const String audience = "PG-13";
-
-  // static const String overallRating = "4/5";
-  // static const String satisfaction = "4/5";
-  // static const String interaction = "4/5";
-  // static const String entertainment = "4/5";
+  static const String overallRating = "4/5";
+  static const String satisfaction = "4/5";
+  static const String interaction = "4/5";
+  static const String entertainment = "4/5";
 
   @override
   Widget build(BuildContext context) {
     getData();
     final rev = text_reviews;
     return Scaffold(
-      backgroundColor: Colors.grey[500],
-      appBar: AppBar(
-          title: Text(
-            'STREVIEW',
-            style:
-                TextStyle(color: Colors.lightGreenAccent, letterSpacing: 1.5),
-          ),
-          actions: <Widget>[
-            // IconButton(
-            //   icon: Icon(Icons.logout),
-            //   alignment: Alignment.centerLeft,
-            //   onPressed: () {
-            //     secureStorage.deleteSecureData('email');
-            //     secureStorage.deleteSecureData('password');
-            //
-            //     Navigator.of(context).pushReplacement(FadePageRoute(
-            //       builder: (context) => LoginScreen(),
-            //     ));
-            //   },
-            // ),
-            // IconButton(
-            //   icon: Icon(Icons.person),
-            //   alignment: Alignment.centerLeft,
-            //   onPressed: () {
-            //     Navigator.pushNamed(context, '/profile');
-            //   },
-            // ),
-            IconButton(
-                icon: isFavorite
-                    ? Icon(Icons.favorite)
-                    : Icon(
-                        Icons.favorite_border,
-                      ),
-                onPressed: () {
-                  favorite();
-                  setState(() {
-                    // Here we changing the icon.
-                    if (isFavorite) {
-                      isFavorite = true;
-                    } else {
-                      isFavorite = false;
-                    }
-                  });
-                }),
-          ],
-          centerTitle: true,
-          backgroundColor: Colors.black54),
-      floatingActionButton: !offline
-          ? new FloatingActionButton(
-              child: const Icon(Icons.settings_input_antenna_sharp),
-              onPressed: openUrl,
-              backgroundColor: Colors.red,
-            )
-          : new FloatingActionButton(
+        floatingActionButton: !offline
+                ? null
+                : new FloatingActionButton(
               child: const Icon(Icons.settings_input_antenna_sharp),
               onPressed: openUrl,
               backgroundColor: Colors.green,
             ),
-
             floatingActionButtonLocation: FloatingActionButtonLocation.endTop,
       body: SingleChildScrollView(
         physics: NeverScrollableScrollPhysics(),
@@ -590,4 +505,20 @@ class StreamerProfile extends State<StreamerPage> {
       ),
     );
   }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 }

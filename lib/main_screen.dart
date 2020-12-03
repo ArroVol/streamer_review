@@ -5,7 +5,6 @@ import 'package:streamer_review/temp_favorites.dart';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:streamer_review/temp_settings.dart';
 
 import 'home.dart';
 

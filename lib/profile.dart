@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:streamer_review/helper/database_helper.dart' as DBHelper;
-import 'helper/database_helper.dart';
 
 class Profile extends StatefulWidget {
   @override
@@ -8,16 +6,8 @@ class Profile extends StatefulWidget {
 }
 
 class _ProfileState extends State<Profile> {
-  int numOfReviews;
-
-  Future<int> getNumReviews() async {
-    DatabaseHelper2 d = DBHelper.DatabaseHelper2.instance;
-    numOfReviews = await d.getNumUserReviews();
-  }
-
   @override
   Widget build(BuildContext context) {
-    getNumReviews();
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.black54,
@@ -45,7 +35,7 @@ class _ProfileState extends State<Profile> {
               'User Name',
               style: TextStyle(color: Colors.blueGrey, letterSpacing: 2.0),
             ),
-            SizedBox(width: 20),
+            SizedBox(height: 10),
             Text(
               'ExampleUser1234',
               style: TextStyle(
@@ -65,28 +55,12 @@ class _ProfileState extends State<Profile> {
                 SizedBox(width: 20),
                 Text(
                   'test@gmail.com',
-                  style: TextStyle(
+                  style:TextStyle(
                       color: Colors.lightGreenAccent[100],
                       fontSize: 18,
-                      letterSpacing: 1),
+                      letterSpacing: 1
+                  ),
                 ),
-                // SizedBox(width: 20),
-                // Text("Number of Reviews made: " + numOfReviews.toString())
-              ],
-            ),
-            Row(
-              children: <Widget>[
-                Icon(
-                  Icons.star,
-                  color: Colors.grey[400],
-                ),
-                SizedBox(width: 20),
-                Text("Number of Reviews made: " + numOfReviews.toString(),
-                    style: TextStyle(
-                        color: Colors.lightGreenAccent[100],
-                        fontSize: 18,
-                        letterSpacing: 1)),
-                SizedBox(height: 10),
               ],
             ),
           ],

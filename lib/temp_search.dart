@@ -2,52 +2,47 @@ import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:streamer_review/search_landing_container.dart';
 import 'package:streamer_review/streamer.dart';
 import 'package:http/http.dart' as http;
 import 'package:streamer_review/streamer_screen.dart';
-
-import 'package:streamer_review/helper/database_helper.dart' as DBHelper;
-import 'helper/database_helper.dart';
-import 'model/broadcaster_from_db.dart';
 
 class SearchPage extends SearchDelegate<String> {
   var data;
   var topStreamerInfo;
   Streamer topStreamer;
-  List<String> streamerList = [];
-
-  List<String> streamerList2 = [];
+  var streamerList = [];
   List countries = [];
   List filteredCountries = [];
   bool isSearching = false;
 
   var selection;
-  var recentSearchList = [];
-  bool offline = false;
-
+  final recentStreamerList = ['ninja'];
 
   Future<List> getStreamers() async {
+
+    // print('in get streamers');
+    // var uri =
+    // Uri.https('https://api.twitch.tv/helix/search/channels?query=',  query.toString());
     // var url = 'https://api.twitch.tv/helix/streams?user_id=' + query + '&?first=10';
-    var url = 'https://api.twitch.tv/helix/search/channels?query=' +
-        query +
-        '&?first=5';
+    var url = 'https://api.twitch.tv/helix/search/channels?query=' + query + '&?first=5';
     // print(url);
     http.Response response = await http.get(Uri.encodeFull(url), headers: {
       "Authorization": "Bearer 5e46v0tks21zqvnloyua8e76bcsui9",
       "Client-Id": "874uve10v0bcn3rmp2bq4cvz8fb5wj"
     });
     streamerList.clear();
-    streamerList2.clear();
     data = json.decode(response.body);
-
+    // print(data['data']);
+    // print(data['data'].length);
     if (data['data'].length > 0) {
       for (int i = 0; i < data['data'].length; i++) {
+        // int number = i + 1;
+        // print(number.toString() + '.) ' + data['data'][i]['display_name']);
         streamerList.add(data['data'][i]['display_name']);
-        streamerList2.add(data['data'][i]['id'].toString());
       }
       print(streamerList);
     }
+    // var streamer = new Streamer('test', 'test', 'test', 10);
     return streamerList;
   }
 
@@ -56,6 +51,7 @@ class SearchPage extends SearchDelegate<String> {
     streamerList = list;
     return streamerList;
   }
+
 
   @override
   List<Widget> buildActions(BuildContext context) {
@@ -86,79 +82,35 @@ class SearchPage extends SearchDelegate<String> {
   @override
   // ignore: missing_return
   Widget buildResults(BuildContext context) {
-    if (query.isNotEmpty) {
-      recentSearchList.add(query);
-      recentSearchList = new List.from(recentSearchList .reversed);
-    }
-    return FutureBuilder(
-        builder: (context, projectSnap) {
-          // if (projectSnap.connectionState == ConnectionState.none &&
-          //     projectSnap.hasData == null) {
-          //   //print('project snapshot data is: ${projectSnap.data}');
-          //   return Container();
-          // }
-          return ListView.builder(
-            itemBuilder: (context, index) => Container(
-              child: SearchContainer(streamerList2),
-            ),
-            itemCount: streamerList.length,
-          );
-        },
-        future: getStreamers());
+    // print("building===========================================");
+    // getStreamers();
   }
 
   @override
   Widget buildSuggestions(BuildContext context) {
-    final searchResults = query.isEmpty ? recentSearchList : streamerList;
-    return FutureBuilder(
-      builder: (context, projectSnap) {
-        // if (projectSnap.connectionState == ConnectionState.none &&
-        //     projectSnap.hasData == null) {
-        //   //print('project snapshot data is: ${projectSnap.data}');
-        //   return Container();
-        // }
-        return ListView.builder(
-          itemBuilder: (context, index) => ListTile(
-            onTap: () {
-              selection = searchResults[index];
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => StreamerPage(selection)));
-              // streamerList = searchResults;
-            },
-            leading: Icon(Icons.gamepad),
-            title: Text(searchResults[index]),
-          ),
-          itemCount: searchResults.length,
-        );
-      },
-      future: getStreamers(),
+    // print(query);
+    // getStreamers();
+
+    getter();
+    final searchResults = streamerList;
+    return ListView.builder(
+      itemBuilder: (context, index) => ListTile(
+        onTap: () {
+          selection = streamerList[index];
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) =>
+                      StreamerPage(selection)));
+        },
+        leading: Icon(Icons.gamepad),
+        title: Text(searchResults[index]),
+      ),
+      itemCount: searchResults.length,
     );
   }
-// @override
-// Widget buildSuggestions(BuildContext context) {
-//   // print(query);
-//   // getStreamers();
-//
-//   getter();
-//   final searchResults = streamerList;
-//   return ListView.builder(
-//     itemBuilder: (context, index) => ListTile(
-//       onTap: () {
-//         selection = streamerList[index];
-//         Navigator.push(
-//             context,
-//             MaterialPageRoute(
-//                 builder: (context) =>
-//                     StreamerPage(selection)));
-//       },
-//       leading: Icon(Icons.gamepad),
-//       title: Text(searchResults[index]),
-//     ),
-//     itemCount: searchResults.length,
-//   );
-// }
+
+
 
 // @override
 // Widget buildSuggestions(BuildContext context) {

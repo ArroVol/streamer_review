@@ -5,8 +5,8 @@ import 'package:streamer_review/main_screen.dart';
 import 'package:streamer_review/profile.dart';
 import 'package:streamer_review/register.dart';
 import 'package:streamer_review/secure_storage/secure_storage.dart';
-import 'login.dart';
-import 'main_screen.dart';
+
+
 final SecureStorage secureStorage = SecureStorage();
 final FlutterSecureStorage _secureStorage = FlutterSecureStorage();
 
