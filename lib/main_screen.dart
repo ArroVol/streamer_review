@@ -20,8 +20,8 @@ class _MainScreenState extends State<MainScreen> {
     HomeScreen(),
     // StreamerPage(),
     // HomePage(),
-    // FavoritesPage(),
-    SettingsPage(),
+    FavoritesPage(),
+    // SettingsPage(),
     Profile(),
   ];
 
@@ -109,8 +109,8 @@ class _MainScreenState extends State<MainScreen> {
           HomeScreen(),
           // StreamerPage(),
           // HomePage(),
-          // FavoritesPage(),
-          SettingsPage(),
+          FavoritesPage(),
+          // SettingsPage(),
           Profile()
 
         ].elementAt(index);

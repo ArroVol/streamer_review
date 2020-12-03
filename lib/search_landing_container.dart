@@ -1,9 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:streamer_review/favorite_card.dart';
-import 'package:streamer_review/streamer.dart';
-import 'package:streamer_review/streamer_thumb.dart';
-import 'package:streamer_review/helper/database_helper.dart' as DBHelper;
-import 'helper/database_helper.dart';
 import 'landing_card.dart';
 
 class SearchContainer extends StatefulWidget {
@@ -38,8 +33,11 @@ class _SearchContainer  extends State<SearchContainer > {
     );
   }
 
+  var temp;
+
   Future<List<LandingCard>> getStreamerList() async {
     List<LandingCard> streamerList1 = new List<LandingCard>();
+
       int tempCount =0;
     if (streamerList != null) {
       for (int i = 0; i < 9; i++) {
@@ -61,8 +59,6 @@ class _SearchContainer  extends State<SearchContainer > {
     return streamerList1;
   }
 
-  var temp;
-  List<String> idList = new List<String>();
 
   @override
   void initState() {

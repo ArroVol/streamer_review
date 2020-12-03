@@ -46,16 +46,8 @@ class _FavoritesContainer extends State<FavoritesContainer> {
         // print(
         //     "new card was supposedly made?----------------------------------------------------------------------------------");
         streamerList.add(favCard);
-        // print("favCard added to list");
       }
     }
-    // if (idList != null) {
-    //   for (int i = 0; i < idList.length; i++) {
-    //     FavoriteCard favCards = new FavoriteCard(idList[i].toString());
-    //     streamerList.add(favCards);
-    //   }
-    // }
-    // print(streamerList.length);
     if (streamerList != null) {
       setState(() {
         favList = streamerList;

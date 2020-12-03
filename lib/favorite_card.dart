@@ -13,8 +13,8 @@ import 'model/broadcaster_from_db.dart';
 class FavoriteCard extends StatefulWidget {
   String streamerId;
 
-  FavoriteCard(String streamerId){
-    this.streamerId= streamerId;
+  FavoriteCard(String streamerId) {
+    this.streamerId = streamerId;
   }
 
   @override
@@ -51,13 +51,13 @@ class _FavoriteCard extends State<FavoriteCard> {
       "Client-Id": "874uve10v0bcn3rmp2bq4cvz8fb5wj"
     });
     data = json.decode(channelInformation.body);
-    if(data!= null) {
+    if (data != null) {
       var login = data['data'][0]['login'];
       var description = data['data'][0]['description'];
       var profilePictureUrl = data['data'][0]['profile_image_url'];
       var viewCount = data['data'][0]['view_count'];
       var streamer =
-      new Streamer(login, description, profilePictureUrl, viewCount);
+          new Streamer(login, description, profilePictureUrl, viewCount);
       DatabaseHelper2 d = DBHelper.DatabaseHelper2.instance;
 
       await d.selectBroadcaster(streamerId).then((value) {
@@ -76,7 +76,7 @@ class _FavoriteCard extends State<FavoriteCard> {
       var url2 = "https://api.twitch.tv/helix/search/channels?query=" + login;
 
       http.Response channelInformation2 =
-      await http.get(Uri.encodeFull(url2), headers: {
+          await http.get(Uri.encodeFull(url2), headers: {
         "Authorization": "Bearer 5e46v0tks21zqvnloyua8e76bcsui9",
         "Client-Id": "874uve10v0bcn3rmp2bq4cvz8fb5wj"
       });
@@ -89,15 +89,18 @@ class _FavoriteCard extends State<FavoriteCard> {
         if (b != null) {
           broadcasterFromDB = b;
           average_satisfaction_rating = broadcasterFromDB.overall_satisfaction;
-          average_entertainment_rating = broadcasterFromDB.overall_entertainment;
-          average_interaction_rating = broadcasterFromDB.overall_interactiveness;
+          average_entertainment_rating =
+              broadcasterFromDB.overall_entertainment;
+          average_interaction_rating =
+              broadcasterFromDB.overall_interactiveness;
           average_skill_rating = broadcasterFromDB.overall_skill;
           calcScore();
         } else {
           broadcasterFromDB = new BroadcasterFromDB(0, 0, 0, 0);
         }
       });
-
+      print(
+          "making card++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
       return streamer;
     }
   }

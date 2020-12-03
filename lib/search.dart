@@ -25,7 +25,7 @@ class SearchPage extends SearchDelegate<String> {
   var selection;
   var recentSearchList = [];
   bool offline = false;
-  String broadcaster_id;
+
 
   Future<List> getStreamers() async {
     // var url = 'https://api.twitch.tv/helix/streams?user_id=' + query + '&?first=10';
@@ -40,18 +40,14 @@ class SearchPage extends SearchDelegate<String> {
     streamerList.clear();
     streamerList2.clear();
     data = json.decode(response.body);
-    // print(data['data']+ "===================================================================");
-    // print(data['data'].length);
+
     if (data['data'].length > 0) {
       for (int i = 0; i < data['data'].length; i++) {
-        // int number = i + 1;
-        // print(number.toString() + '.) ' + data['data'][i]['display_name']);
         streamerList.add(data['data'][i]['display_name']);
         streamerList2.add(data['data'][i]['id'].toString());
       }
       print(streamerList);
     }
-    // var streamer = new Streamer('test', 'test', 'test', 10);
     return streamerList;
   }
 

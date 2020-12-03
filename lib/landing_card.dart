@@ -129,7 +129,7 @@ class _LandingCard extends State<LandingCard> {
             ),
       ),
          decoration: BoxDecoration( //                    <-- BoxDecoration
-        border: Border(bottom: BorderSide()),
+        border: Border(bottom: BorderSide(color: Colors.black12)),
       ),
     );
   }
