@@ -7,8 +7,6 @@ import 'package:streamer_review/helper/database_helper.dart' as DBHelper;
 import 'package:http/http.dart' as http;
 import 'helper/database_helper.dart';
 
-
-
 class ReviewPage extends StatefulWidget {
   String broadcaster_id;
   ReviewPage(String broadcaster_id) {

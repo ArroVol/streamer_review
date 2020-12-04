@@ -1,17 +1,25 @@
 import 'package:flutter/material.dart';
 
 class Profile extends StatefulWidget {
+
   @override
   _ProfileState createState() => _ProfileState();
+
 }
 
 class _ProfileState extends State<Profile> {
+  // final SecureStorage secureStorage = SecureStorage();
+  String email ='';
+
+  void initState() {
+    super.initState();
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.black54,
-        title: Text('User'),
+        title: Text('Settings'),
         centerTitle: true,
         elevation: 0,
       ),
@@ -54,12 +62,20 @@ class _ProfileState extends State<Profile> {
                 ),
                 SizedBox(width: 20),
                 Text(
-                  'test@gmail.com',
+                  '$email',
                   style:TextStyle(
                       color: Colors.lightGreenAccent[100],
                       fontSize: 18,
                       letterSpacing: 1
                   ),
+
+                ),
+                CheckboxListTile(
+                  value: true,
+                  title: Text("This is a CheckBoxPreference"),
+                  onChanged: (value) {
+
+                  },
                 ),
               ],
             ),
@@ -68,4 +84,11 @@ class _ProfileState extends State<Profile> {
       ),
     );
   }
+
+  Future _getUserName() async {
+    print("in get");
+    // String email = await secureStorage.readSecureData("email");
+    print(email);
+  }
+
 }
