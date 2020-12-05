@@ -1,20 +1,180 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+import 'package:streamer_review/streamer.dart';
 import 'package:streamer_review/streamer_screen.dart';
+import 'dart:async';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
+import 'package:streamer_review/helper/database_helper.dart' as DBHelper;
+import 'helper/database_helper.dart';
+import 'model/broadcaster_from_db.dart';
 
 class FavoriteCard extends StatefulWidget {
+  String streamerId;
+
+  FavoriteCard(String streamerId) {
+    this.streamerId = streamerId;
+  }
+
   @override
-  _FavoriteCard createState() => _FavoriteCard();
+  _FavoriteCard createState() => _FavoriteCard(streamerId);
 }
 
 class _FavoriteCard extends State<FavoriteCard> {
+  String streamerId;
+
+  _FavoriteCard(String streamerId) {
+    this.streamerId = streamerId;
+    getData();
+  }
+
+  var data;
+  var topStreamerInfo;
+  Streamer topStreamer;
+  BroadcasterFromDB broadcasterFromDB;
+  var average_satisfaction_rating;
+  var average_entertainment_rating;
+  var average_interaction_rating;
+  var average_skill_rating;
+  String broadcaster_id;
+  int user_id = 1;
+  BroadcasterFromDB b;
+  bool offline = false;
+  String userName;
+
+  // Future<Streamer> getData() async {
+  //   var url = "https://api.twitch.tv/helix/users?id=" + streamerId;
+  //
+  //   http.Response channelInformation =
+  //       await http.get(Uri.encodeFull(url), headers: {
+  //     "Authorization": "Bearer 5e46v0tks21zqvnloyua8e76bcsui9",
+  //     "Client-Id": "874uve10v0bcn3rmp2bq4cvz8fb5wj"
+  //   });
+  //   data = json.decode(channelInformation.body);
+  //   if (data != null) {
+  //     var login = data['data'][0]['login'];
+  //     var description = data['data'][0]['description'];
+  //     var profilePictureUrl = data['data'][0]['profile_image_url'];
+  //     var viewCount = data['data'][0]['view_count'];
+  //     var streamer =
+  //         new Streamer(login, description, profilePictureUrl, viewCount);
+  //     DatabaseHelper2 d = DBHelper.DatabaseHelper2.instance;
+  //
+  //     await d.selectBroadcaster(streamerId).then((value) {
+  //       if (value.isNotEmpty) {
+  //         b = new BroadcasterFromDB(
+  //             value[0]['overall_satisfaction'],
+  //             value[0]['overall_skill'],
+  //             value[0]['overall_entertainment'],
+  //             value[0]['overall_interactiveness']);
+  //       }
+  //     }, onError: (error) {
+  //       print(error);
+  //     });
+  //     await d.updateBroadcaster(broadcaster_id, user_id, login);
+  //
+  //     var url2 = "https://api.twitch.tv/helix/search/channels?query=" + login;
+  //
+  //     http.Response channelInformation2 =
+  //         await http.get(Uri.encodeFull(url2), headers: {
+  //       "Authorization": "Bearer 5e46v0tks21zqvnloyua8e76bcsui9",
+  //       "Client-Id": "874uve10v0bcn3rmp2bq4cvz8fb5wj"
+  //     });
+  //
+  //     data = json.decode(channelInformation2.body);
+  //     offline = data['data'][0]['is_live'];
+  //
+  //     setState(() {
+  //       topStreamer = streamer;
+  //       if (b != null) {
+  //         broadcasterFromDB = b;
+  //         average_satisfaction_rating = broadcasterFromDB.overall_satisfaction;
+  //         average_entertainment_rating =
+  //             broadcasterFromDB.overall_entertainment;
+  //         average_interaction_rating =
+  //             broadcasterFromDB.overall_interactiveness;
+  //         average_skill_rating = broadcasterFromDB.overall_skill;
+  //         if( average_satisfaction_rating == "NaN"){
+  //           average_satisfaction_rating = 0;
+  //           average_entertainment_rating =0;
+  //           average_interaction_rating = 0;
+  //           average_skill_rating = 0;
+  //         }else {
+  //           calcScore();
+  //         }
+  //       } else {
+  //         broadcasterFromDB = new BroadcasterFromDB(0, 0, 0, 0);
+  //       }
+  //     });
+  //     print(
+  //         "making card++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
+  //     return streamer;
+  //   }
+  // }
+
+  Future<String> getData() async {
+    DatabaseHelper2 d = DBHelper.DatabaseHelper2.instance;
+
+    await d.selectBroadcaster(streamerId).then((value) {
+      if (value.isNotEmpty) {
+        b = new BroadcasterFromDB(
+            value[0]['overall_satisfaction'],
+            value[0]['overall_skill'],
+            value[0]['overall_entertainment'],
+            value[0]['overall_interactiveness']);
+        userName = value[0]['broadcaster_name'];
+      }
+    }, onError: (error) {
+      print(error);
+    });
+    // await d.updateBroadcaster(broadcaster_id, user_id, login);
+
+    setState(() {
+      // topStreamer = streamer;
+      if (b != null) {
+        broadcasterFromDB = b;
+        average_satisfaction_rating = broadcasterFromDB.overall_satisfaction;
+        average_entertainment_rating =
+            broadcasterFromDB.overall_entertainment;
+        average_interaction_rating =
+            broadcasterFromDB.overall_interactiveness;
+        average_skill_rating = broadcasterFromDB.overall_skill;
+        if (average_satisfaction_rating == "NaN") {
+          average_satisfaction_rating = 0;
+          average_entertainment_rating = 0;
+          average_interaction_rating = 0;
+          average_skill_rating = 0;
+        } else {
+          calcScore();
+        }
+      } else {
+        broadcasterFromDB = new BroadcasterFromDB(0, 0, 0, 0);
+      }
+    });
+    // print(
+    //     "making card++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
+    return userName;
+  }
+
+  var averageScore;
+
+  void calcScore() {
+    averageScore = (average_entertainment_rating +
+        average_satisfaction_rating +
+        average_interaction_rating +
+        average_skill_rating) /
+        4;
+  }
+
+
   @override
   Widget build(BuildContext context) {
+    getData();
     return Card(
       margin: EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
       clipBehavior: Clip.antiAlias,
-      color: Colors.white,
+      color: Colors.grey[850],
       elevation: 5.0,
       child: new InkWell(
         onTap: () {
@@ -22,26 +182,29 @@ class _FavoriteCard extends State<FavoriteCard> {
               context,
               MaterialPageRoute(
                   builder: (context) =>
-                      StreamerPage('SlyFoxHound')));;
+                      StreamerPage(
+                        userName,
+                      )));
         },
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 4.0, vertical: 6.0),
+          padding:
+          const EdgeInsets.symmetric(horizontal: 4.0, vertical: 6.0),
           child: Column(
             children: <Widget>[
               ListTile(
-                leading: CircleAvatar(
-                  backgroundImage: NetworkImage(
-                    'https://static-cdn.jtvnw.net/jtv_user_pictures/00d4514a-e300-4f00-8ca9-b6094577af49-profile_image-70x70.png',
-                  ),
-                  radius: 30.0,
-                ),
+                //       leading: CircleAvatar(
+                //         backgroundImage:
+                //             NetworkImage(topStreamer.profilePictureUrl),
+                //         radius: 30.0,
+                //       ),
                 title: Text(
-                  "SlyFoxHound",
+                  userName.toUpperCase(),
                   textAlign: TextAlign.center,
                   style: TextStyle(
-                    color: Colors.deepPurple,
-                    fontSize: 22.0,
-                    fontWeight: FontWeight.bold,
+                      color: Colors.grey[400],
+                      fontSize: 22.0,
+                      fontWeight: FontWeight.bold,
+                      letterSpacing: 1.5
                   ),
                 ),
                 subtitle: Column(
@@ -49,51 +212,32 @@ class _FavoriteCard extends State<FavoriteCard> {
                     Align(
                       alignment: Alignment.topLeft,
                     ),
-                    RatingBar.builder(
-                      initialRating: 3,
+                    average_satisfaction_rating == 0
+                        ? Text(
+                      "n/a",
+                      textAlign: TextAlign.left,
+                      style: TextStyle(
+                        fontSize: 20.0,
+                        color: Colors.lightGreenAccent[100],
+                        fontWeight: FontWeight.w500,
+                      ),
+                    )
+                        : RatingBar.builder(
+                      initialRating: averageScore,
                       minRating: 1,
                       direction: Axis.horizontal,
-                      allowHalfRating: false,
+                      allowHalfRating: true,
                       itemCount: 5,
                       itemSize: 30.0,
                       // itemPadding: EdgeInsets.symmetric(horizontal: 4.0),
                       itemBuilder: (context, _) => Icon(
                         Icons.star,
-                        color: Colors.amber,
+                        color: Colors.lightGreenAccent[100],
                       ),
-                      // onRatingUpdate: (rating) {
-                      //   // entertainment_rating = rating;
-                      //   // print(rating);
-                      // },
                     ),
                   ],
                 ),
-                trailing: Icon(
-                  Icons.favorite,
-                  size: 35.0,
-                  color: Colors.deepPurple[800],
-                ),
               ),
-              // Column(
-              //     children: <Widget>[
-              //       RatingBar.builder(
-              //         initialRating: 3,
-              //         minRating: 1,
-              //         direction: Axis.horizontal,
-              //         allowHalfRating: false,
-              //         itemCount: 5,
-              //         itemPadding: EdgeInsets.symmetric(horizontal: 4.0),
-              //         itemBuilder: (context, _) => Icon(
-              //           Icons.star,
-              //           color: Colors.amber,
-              //         ),
-              //         onRatingUpdate: (rating) {
-              //           // entertainment_rating = rating;
-              //           // print(rating);
-              //         },
-              //       ),
-              //     ],
-              //   ),
             ],
           ),
         ),

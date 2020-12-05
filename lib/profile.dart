@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:streamer_review/secure_storage/secure_storage.dart';
-
+import 'package:streamer_review/helper/database_helper.dart' as DBHelper;
+import 'helper/database_helper.dart';
 import 'custom_route.dart';
 import 'login.dart';
 
@@ -11,6 +12,26 @@ class Profile extends StatefulWidget {
 
 class _ProfileState extends State<Profile> {
   final SecureStorage secureStorage = SecureStorage();
+
+  int numOfReviews;
+  String userEmail;
+
+  Future<int> getNumReviews() async {
+    DatabaseHelper2 d = DBHelper.DatabaseHelper2.instance;
+    var numOfReviews2 = await d.getNumUserReviews();
+    var userEmail2 = await d.getUserEmail();
+    setState(() {
+
+      numOfReviews = numOfReviews2;
+      userEmail = userEmail2;
+    });
+  }
+
+  @override
+  void initState() {
+    getNumReviews();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -60,13 +81,28 @@ class _ProfileState extends State<Profile> {
                 ),
                 SizedBox(width: 20),
                 Text(
-                  'test@gmail.com',
+                  userEmail,
                   style:TextStyle(
                       color: Colors.lightGreenAccent[100],
                       fontSize: 18,
                       letterSpacing: 1
                   ),
                 ),
+              ],
+            ),
+            Row(
+              children: <Widget>[
+                Icon(
+                  Icons.star,
+                  color: Colors.grey[400],
+                ),
+                SizedBox(width: 20),
+                Text("Number of Reviews made: " + numOfReviews.toString(),
+                    style: TextStyle(
+                        color: Colors.lightGreenAccent[100],
+                        fontSize: 18,
+                        letterSpacing: 1)),
+                SizedBox(height: 10),
               ],
             ),
             OutlineButton(onPressed: () {

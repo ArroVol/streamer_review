@@ -228,7 +228,8 @@ class LoginScreen extends StatelessWidget {
           // Navigator.pushReplacementNamed(context, '/main_screen');
 
         Navigator.of(context).pushReplacement(FadePageRoute(
-            builder: (context) => Register(),
+            // builder: (context) => Register(),
+            builder: (context) => MainScreen(),
           )
         );
         } else {
