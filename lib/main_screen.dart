@@ -1,11 +1,10 @@
 
 import 'package:streamer_review/profile.dart';
-import 'package:streamer_review/register.dart';
-import 'package:streamer_review/temp_favorites.dart';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
+import 'favorites.dart';
 import 'home.dart';
 
 class MainScreen extends StatefulWidget {
@@ -23,15 +22,15 @@ class _MainScreenState extends State<MainScreen> {
     FavoritesPage(),
     // SettingsPage(),
     Profile(),
-    Register(),
   ];
 
   @override
   Widget build(BuildContext context) {
 
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Colors.grey[850],
       bottomNavigationBar: BottomNavigationBar(
+        backgroundColor: Colors.grey[850],
         type: BottomNavigationBarType.fixed,
         currentIndex: _selectedIndex,
         showSelectedLabels: false,
@@ -43,12 +42,11 @@ class _MainScreenState extends State<MainScreen> {
             icon: Icon(
               Icons.home,
               color: Colors.grey,
-
             ),
             title: Text('HOME'),
             activeIcon: Icon(
               Icons.home,
-              color: Colors.deepPurple[800],
+              color: Colors.lightGreenAccent,
             ),
           ),
           // BottomNavigationBarItem(
@@ -70,7 +68,7 @@ class _MainScreenState extends State<MainScreen> {
             title: Text('FAVORITES'),
             activeIcon: Icon(
               Icons.favorite,
-              color: Colors.deepPurple[800],
+              color: Colors.lightGreenAccent,
             ),
           ),
           BottomNavigationBarItem(
@@ -81,7 +79,7 @@ class _MainScreenState extends State<MainScreen> {
             title: Text('SETTINGS'),
             activeIcon: Icon(
               Icons.settings,
-              color: Colors.deepPurple[800],
+              color: Colors.lightGreenAccent,
             ),
           ),
         ],
@@ -112,7 +110,6 @@ class _MainScreenState extends State<MainScreen> {
           // HomePage(),
           FavoritesPage(),
           Profile(),
-          Register()
           // SettingsPage(),
         ].elementAt(index);
       },
@@ -134,4 +131,3 @@ class _MainScreenState extends State<MainScreen> {
     );
   }
 }
-

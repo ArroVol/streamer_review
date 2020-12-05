@@ -519,7 +519,7 @@ class StreamerReview extends State<ReviewPage> {
                                             child: Column(
                                               children: <Widget>[
                                                 Text(
-                                                  "Skill Level",
+                                                  "Additional Comments",
                                                   style: TextStyle(
                                                     color: Colors.deepPurple,
                                                     fontSize: 22.0,
