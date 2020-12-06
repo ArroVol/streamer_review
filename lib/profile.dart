@@ -38,7 +38,11 @@ class _ProfileState extends State<Profile> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.black54,
-        title: Text('User'),
+        title: Text('User',
+        style: TextStyle(
+          color: Colors.lightGreenAccent,
+          letterSpacing: 1.5,
+        ),),
         centerTitle: true,
         elevation: 0,
       ),

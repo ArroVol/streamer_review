@@ -1,22 +1,26 @@
 import 'package:flutter/material.dart';
 
+import 'category.dart';
+
 class CustomizeHome extends StatefulWidget {
   @override
   _CustomizeHomeState createState() => _CustomizeHomeState();
 }
 
 class _CustomizeHomeState extends State<CustomizeHome> {
-  List<String> categories = [
-    'Gaming',
-    'Food & Drinks',
-        'Sports & Fitness',
-    'Talk Shows & Podcasts',
-    'Just Chatting',
-    'Makers & Crafting',
-    'Tabletop RPGs',
-    'Science & Technologies',
-    'Music & Performing Arts',
-    'Beauty & Body Art'
+  List<Category> categories = [
+    new Category('Favorites', true),
+    new Category('Random', true),
+    new Category('Gaming', true),
+    new Category('Food & Drinks', true),
+    new Category('Sports & Fitness', true),
+    new Category('Talk Shows & Podcasts', true),
+    new Category('Just Chatting', true),
+    new Category('Makers & Crafting', true),
+    new Category('Tabletop RPGs', true),
+    new Category('Science & Technologies', true),
+    new Category('Music & Performing Arts', true),
+    new Category('Beauty & Body Art', true)
   ];
 
   @override
@@ -24,7 +28,7 @@ class _CustomizeHomeState extends State<CustomizeHome> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          'Customize',
+          'Customize Home Screen',
           style: TextStyle(
             letterSpacing: 1.5,
             color: Colors.lightGreenAccent,
@@ -32,30 +36,41 @@ class _CustomizeHomeState extends State<CustomizeHome> {
         ),
         backgroundColor: Colors.black54,
       ),
-      body: ReorderableListView(
-          onReorder: onReorder,
-          children: getListItems()),
+      body: ReorderableListView(onReorder: onReorder, children: getListItems()),
+        backgroundColor: Colors.black45,
     );
   }
 
-  List<ListTile> getListItems() => categories
+  List<SwitchListTile> getListItems() => categories
       .asMap()
       .map((index, item) => MapEntry(index, buildTenableListTile(item, index)))
       .values
       .toList();
 
-  ListTile buildTenableListTile(String item, int index) => ListTile(
-        key: ValueKey(item),
-        title: Text(item),
-        leading: Text("#${index + 1}"),
+  SwitchListTile buildTenableListTile(Category category, int index) =>
+      SwitchListTile(
+        key: ValueKey(category.category),
+        title: Text(
+          category.category,
+          style: TextStyle(
+            color: Colors.lightGreenAccent,
+          ),
+        ),
+        activeColor: Colors.lightGreenAccent,
+        value: category.selected,
+        onChanged: (bool value) {
+          setState(() {
+            category.selected = value;
+          });
+        },
       );
 
-  void onReorder(int oldIndex, int newIndex){
-    if(newIndex > oldIndex) {
+  void onReorder(int oldIndex, int newIndex) {
+    if (newIndex > oldIndex) {
       newIndex -= 1;
     }
-    setState((){
-      String category = categories[oldIndex];
+    setState(() {
+      Category category = categories[oldIndex];
 
       categories.removeAt(oldIndex);
       categories.insert(newIndex, category);
