@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:streamer_review/secure_storage/secure_storage.dart';
 import 'package:streamer_review/helper/database_helper.dart' as DBHelper;
+import 'customize_home.dart';
 import 'helper/database_helper.dart';
 import 'custom_route.dart';
 import 'login.dart';
@@ -21,7 +22,6 @@ class _ProfileState extends State<Profile> {
     var numOfReviews2 = await d.getNumUserReviews();
     var userEmail2 = await d.getUserEmail();
     setState(() {
-
       numOfReviews = numOfReviews2;
       userEmail = userEmail2;
     });
@@ -82,11 +82,10 @@ class _ProfileState extends State<Profile> {
                 SizedBox(width: 20),
                 Text(
                   userEmail,
-                  style:TextStyle(
+                  style: TextStyle(
                       color: Colors.lightGreenAccent[100],
                       fontSize: 18,
-                      letterSpacing: 1
-                  ),
+                      letterSpacing: 1),
                 ),
               ],
             ),
@@ -105,21 +104,46 @@ class _ProfileState extends State<Profile> {
                 SizedBox(height: 10),
               ],
             ),
-            OutlineButton(onPressed: () {
-              secureStorage.deleteSecureData('email');
-              secureStorage.deleteSecureData('password');
+            OutlineButton(
+              onPressed: () {
+                Navigator.push(context, MaterialPageRoute(builder: (context) => CustomizeHome()));
+              },
+              child: Container(
+                height: 30,
+                width: 100,
+                child: Align(
+                  alignment: Alignment.center,
+                  child: Text('Customize',
+                      style: TextStyle(
+                          color: Colors.lightGreenAccent[100],
+                          fontSize: 18,
+                          letterSpacing: 1)),
+                ),
+              ),
+            ),
+            OutlineButton(
+              onPressed: () {
+                secureStorage.deleteSecureData('email');
+                secureStorage.deleteSecureData('password');
 
-              Navigator.of(context, rootNavigator: true).pushReplacement(FadePageRoute(
-                builder: (context) => new LoginScreen(),
-              ));
-            },
-              child: Text('Logout',
-                  style: TextStyle(
-                      color: Colors.lightGreenAccent[100],
-                      fontSize: 18,
-                      letterSpacing: 1
-                  )),
-            )
+                Navigator.of(context, rootNavigator: true)
+                    .pushReplacement(FadePageRoute(
+                  builder: (context) => new LoginScreen(),
+                ));
+              },
+              child: Container(
+                height: 30,
+                width: 100,
+                child: Align(
+                  alignment: Alignment.center,
+                  child: Text('Logout',
+                      style: TextStyle(
+                          color: Colors.lightGreenAccent[100],
+                          fontSize: 18,
+                          letterSpacing: 1)),
+                ),
+              ),
+            ),
           ],
         ),
       ),
