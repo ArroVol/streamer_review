@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:streamer_review/helper/database_helper.dart';
+import 'package:streamer_review/main.dart';
 import 'package:streamer_review/model/user.dart';
 import 'package:streamer_review/repository/broadcaster_repository.dart';
 import 'package:streamer_review/repository/user_favorites_repository.dart';
@@ -105,6 +106,23 @@ class _MyHomePageState extends State<AaronsMain2> {
                   print(queryRows);
                 },
                 child: Text('query all tag names')),
+            FlatButton(
+                onPressed: () async {
+                  List<Map<String, dynamic>> queryRows =  await DatabaseHelper2.instance.broadcasterTagRepository.selectAllBroadcastersByBroadcasterTag('Gaming');
+                  print(queryRows);
+                },
+                child: Text('select all broadcasters by tag: gaming')),
+            FlatButton(
+                onPressed: () async {
+                  List<Map<String, dynamic>> queryRows =  await DatabaseHelper2.instance.broadcasterTagRepository.selectAllBroadcasterTagsByBroadcaster(222555);
+                  print(queryRows);
+                },
+                child: Text('query all tags from a broadcaster')),
+            FlatButton(
+                onPressed: () async {
+                  String email =  await secureStorage.readSecureData('email');
+                },
+                child: Text('check whats in secure storage')),
           ],
         ),
       ),

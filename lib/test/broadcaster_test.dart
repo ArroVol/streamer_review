@@ -7,6 +7,8 @@ import 'package:streamer_review/repository/user_favorites_repository.dart';
 import 'package:streamer_review/repository/user_repository.dart';
 import 'package:streamer_review/widgets/anotherMain.dart';
 
+import '../main.dart';
+
 // import 'model/user.dart';
 
 void main() {
@@ -107,7 +109,7 @@ class _MyHomePageState extends State<AaronsMain2> {
 
             FlatButton(
                 onPressed: () async {
-                  secureStorage.writeSecureData("email", "goobytest@gmail.com");
+                  // secureStorage.writeSecureData("email", "goobytest@gmail.com");
                   await DatabaseHelper2.instance.insertFavorite(229729353);
                 },
                 child: Text('insert favorite')),

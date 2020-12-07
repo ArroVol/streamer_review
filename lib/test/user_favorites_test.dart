@@ -7,6 +7,8 @@ import 'package:streamer_review/repository/user_favorites_repository.dart';
 import 'package:streamer_review/repository/user_repository.dart';
 import 'package:streamer_review/widgets/anotherMain.dart';
 
+import '../main.dart';
+
 // import 'model/user.dart';
 
 void main() {
@@ -59,7 +61,6 @@ class _MyHomePageState extends State<AaronsMain2> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-
             new TextField(
               decoration:
               new InputDecoration.collapsed(hintText: "input favorite broadcaster id"),
@@ -74,7 +75,6 @@ class _MyHomePageState extends State<AaronsMain2> {
               },
             ),
 
-
             FlatButton(
                 onPressed: () async {
                   List<Map<String, dynamic>> queryRows =
@@ -86,18 +86,16 @@ class _MyHomePageState extends State<AaronsMain2> {
             FlatButton(
                 onPressed: () async {
                   if(secureStorage.readSecureData('email') == null) {
-                    secureStorage.writeSecureData(
-                        "email", "goobytest@gmail.com");
+                    // secureStorage.writeSecureData(
+                    //     "email", "goobytest@gmail.com");
+                    print('null email');
                   }
-                  await DatabaseHelper2.instance.insertFavorite(_iD);
+                  print('id: $_iD');
+                  if(_iD != null) {
+                    await DatabaseHelper2.instance.insertFavorite(_iD);
+                  }
                 },
                 child: Text('insert favorite')),
-            FlatButton(
-                onPressed: () async {
-                  List<Map<String, dynamic>> queryRows = await DatabaseHelper2.instance.queryAllFavorites();
-                  print(queryRows);
-                },
-                child: Text('query favorite')),
             FlatButton(
                 onPressed: () async {
                   List<Map<String, dynamic>> queryRows =

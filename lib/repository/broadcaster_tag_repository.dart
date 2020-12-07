@@ -67,7 +67,7 @@ class BroadcasterTagRepository {
   }
 
   Future<List<Map<String, dynamic>>> selectAllBroadcasterTagsByBroadcaster(
-      broadcasterId, tagName) async {
+      broadcasterId) async {
     // get a reference to the database
     Database db = await DatabaseHelper2.instance.database;
     // raw query

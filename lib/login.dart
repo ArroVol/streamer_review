@@ -226,6 +226,10 @@ class LoginScreen extends StatelessWidget {
       onSubmitAnimationCompleted: () {
         if(signedUp){
           print("user has first time sign up");
+          secureStorage.writeSecureData("email", _email);
+
+          secureStorage.writeSecureData("password", _password);
+
           // Navigator.pushReplacementNamed(context, '/main_screen');
 
         Navigator.of(context).pushReplacement(FadePageRoute(

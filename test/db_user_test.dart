@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:streamer_review/helper/database_helper.dart';
+import 'package:streamer_review/main.dart';
 import 'package:streamer_review/model/user.dart';
 import 'package:streamer_review/repository/broadcaster_repository.dart';
 import 'package:streamer_review/repository/user_favorites_repository.dart';

@@ -6,6 +6,8 @@ import 'package:streamer_review/repository/user_favorites_repository.dart';
 import 'package:streamer_review/repository/user_repository.dart';
 import 'package:streamer_review/widgets/anotherMain.dart';
 
+import '../main.dart';
+
 // import 'model/user.dart';
 
 void main() {

@@ -18,6 +18,7 @@ class UserFavoritesRepository {
     int userId = await DatabaseHelper2.instance.getUserIdByEmail(userEmail);
     print("**inserting favorite: $userId**");
 
+    // await db.rawQuery('SELECT * FROM ')
     await db.rawQuery(
         'INSERT INTO user_favorites (fk_broadcaster_id, fk_user_id) VALUES(?, ?)',
         [broadcasterId, userId]);

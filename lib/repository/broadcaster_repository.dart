@@ -97,6 +97,7 @@ class BroadcasterRepository  {
             temp_interaction_rating
           ]);
     } else {
+      print("broadcaster already exists");
       db.rawQuery(
           'UPDATE broadcaster_table SET overall_satisfaction = ?, overall_skill = ?, overall_entertainment = ?, overall_interactiveness = ? WHERE broadcaster_id = ?',
           [

@@ -8,6 +8,11 @@ import 'model/user.dart';
 
 /// This classes finalizes the users account.
 class Register extends StatelessWidget {
+
+  // Navigator.of(context, rootNavigator: true)
+  //     .pushReplacement(FadePageRoute(
+  // builder: (context) => new WhateverTheRegistrationScreenisCalled(),
+  // ));
   static const routeName = '/auth';
   bool verifiedRegistration = false;
 
@@ -19,6 +24,9 @@ class Register extends StatelessWidget {
 
   String userName;
   String phoneNumber;
+
+  String userNameUnSubmitted;
+  String phoneNumberUnSubmitted;
 
   @override
   Widget build(BuildContext context) {
@@ -33,6 +41,9 @@ class Register extends StatelessWidget {
         userName = value;
         DatabaseHelper2 d = DBHelper.DatabaseHelper2.instance;
       // checkUserName(value);
+      },
+      onChanged: (userNameOnChanged){
+        userNameUnSubmitted = userNameOnChanged;
       },
       decoration: const InputDecoration(
         icon: Icon(Icons.person),
@@ -49,6 +60,9 @@ class Register extends StatelessWidget {
         phoneNumber = value;
         DatabaseHelper2 d = DBHelper.DatabaseHelper2.instance;
         // checkPhoneNumber(value);
+      },
+      onChanged: (phoneNumberOnChanged){
+       phoneNumberUnSubmitted = phoneNumberOnChanged;
       },
       decoration: const InputDecoration(
         icon: Icon(Icons.person),
@@ -69,11 +83,26 @@ class Register extends StatelessWidget {
             .width,
         padding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
         onPressed: () {
-          print('pressed in login button');
+          print('pressed login button');
           print(phoneNumber);
-          checkPhoneNumber(phoneNumber);
-          print(userName);
-          checkUserName(userName);
+          if(phoneNumber == null && phoneNumberUnSubmitted != null){
+            print("switching for onchanged for phone number");
+            phoneNumber = phoneNumberUnSubmitted;
+            print(phoneNumber);
+          }
+          if(phoneNumber != null) {
+            checkPhoneNumber(phoneNumber);
+          }
+
+          if(userName == null && userNameUnSubmitted != null){
+            print("switching for onchanged for user name");
+            userName = userNameUnSubmitted;
+            print(userName);
+          }
+          print('user name: $userName');
+          if(userName != null) {
+            checkUserName(userName);
+          }
 
           print(userNameVerified);
           print(phoneVerified);
@@ -82,6 +111,8 @@ class Register extends StatelessWidget {
             Navigator.of(context).pushReplacement(FadePageRoute(
               builder: (context) => MainScreen(),
             ));
+          } else {
+            print('fields arent completed');
           }
         },
         child: Text(
@@ -169,7 +200,7 @@ class Register extends StatelessWidget {
   /// [userName], the user name of the user.
   Future<bool> checkUserName(String userName) async {
     String email = await secureStorage.readSecureData("email");
-    print("in check");
+    print("in user check");
     if (!await DatabaseHelper2.instance.checkByUserName(userName)) {
       print("the user name doesnt exist");
       List<User> pulledUser = await DatabaseHelper2.instance.getUserByEmail(
@@ -192,8 +223,8 @@ class Register extends StatelessWidget {
   /// [phoneNumber], the phoneNumber of the user.
   Future<bool> checkPhoneNumber(String phoneNumber) async {
     String email = await secureStorage.readSecureData("email");
-    print("in check");
-    if (await DatabaseHelper2.instance.getPhoneNumber(phoneNumber) == null) {
+    print("in phone check");
+    if (await DatabaseHelper2.instance.getPhoneNumber(phoneNumber)== null) {
       print("the phone Number doesnt exist");
       List<User> pulledUser = await DatabaseHelper2.instance.getUserByEmail(
           email);
