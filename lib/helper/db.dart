@@ -29,7 +29,7 @@ class DBProvider {
     // secureStorage.deleteSecureData('email');
     // secureStorage.deleteSecureData('password');
     Directory documentsDirectory = await getApplicationDocumentsDirectory();
-    final path = join(documentsDirectory.path, 'employee_manager.db');
+    final path = join(documentsDirectory.path, 'streamer_review.db');
 
     return await openDatabase(path, version: 1, onOpen: (db) {},
         onCreate: (Database db, int version) async {

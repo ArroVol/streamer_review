@@ -20,8 +20,6 @@ class Register extends StatelessWidget {
   String userName;
   String phoneNumber;
 
-  // Register({this.email});
-
   @override
   Widget build(BuildContext context) {
     final formKey = new GlobalKey<FormState>();
@@ -166,6 +164,9 @@ class Register extends StatelessWidget {
     );
   }
 
+  /// This method checks to see if the user entered a phone number that already exists in the DB
+  ///
+  /// [userName], the user name of the user.
   Future<bool> checkUserName(String userName) async {
     String email = await secureStorage.readSecureData("email");
     print("in check");
@@ -186,7 +187,9 @@ class Register extends StatelessWidget {
       print("the user name already exists");
     }
     }
-
+  /// This method checks to see if the user entered a phone number that already exists in the DB
+  ///
+  /// [phoneNumber], the phoneNumber of the user.
   Future<bool> checkPhoneNumber(String phoneNumber) async {
     String email = await secureStorage.readSecureData("email");
     print("in check");

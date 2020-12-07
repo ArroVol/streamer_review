@@ -4,6 +4,10 @@ import 'package:sqflite/sqflite.dart';
 import 'package:streamer_review/model/broadcaster_tag.dart';
 import 'package:streamer_review/model/user.dart';
 import 'package:streamer_review/repository/broadcaster_repository.dart';
+import 'package:streamer_review/repository/broadcaster_tag_repository.dart';
+import 'package:streamer_review/repository/review_repository.dart';
+import 'package:streamer_review/repository/user_favorites_repository.dart';
+import 'package:streamer_review/repository/user_repository.dart';
 
 import 'package:streamer_review/streamer.dart';
 import 'package:streamer_review/streamer_thumb.dart';
@@ -20,7 +24,7 @@ import 'DatabaseCreator.dart';
 class DatabaseHelper2 {
   //These are not given a type because it will automatically take the type that it is given first to it
   // Database name and database version are specified.
-  static final _dbName = 'myDatabase24.db';
+  static final _dbName = 'myDatabase25.db';
   static final _dbVersion = 1;
   static final _tableName = '_user_table';
   static final _reviewTable = 'reviews';
@@ -28,7 +32,11 @@ class DatabaseHelper2 {
   // The secure storage that holds the user logged in.
   final SecureStorage secureStorage = SecureStorage();
 
-  BroadcasterRepository broadcasterRepository = new BroadcasterRepository();
+  BroadcasterRepository broadcasterRepository = BroadcasterRepository();
+  BroadcasterTagRepository broadcasterTagRepository = BroadcasterTagRepository();
+  UserRepository userRepository = UserRepository();
+  UserFavoritesRepository userFavoritesRepository = UserFavoritesRepository();
+  ReviewRepository reviewRepository = ReviewRepository();
 
   //Fields given to the user table
   static final columnId = '_id';
@@ -91,7 +99,7 @@ class DatabaseHelper2 {
     db.execute('''
       CREATE TABLE broadcaster_table(
       broadcaster_id INTEGER PRIMARY KEY,
-      broadcaster_name TEXT NOT NULL,
+      broadcaster_name TEXT,
       overall_satisfaction REAL, 
       overall_skill REAL, 
       overall_entertainment REAL, 
@@ -129,12 +137,39 @@ class DatabaseHelper2 {
     db.execute('''
       CREATE TABLE broadcaster_tags(
       tags_id INTEGER PRIMARY KEY AUTOINCREMENT,
-      tag_name TEXT,
+      fk_user_id INTEGER,
+      fk_tag_name TEXT,
       fk_broadcaster_id INTEGER,
       FOREIGN KEY (fk_broadcaster_id)
-        REFERENCES broadcaster_table(broadcaster_id)
+        REFERENCES broadcaster_table(broadcaster_id),
+      FOREIGN KEY (fk_user_id)
+        REFERENCES _user_table(_id),
+      FOREIGN KEY (fk_tag_name)
+        REFERENCES tag_names(tag_name) 
       )
       ''');
+
+    db.execute('''
+      CREATE TABLE tag_names(
+      tag_id INTEGER PRIMARY KEY AUTOINCREMENT,
+      tag_name TEXT
+      )
+      ''');
+    // db.execute('''
+    //   CREATE TABLE broadcaster_tags(
+    //   tags_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    //   tag_name TEXT,
+    //   fk_broadcaster_id INTEGER,
+    //   FOREIGN KEY (fk_broadcaster_id)
+    //     REFERENCES broadcaster_table(broadcaster_id)
+    //   )
+    //   ''');
+
+    // db.execute(
+    //     ''' INSERT INTO tag_names (tag_name)
+    // VALUES('Gaming')
+    // ''');
+    insertTags(db);
 
     // db.execute(
     //     ''' INSERT INTO _user_table (email, password, phone_number, user_name)
@@ -804,6 +839,49 @@ class DatabaseHelper2 {
     return await db.query("user_favorites");
   }
 
+  void insertTags(Database db) async {
+    db.execute(
+        ''' INSERT INTO tag_names (tag_name)
+    VALUES('Gaming')
+    ''');
+    db.execute(
+        ''' INSERT INTO tag_names (tag_name)
+    VALUES('Food & Drinks')
+    ''');
+    db.execute(
+        ''' INSERT INTO tag_names (tag_name)
+    VALUES('Sports & Fitness')
+    ''');
+    db.execute(
+        ''' INSERT INTO tag_names (tag_name)
+    VALUES('Talk Shows & Podcasts')
+    ''');
+    db.execute(
+        ''' INSERT INTO tag_names (tag_name)
+    VALUES('Just Chatting')
+    ''');
+    db.execute(
+        ''' INSERT INTO tag_names (tag_name)
+    VALUES('Makers & Crafting')
+    ''');
+    db.execute(
+        ''' INSERT INTO tag_names (tag_name)
+    VALUES('Tabletop RPGs')
+    ''');
+    db.execute(
+        ''' INSERT INTO tag_names (tag_name)
+    VALUES('Science & Technologies')
+    ''');
+    db.execute(
+        ''' INSERT INTO tag_names (tag_name)
+    VALUES('Music & Performing Arts')
+    ''');
+    db.execute(
+        ''' INSERT INTO tag_names (tag_name)
+    VALUES('Beauty & Body Art')
+    ''');
+
+  }
 
 }
 

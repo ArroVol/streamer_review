@@ -85,6 +85,7 @@ class BroadcasterRepository  {
         [broadcaster_id]);
     count = result.length;
     if (count == 0) {
+      print("broadcaster doesnt exist");
       db.rawQuery(
           'INSERT INTO broadcaster_table (broadcaster_id, broadcaster_name, overall_satisfaction, overall_entertainment, overall_interactiveness, overall_skill) VALUES(?, ?, ?, ?, ?, ?)',
           [

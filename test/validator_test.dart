@@ -1,5 +1,3 @@
-// import 'package:login_demo/login_page.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:streamer_review/helper/database_helper.dart';
@@ -7,17 +5,10 @@ import 'package:streamer_review/helper/database_helper.dart' as DBHelper;
 import 'package:streamer_review/model/review.dart';
 import 'package:streamer_review/model/user.dart';
 
-import 'package:streamer_review/widgets/anotherMain.dart';
 
 void main() {
-  // TestWidgetsFlutterBinding.ensureInitialized();
-  // WidgetsFlutterBinding.ensureInitialized();
-  // runApp(MyApp());
 
   test('query users', () async {
-    // WidgetsFlutterBinding.ensureInitialized();
-    // TestWidgetsFlutterBinding.ensureInitialized();
-    // runApp(MyApp());
     TestWidgetsFlutterBinding.ensureInitialized();
 
     DatabaseHelper2 d = DBHelper.DatabaseHelper2.instance;
@@ -32,31 +23,10 @@ void main() {
     User user = new User();
     List.generate(result2.toString().length, (i) {
       userList.add(User(
-        // id: user[i]['_id'],
-        // email: user[i]['email'],
-        // password: user[i]['password'],
-        // userName: user[i]['user_name'],
-        // phoneNumber: user[i]['phone_number'],
       ));
     });
-   // print(userList.length);
     int id = userList.first.id;
-    // print(id);
-    // for(var x in result2){
-    //   print(x);
-    // }
-    // print(result2);
     expect(48, userList.length);
-
-    // var db = await openDatabase('myDatabase24.db');
-
-    // final result = EmailFieldValidator.validate('');
-    // expect(result, 'Email can\'t be empty');
-    // Database db2 = DatabaseHelper2.instance;
-    // List<Map> result = await db.rawQuery(
-    //     'SELECT * FROM broadcaster_table WHERE broadcaster_id=?',
-    //     [2224]);
-    // print(db.path);
   });
 
 
@@ -97,8 +67,6 @@ void main() {
       userList.add(Review(
       ));
     });
-    // int id = userList.first.id;
-    // print(id);
     expect(48, userList.length);
   });
   test('non-empty email returns null', () async {

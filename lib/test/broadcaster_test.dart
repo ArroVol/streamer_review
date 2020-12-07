@@ -98,12 +98,12 @@ class _MyHomePageState extends State<AaronsMain2> {
                 },
                 child: Text('query all broadcasters')),
 
-            FlatButton(
-                onPressed: () async {
-                  List<Map<String, dynamic>> queryRows = await DatabaseHelper2.instance.selectBroadcaster(_iD);
-                  print(queryRows);
-                },
-                child: Text('query selected broadcaster')),
+            // FlatButton(
+            //     onPressed: () async {
+            //       List<Map<String, dynamic>> queryRows = await DatabaseHelper2.instance.selectBroadcaster(_iD);
+            //       print(queryRows);
+            //     },
+            //     child: Text('query selected broadcaster')),
 
             FlatButton(
                 onPressed: () async {
@@ -126,11 +126,11 @@ class _MyHomePageState extends State<AaronsMain2> {
 
                 },
                 child: Text('query all users')),
-            FlatButton(
-                onPressed: () async {
-                  await DatabaseHelper2.instance.insertBroadcaster(0, 0,0 ,0, 222555, 7);
-                },
-                child: Text('insert broadcaster')),
+            // FlatButton(
+            //     onPressed: () async {
+            //       await DatabaseHelper2.instance.insertBroadcaster(0, 0,0 ,0, 222555, 7);
+            //     },
+            //     child: Text('insert broadcaster')),
             // FlatButton(
             //     onPressed: () async {
             //       await DatabaseHelper2.instance.insertBroadcasterTag(222555, 'funny');
@@ -141,7 +141,7 @@ class _MyHomePageState extends State<AaronsMain2> {
                   List<Map<String, dynamic>> queryRows = await DatabaseHelper2.instance.queryAllFavorites();
                   print(queryRows);
                 },
-                child: Text('query broadcaster tag')),
+                child: Text('query all favorites')),
             FlatButton(
                 onPressed: () async {
                   List<Map<String, dynamic>> queryRows = await DatabaseHelper2.instance.selectReviews(229729353, 1);
@@ -164,6 +164,29 @@ class _MyHomePageState extends State<AaronsMain2> {
                   await DatabaseHelper2.instance.updateBroadcaster(229729353, 1, 1);
                 },
                 child: Text('update broadcaster')),
+            FlatButton(
+                onPressed: () async {
+                  List<Map<String, dynamic>> queryRows =  await DatabaseHelper2.instance.broadcasterTagRepository.insertBroadcasterTag(69420, 'Just Chatting', 1);
+                  print(queryRows);
+                },
+                child: Text('insert broadcaster tag')),
+            FlatButton(
+                onPressed: () async {
+                  List<Map<String, dynamic>> queryRows =  await DatabaseHelper2.instance.broadcasterTagRepository.selectAllTags();
+                  print(queryRows);
+                },
+                child: Text('query all broadcaster tag')),
+            FlatButton(
+                onPressed: () async {
+                  List<Map<String, dynamic>> queryRows =  await DatabaseHelper2.instance.broadcasterTagRepository.queryAllfromTagNames();
+                  print(queryRows);
+                },
+                child: Text('query all tag names')),
+            FlatButton(
+                onPressed: () async {
+                  await DatabaseHelper2.instance.broadcasterRepository.insertBroadcaster(0, 0, 0, 0, _iD);
+                },
+                child: Text('insert broadcaster ')),
           ],
 
         ),

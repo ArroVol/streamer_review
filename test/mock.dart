@@ -1,8 +1,6 @@
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:streamer_review/helper/database_helper.dart';
-// import 'package:sqlcool/sqlcool.dart';
-// import 'base.dart';
 
 import 'package:streamer_review/helper/database_helper.dart' as DBHelper;
 import 'package:http/http.dart' as http;

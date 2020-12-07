@@ -39,10 +39,17 @@ class UserFavoritesRepository {
   }
 
   /// This method queries all favorites by the user who is currently logged in.
-  Future<List<Map<String, dynamic>>> queryAllFavoritesByUser() async {
+  Future<List<Map<String, dynamic>>> queryAllFavoritesByUserLoggedIn() async {
     Database db = await DatabaseHelper2.instance.database;
     String userEmail = await secureStorage.readSecureData("email");
     int userId = await DatabaseHelper2.instance.getUserIdByEmail(userEmail);
+    return await db
+        .query('user_favorites', where: 'fk_user_id = ?', whereArgs: [userId]);
+  }
+
+  /// This method queries all favorites by the user id specified to the method.
+  Future<List<Map<String, dynamic>>> queryAllFavoritesByUserSpecified(int userId) async {
+    Database db = await DatabaseHelper2.instance.database;
     return await db
         .query('user_favorites', where: 'fk_user_id = ?', whereArgs: [userId]);
   }
