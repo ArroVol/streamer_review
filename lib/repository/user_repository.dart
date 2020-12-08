@@ -218,6 +218,20 @@ class UserRepository {
     print('The user name: $userName DOES NOT match one in the db');
     return false;
   }
+  /// Checks to see if the user's user name exists in the database.
+  ///
+  /// [userName], user's user name.
+  Future<bool> checkByPhoneNumber(String phoneNumber) async {
+    Database db = await DatabaseHelper2.instance.database;
+    List<Map<String, dynamic>> userPulled = await db
+        .query('_user_table', where: 'phone_number = ?', whereArgs: [phoneNumber]);
+    if (userPulled.isNotEmpty) {
+      print('The #: $phoneNumber matches one in the db');
+      return true;
+    }
+    print('The #: $phoneNumber DOES NOT match one in the db');
+    return false;
+  }
   /// Checks to see if the phone number exists in the database.
   ///
   /// [user], the current user.

@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:streamer_review/expansion_row_container.dart';
-import 'package:streamer_review/temp_search.dart';
+import 'package:streamer_review/streamer_thumb.dart';
+import 'package:streamer_review/push_notifications.dart';
+import 'package:streamer_review/search.dart';
 import 'package:streamer_review/widgets/anotherMain.dart';
 
 import 'custom_route.dart';
+import 'featuredStreamer.dart';
 import 'login.dart';
-import 'main.dart';
 
 class HomeScreen extends StatelessWidget {
   @override
@@ -20,25 +22,6 @@ class HomeScreen extends StatelessWidget {
             ),
             actions: <Widget>[
               IconButton(
-                icon: Icon(Icons.logout),
-                alignment: Alignment.centerLeft,
-                onPressed: () {
-                  secureStorage.deleteSecureData('email');
-                  secureStorage.deleteSecureData('password');
-
-                  Navigator.of(context).pushReplacement(FadePageRoute(
-                    builder: (context) => LoginScreen(),
-                  ));
-                },
-              ),
-              IconButton(
-                icon: Icon(Icons.person),
-                alignment: Alignment.centerLeft,
-                onPressed: () {
-                  Navigator.pushNamed(context, '/profile');
-                },
-              ),
-              IconButton(
                   icon: Icon(Icons.search),
                   onPressed: () {
                     showSearch(context: context, delegate: SearchPage());
@@ -51,24 +34,14 @@ class HomeScreen extends StatelessWidget {
           child: ListView(
             scrollDirection: Axis.vertical,
             children: <Widget>[
-              Center(
-                child: Container(
-                  child: Column(
-                    children: <Widget>[
-                      // StreamerThumb(),
-                      Text(
-                        'Featured Streamer',
-                      ),
-                    ],
-                  ),
-                ),
-              ),
+              FeaturedStreamer(),
               Divider(
                 height: 10,
                 color: Colors.black38,
               ),
               Text('Favorites'),
               ExpansionTile(
+                trailing: Icon(Icons.add_sharp),
                 children: [
                   ExpansionRowContainer(),
                 ],

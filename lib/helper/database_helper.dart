@@ -25,6 +25,7 @@ class DatabaseHelper2 {
   //These are not given a type because it will automatically take the type that it is given first to it
   // Database name and database version are specified.
   static final _dbName = 'myDatabase25.db';
+
   static final _dbVersion = 1;
   static final _tableName = '_user_table';
   static final _reviewTable = 'reviews';
@@ -99,7 +100,7 @@ class DatabaseHelper2 {
     db.execute('''
       CREATE TABLE broadcaster_table(
       broadcaster_id INTEGER PRIMARY KEY,
-      broadcaster_name TEXT,
+      broadcaster_name TEXT NOT NULL,
       overall_satisfaction REAL, 
       overall_skill REAL, 
       overall_entertainment REAL, 
@@ -137,16 +138,25 @@ class DatabaseHelper2 {
     db.execute('''
       CREATE TABLE broadcaster_tags(
       tags_id INTEGER PRIMARY KEY AUTOINCREMENT,
-      fk_user_id INTEGER,
-      fk_tag_name TEXT,
+      tag_name TEXT,
       fk_broadcaster_id INTEGER,
       FOREIGN KEY (fk_broadcaster_id)
-        REFERENCES broadcaster_table(broadcaster_id),
-      FOREIGN KEY (fk_user_id)
-        REFERENCES _user_table(_id),
-      FOREIGN KEY (fk_tag_name)
-        REFERENCES tag_names(tag_name) 
+        REFERENCES broadcaster_table(broadcaster_id)
       )
+      ''');
+
+    db.execute('''
+      CREATE TABLE text_reviews(
+      favorites_id INTEGER PRIMARY KEY AUTOINCREMENT, 
+      review_content TEXT,
+      submission_date TEXT,
+      fk_broadcaster_id INTEGER,
+      fk_user_id INTEGER,
+       FOREIGN KEY (fk_broadcaster_id)
+        REFERENCES broadcaster_table(broadcaster_id),
+       FOREIGN KEY (fk_user_id)
+         REFERENCES _user_table(_id)  
+        )
       ''');
 
     db.execute('''
@@ -187,6 +197,17 @@ class DatabaseHelper2 {
   //   final Database db = await _holder.db;
   //   // delete database
   // }
+
+  Future<List<Map<String, dynamic>>> selectAllBroadcasterTagsByBroadcaster(
+      broadcasterId) async {
+    // get a reference to the database
+    Database db = await DatabaseHelper2.instance.database;
+    // raw query
+    List<Map> result = await db.rawQuery(
+        'SELECT * FROM broadcaster_tags WHERE broadcaster_id=?',
+        [broadcasterId]);
+    return result;
+  }
   Future<void> insertUser(User user) async {
     // Get a reference to the database.
     final Database db = await instance.database;
@@ -450,7 +471,7 @@ class DatabaseHelper2 {
     return result;
   }
 
-  Future<List<Map<String, dynamic>>> selectAllBroadcasterTagsByBroadcaster(
+  Future<List<Map<String, dynamic>>> selectAllBroadcasterTagsByBroadcaster2(
       broadcasterId, tagName) async {
     // get a reference to the database
     Database db = await DatabaseHelper2.instance.database;
@@ -485,6 +506,54 @@ class DatabaseHelper2 {
     // {_id: 1, name: Bob, age: 23}
     // {_id: 2, name: Mary, age: 32}
     // {_id: 3, name: Susan, age: 12}
+  }
+
+  Future<int> getNumUserReviews() async {
+    String userEmail = await secureStorage.readSecureData("email");
+    int userId = await DatabaseHelper2.instance.getUserIdByEmail(userEmail);
+    // get a reference to the database
+    Database db = await DatabaseHelper2.instance.database;
+
+    // raw query
+    List<Map> result = await db
+        .rawQuery('SELECT * FROM reviews WHERE fk_user_id=?', [userId]);
+
+    int numOfReviews = result.length;
+
+    return numOfReviews;
+  }
+
+  Future<String> getUserEmail() async {
+    String userEmail = await secureStorage.readSecureData("email");
+    return userEmail;
+  }
+
+  Future<List<Map<String, dynamic>>> selectTextReviews(
+      broadcaster_id) async {
+    Database db = await DatabaseHelper2.instance.database;
+
+    // raw query
+    List<Map> result = await db.rawQuery(
+        'SELECT * FROM text_reviews WHERE fk_broadcaster_id=? ORDER BY datetime(submission_date) DESC',
+        [broadcaster_id]);
+
+    return result;
+  }
+
+  Future<void> insertTextReviews(
+      review_content, submission_date, broadcaster_id, user_id) async {
+    // get a reference to the database
+    int count = 0;
+    Database db = await DatabaseHelper2.instance.database;
+
+    await db.rawQuery(
+        'INSERT INTO text_reviews (review_content, submission_date, fk_broadcaster_id, fk_user_id) VALUES(?, ?, ?, ?)',
+        [
+          review_content,
+          submission_date,
+          broadcaster_id,
+          user_id
+        ]);
   }
 
   Future<List<Map<String, dynamic>>> selectReviews(
@@ -698,7 +767,7 @@ class DatabaseHelper2 {
     // `conflictAlgorithm` to use in case the same user is inserted twice.
     // In this case, replace any previous data.
     await db.rawQuery(
-        'INSERT INTO user_favorites (fk_broadcaster_id, fk_user_id) VALUES(?, ?)',
+        'INSERT OR IGNORE INTO user_favorites (fk_broadcaster_id, fk_user_id) VALUES(?, ?)',
         [broadcasterId, userId]);
   }
   Future<int> deleteFavorite(int broadcasterId) async {
@@ -710,6 +779,49 @@ class DatabaseHelper2 {
     int deletedRow = await db.delete('user_favorites', where: 'fk_broadcaster_id = ?', whereArgs: [broadcasterId]);
     return deletedRow;
   }
+
+  Future<bool> isFavorite(int broadcasterId) async {
+    Database db = await DatabaseHelper2.instance.database;
+    String userEmail = await secureStorage.readSecureData("email");
+    int userId = await DatabaseHelper2.instance.getUserIdByEmail(userEmail);
+    //
+    // List<Map<String, dynamic>> isFav = await db
+    //     .query('_user_favorites', where: '(k_broadcaster_id = ?,  fk_user_id = ?', whereArgs: [broadcasterId, userId]);
+
+    var isFav = await db.rawQuery(
+        'SELECT * FROM user_favorites WHERE fk_broadcaster_id = ? AND fk_user_id = ?',
+        [broadcasterId, userId]);
+    // print(isFav);
+
+    if (isFav.length != 0) {
+      // print('is favorite');
+      return true;
+    } else {
+      // print('is not favorite');
+      return false;
+    }
+  }
+
+  Future<List> getFavorites() async {
+    Database db = await DatabaseHelper2.instance.database;
+    String userEmail = await secureStorage.readSecureData("email");
+    int userId = await DatabaseHelper2.instance.getUserIdByEmail(userEmail);
+
+    var favorites = await db.rawQuery(
+        'SELECT * FROM user_favorites WHERE fk_user_id = ?', [userId]);
+    // print(isFav);
+    // print(favorites);
+    return favorites;
+    // if (isFav.length != 0) {
+    //   // print('is favorite');
+    //   return favorites;
+    // } else {
+    //   // print('is not favorite');
+    //   return false;
+    // }
+  }
+
+
 
   // int is used to make all id values unique since they are auto incremented by 1
   Future<int> insert(Map<String, dynamic> row) async {

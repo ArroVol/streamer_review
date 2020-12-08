@@ -89,7 +89,7 @@ class LoginScreen extends StatelessWidget {
       ),
       theme: LoginTheme(
         primaryColor: Colors.lightGreenAccent,
-        accentColor: Colors.yellow,
+        accentColor: Colors.lightGreenAccent,
         errorColor: Colors.deepOrange,
         pageColorLight: Colors.black12,
         pageColorDark: Colors.black87,

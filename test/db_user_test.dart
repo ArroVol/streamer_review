@@ -1,4 +1,6 @@
+import 'package:dev_test/dev_test.dart';
 import 'package:flutter/material.dart';
+import 'package:sqflite/sqflite.dart';
 import 'package:streamer_review/helper/database_helper.dart';
 import 'package:streamer_review/main.dart';
 import 'package:streamer_review/model/user.dart';
@@ -10,6 +12,18 @@ import 'package:streamer_review/widgets/anotherMain.dart';
 
 void main() {
   runApp(MyApp());
+
+  // test('return the database', () async {
+  //
+  //   // TestWidgetsFlutterBinding.ensureInitialized();
+  //   // final result = EmailFieldValidator.validate('');
+  //   // expect(result, 'Email can\'t be empty');
+  //   Database db = await DatabaseHelper2.instance.database;
+  //   List<Map> result = await db.rawQuery(
+  //       'SELECT * FROM broadcaster_table WHERE broadcaster_id=?',
+  //       [2224]);
+  //   // print(db.path);
+  // });
 }
 
 class MyApp extends StatelessWidget {
@@ -24,6 +38,7 @@ class MyApp extends StatelessWidget {
         ),
         home: AaronsMain()
 
+      // home: ColorCircle(title: 'Color Circle',),
     );
   }
 }

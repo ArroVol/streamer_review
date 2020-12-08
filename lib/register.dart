@@ -1,19 +1,36 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
-import 'package:streamer_review/helper/database_helper.dart' as DBHelper;
+import 'package:streamer_review/main.dart';
 import 'package:streamer_review/secure_storage/secure_storage.dart';
+import 'package:streamer_review/helper/database_helper.dart' as DBHelper;
+
 import 'custom_route.dart';
 import 'helper/database_helper.dart';
 import 'main_screen.dart';
 import 'model/user.dart';
 
-/// This classes finalizes the users account.
-class Register extends StatelessWidget {
 
-  // Navigator.of(context, rootNavigator: true)
-  //     .pushReplacement(FadePageRoute(
-  // builder: (context) => new WhateverTheRegistrationScreenisCalled(),
-  // ));
-  static const routeName = '/auth';
+class RegisterApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Retrieve Text Input',
+      home: Register(),
+    );
+  }
+}
+
+// Define a custom Form widget.
+class Register extends StatefulWidget {
+  @override
+ RegisterForm createState() => RegisterForm();
+}
+
+// Define a corresponding State class.
+// This class holds the data related to the Form.
+class RegisterForm extends State<Register> {
+
   bool verifiedRegistration = false;
 
   final SecureStorage secureStorage = SecureStorage();
@@ -28,19 +45,31 @@ class Register extends StatelessWidget {
   String userNameUnSubmitted;
   String phoneNumberUnSubmitted;
 
+  // Create a text controller and use it to retrieve the current value
+  // of the TextField.
+  final myController = TextEditingController();
+
+  @override
+  void dispose() {
+    // Clean up the controller when the widget is disposed.
+    myController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
-    final formKey = new GlobalKey<FormState>();
 
     final usernameField = TextField(
 
-      textInputAction: TextInputAction.go,
+      style: TextStyle(color: Colors.white),
+
+      // textInputAction: TextInputAction.go,
       onSubmitted: (value) {
         print("search");
         print(value);
         userName = value;
         DatabaseHelper2 d = DBHelper.DatabaseHelper2.instance;
-      // checkUserName(value);
+        // checkUserName(value);
       },
       onChanged: (userNameOnChanged){
         userNameUnSubmitted = userNameOnChanged;
@@ -48,12 +77,14 @@ class Register extends StatelessWidget {
       decoration: const InputDecoration(
         icon: Icon(Icons.person),
         hintText: 'Enter a username',
+        // color: Colors.lightGreenAccent,
+
       ),
       autofocus: true,
     );
 
     final confirmPhoneNumber = TextField(
-      textInputAction: TextInputAction.go,
+      // textInputAction: TextInputAction.go,
       onSubmitted: (value) {
         print("search");
         print(value);
@@ -68,7 +99,9 @@ class Register extends StatelessWidget {
         icon: Icon(Icons.person),
         hintText: 'Enter your mobile number',
       ),
-      autofocus: true,
+      style: TextStyle(color: Colors.white),
+
+      // autofocus: false,
     );
 
 
@@ -82,6 +115,9 @@ class Register extends StatelessWidget {
             .size
             .width,
         padding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
+
+        // textColor: Colors.lightGreenAccent,
+        // color: Colors.lightGreenAccent,
         onPressed: () {
           print('pressed login button');
           print(phoneNumber);
@@ -91,6 +127,7 @@ class Register extends StatelessWidget {
             print(phoneNumber);
           }
           if(phoneNumber != null) {
+            print("not null number...");
             checkPhoneNumber(phoneNumber);
           }
 
@@ -104,8 +141,8 @@ class Register extends StatelessWidget {
             checkUserName(userName);
           }
 
-          print(userNameVerified);
-          print(phoneVerified);
+          // sleep(const Duration(seconds:1));
+          checkVerified();
           if (userNameVerified && phoneVerified) {
             print("verified");
             Navigator.of(context).pushReplacement(FadePageRoute(
@@ -121,77 +158,48 @@ class Register extends StatelessWidget {
         ),
       ),
     );
-
-    var loading = Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: <Widget>[
-        CircularProgressIndicator(),
-        Text(" Registering ... Please wait")
-      ],
-    );
-
-    final forgotLabel = Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: <Widget>[
-        FlatButton(
-          padding: EdgeInsets.only(left: 0.0),
-          child: Text("Complete Registration",
-              style: TextStyle(fontWeight: FontWeight.w300)),
-          onPressed: () {
-            print('pressed in button');
-            // Navigator.pushReplacementNamed(context, '/main_screen');
-            if (userNameVerified && phoneVerified) {
-              print("verified");
-              Navigator.of(context).pushReplacement(FadePageRoute(
-                builder: (context) => MainScreen(),
-              ));
-            }
-          },
-        )
-      ],
-    );
-
-    return SafeArea(
-      child: Scaffold(
-        body: SingleChildScrollView(
-          child: Container(
-            padding: EdgeInsets.all(40.0),
-            child: Form(
-              key: formKey,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  SizedBox(height: 215.0),
-                  Text(
-                    "Username",
-                    style: TextStyle(
-                      color: Colors.deepPurple,
-                      fontSize: 22.0,
-                      fontWeight: FontWeight.bold,
-                    ),
+    return Scaffold(
+      body: SingleChildScrollView(
+        child: Container(
+          padding: EdgeInsets.all(40.0),
+          child: Form(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                SizedBox(height: 215.0),
+                Text(
+                  "Username",
+                  style: TextStyle(
+                    letterSpacing: 1.5,
+                    fontSize: 22.0,
+                    color: Colors.lightGreenAccent,
                   ),
-                  SizedBox(height: 5.0),
-                  usernameField,
-                  SizedBox(height: 15.0),
-                  SizedBox(height: 15.0),
-                  Text(
-                    "Phone number",
-                    style: TextStyle(
-                      color: Colors.deepPurple,
-                      fontSize: 22.0,
-                      fontWeight: FontWeight.bold,
-                    ),
+                ),
+
+                SizedBox(height: 5.0),
+                usernameField,
+                SizedBox(height: 15.0),
+                SizedBox(height: 15.0),
+                Text(
+                  "Phone number",
+                  style: TextStyle(
+                    letterSpacing: 1.5,
+                    fontSize: 22.0,
+                    color: Colors.lightGreenAccent,
+                    // fontWeight: FontWeight.bold,
                   ),
-                  SizedBox(height: 10.0),
-                  confirmPhoneNumber,
-                  SizedBox(height: 5.0),
-                  loginButon
-                ],
-              ),
+                ),
+                SizedBox(height: 10.0),
+                confirmPhoneNumber,
+                SizedBox(height: 5.0),
+                loginButon
+              ],
             ),
           ),
         ),
       ),
+      backgroundColor: Colors.black54,
+
     );
   }
 
@@ -203,39 +211,60 @@ class Register extends StatelessWidget {
     print("in user check");
     if (!await DatabaseHelper2.instance.checkByUserName(userName)) {
       print("the user name doesnt exist");
-      List<User> pulledUser = await DatabaseHelper2.instance.getUserByEmail(
-          email);
-      print(pulledUser.first.phoneNumber);
-      print(pulledUser.first.id);
-      updatedUser.email = pulledUser.first.email;
-      updatedUser.password = pulledUser.first.password;
-      updatedUser.userName = userName;
-      updatedUser.id = pulledUser.first.id;
-      await DatabaseHelper2.instance.updateUser(updatedUser);
       userNameVerified = true;
       print("done");
     } else {
       print("the user name already exists");
     }
-    }
+  }
   /// This method checks to see if the user entered a phone number that already exists in the DB
   ///
   /// [phoneNumber], the phoneNumber of the user.
   Future<bool> checkPhoneNumber(String phoneNumber) async {
     String email = await secureStorage.readSecureData("email");
     print("in phone check");
-    if (await DatabaseHelper2.instance.getPhoneNumber(phoneNumber)== null) {
+    print(phoneNumber);
+    if (!await DatabaseHelper2.instance.userRepository.checkByPhoneNumber(phoneNumber)) {
       print("the phone Number doesnt exist");
       List<User> pulledUser = await DatabaseHelper2.instance.getUserByEmail(
           email);
-      print(pulledUser.first.phoneNumber);
-      print(pulledUser.first.id);
-      updatedUser.phoneNumber = phoneNumber;
-      await DatabaseHelper2.instance.updateUser(updatedUser);
+      // print(pulledUser.first.phoneNumber);
+      // print(pulledUser.first.id);
+      // updatedUser.phoneNumber = phoneNumber;
+      // await DatabaseHelper2.instance.updateUser(updatedUser);
       phoneVerified = true;
       print("done again ");
     } else {
       print("the phone number already exists in the db");
     }
   }
+
+  void checkVerified() async {
+    String email = await secureStorage.readSecureData("email");
+    List<User> pulledUser = await DatabaseHelper2.instance.getUserByEmail(
+        email);
+    print(pulledUser.first.phoneNumber);
+    print(pulledUser.first.id);
+    updatedUser.email = pulledUser.first.email;
+    updatedUser.password = pulledUser.first.password;
+    updatedUser.userName = userName;
+    updatedUser.id = pulledUser.first.id;
+    updatedUser.phoneNumber = phoneNumber;
+    await DatabaseHelper2.instance.updateUser(updatedUser);
+    sleep(const Duration(seconds:1));
+
+    print(userNameVerified);
+    print(phoneVerified);
+    if (userNameVerified && phoneVerified) {
+      print("verified");
+      secureStorage.writeSecureData('userName', userName);
+      secureStorage.writeSecureData('phoneNumber', phoneNumber);
+      Navigator.of(context).pushReplacement(FadePageRoute(
+        builder: (context) => MainScreen(),
+      ));
+    } else {
+      print('fields arent completed');
+    }
+  }
+
 }
