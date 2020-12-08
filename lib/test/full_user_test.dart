@@ -1,6 +1,4 @@
-import 'package:dev_test/dev_test.dart';
 import 'package:flutter/material.dart';
-import 'package:sqflite/sqflite.dart';
 import 'package:streamer_review/helper/database_helper.dart';
 import 'package:streamer_review/model/user.dart';
 import 'package:streamer_review/repository/broadcaster_repository.dart';
@@ -10,33 +8,11 @@ import 'package:streamer_review/widgets/anotherMain.dart';
 
 import '../main.dart';
 
+// import 'model/user.dart';
 
 void main() {
   runApp(MyApp());
-
-  test('return the database', () async {
-
-    // TestWidgetsFlutterBinding.ensureInitialized();
-    // final result = EmailFieldValidator.validate('');
-    // expect(result, 'Email can\'t be empty');
-    Database db = await DatabaseHelper2.instance.database;
-    List<Map> result = await db.rawQuery(
-        'SELECT * FROM broadcaster_table WHERE broadcaster_id=?',
-        [2224]);
-    print(db.path);
-  });
-
-  test('return the database', () async {
-
-    // TestWidgetsFlutterBinding.ensureInitialized();
-    // final result = EmailFieldValidator.validate('');
-    // expect(result, 'Email can\'t be empty');
-    Database db = await DatabaseHelper2.instance.database;
-    List<Map> result = await db.rawQuery(
-        'SELECT * FROM broadcaster_table WHERE broadcaster_id=?',
-        [2224]);
-    // print(db.path);
-  });
+  print(DatabaseHelper2.directoryPath);
 }
 
 class MyApp extends StatelessWidget {
@@ -44,20 +20,19 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-        title: 'DB User testing',
+        title: 'Streamer Review App',
         theme: ThemeData(
           primarySwatch: Colors.blue,
           visualDensity: VisualDensity.adaptivePlatformDensity,
         ),
-        home: AaronsMain()
+        home: AaronsMain2()
 
-      // home: ColorCircle(title: 'Color Circle',),
     );
   }
 }
 
-class AaronsMain extends StatefulWidget {
-  AaronsMain({Key key, this.title}) : super(key: key);
+class AaronsMain2 extends StatefulWidget {
+  AaronsMain2({Key key, this.title}) : super(key: key);
 
   final String title;
 
@@ -65,13 +40,12 @@ class AaronsMain extends StatefulWidget {
   _MyHomePageState createState() => _MyHomePageState();
 }
 
-class _MyHomePageState extends State<AaronsMain> {
+class _MyHomePageState extends State<AaronsMain2> {
   UserFavoritesRepository _userFavoritesRepository = new UserFavoritesRepository();
   BroadcasterRepository _broadcasterRepository = new BroadcasterRepository();
   UserRepository _userRepository = new UserRepository();
   String _email = "";
   String _password = "";
-  String _userName = '';
   int _iD;
 
   @override
@@ -79,12 +53,21 @@ class _MyHomePageState extends State<AaronsMain> {
     Widget titleSection = Container();
     return Scaffold(
       appBar: AppBar(
-        title: Text('Streamer Review'),
+        title: Text('USER TEST'),
       ),
       body: Center(
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+            SizedBox(height: 215.0),
+        Text(
+          "Username",
+          style: TextStyle(
+            color: Colors.deepPurple,
+            fontSize: 22.0,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
             new TextField(
               decoration:
               new InputDecoration.collapsed(hintText: "input email"),
@@ -107,25 +90,49 @@ class _MyHomePageState extends State<AaronsMain> {
                 _setPassword(password);
               },
             ),
-            new TextField(
-              decoration:
-              new InputDecoration.collapsed(hintText: "input user Name"),
-              // onChanged: (String text) {
-              // print("Text => $text");
-              // },
-              onSubmitted: (String userName) {
-                // print("Submitted:  $password");
-                // _setPassword(password);
-              },
-            ),
-
+            // FlatButton(
+            //     onPressed: () async {
+            //       int i = await DatabaseHelper2.instance.insert({
+            //         DatabaseHelper2.columnEmail: 'sarah@spoopmail.net',
+            //         DatabaseHelper2.columnPassword: 'spoopy9r'
+            //       });
+            //       print('the inserted id is $i');
+            //     },
+            //     child: Text('insert')),
             FlatButton(
                 onPressed: () async {
                   List<Map<String, dynamic>> queryRows =
                   await DatabaseHelper2.instance.queryAllUsers();
                   print(queryRows);
+                  print(DatabaseHelper2.directoryPath);
+
                 },
                 child: Text('query all users')),
+            FlatButton(
+                onPressed: () async {
+                  List<Map<String, dynamic>> queryRows =
+                  await DatabaseHelper2.instance.queryAllStreamers();
+                  print(queryRows);
+                },
+                child: Text('query all streamers')),
+            FlatButton(
+                onPressed: () async {
+                  List<Map<String, dynamic>> queryRows =
+                  await _userFavoritesRepository.queryAllFavorites();
+                  print(queryRows);
+                },
+                child: Text('query all favorites')),
+            // FlatButton(
+            //     onPressed: () async {
+            //       int updatedId = await DatabaseHelper2.instance.update({
+            //         DatabaseHelper2.columnId: 12,
+            //         DatabaseHelper2.columnPassword: 'Mark'
+            //       });
+            //       //returns the number of rows affected
+            //       print("on update, this is the updated ID: ,  ");
+            //       print(updatedId);
+            //     },
+            //     child: Text('update')),
 
             Center(
               child: new TextField(
@@ -144,7 +151,16 @@ class _MyHomePageState extends State<AaronsMain> {
                   print(rowsAffected);
                 },
                 child: Text('delete user')),
-
+            // FlatButton(
+            //     onPressed: () async {
+            //       DatabaseHelper2.instance.resetDb();
+            //     },
+            //     child: Text('Reset Table')),
+            // FlatButton(
+            //     onPressed: () async {
+            //       DatabaseHelper2.instance.createUserTable();
+            //     },
+            //     child: Text('Recreate user table')),
             FlatButton(
                 onPressed: () async {
                   print("testing pushing email and pass");
@@ -171,6 +187,8 @@ class _MyHomePageState extends State<AaronsMain> {
                 onPressed: () async {
                   secureStorage.deleteSecureData('email');
                   secureStorage.deleteSecureData('password');
+                  // List<Map<String, dynamic >> user = await DatabaseHelper2.instance.retrieveUserById(1);
+                  // print(user.toString());
                 },
                 child: Text('Clear Secure Data')),
             FlatButton(
@@ -196,7 +214,11 @@ class _MyHomePageState extends State<AaronsMain> {
                   print(pulledUser.first.id);
                 },
                 child: Text('get user by username')),
-
+            FlatButton(
+                onPressed: () async {
+                  await _userFavoritesRepository.insertFavorite(229729353);
+                },
+                child: Text('insert favorite')),
           ],
         ),
       ),
@@ -220,12 +242,5 @@ class _MyHomePageState extends State<AaronsMain> {
       _password = password;
     });
   }
-  void _setUserName(String userName) {
-    setState(() {
-      _userName = userName;
-    });
-  }
-
-
 
 }

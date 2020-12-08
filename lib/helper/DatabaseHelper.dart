@@ -1,6 +1,5 @@
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
-import 'package:streamer_review/model/Todo.dart';
 import 'package:streamer_review/model/user.dart';
 
 
@@ -37,73 +36,73 @@ class DatabaseHelper {
   //       });
   // }
 
-  insertUser(User user) async {
-    final db = await database;
-    var res = await db.insert(Todo.TABLENAME, user.toJson(),
-        conflictAlgorithm: ConflictAlgorithm.replace);
-    return res;
-  }
-
-  Future<List<User>> retrieveUsers() async {
-    final db = await database;
-
-    final List<Map<String, dynamic>> maps = await db.query(User.TABLENAME);
-
-    return List.generate(maps.length, (i) {
-      return User(
-        id: maps[i]['user_id'],
-       email: maps[i]['user_email'],
-       password: maps[i]['content'],
-      );
-    });
-  }
-
-  updateUser(Todo todo) async {
-    final db = await database;
-
-    await db.update(Todo.TABLENAME, todo.toMap(),
-        where: 'id = ?',
-        whereArgs: [todo.id],
-        conflictAlgorithm: ConflictAlgorithm.replace);
-  }
-
-  deleteUser(int id) async {
-    var db = await database;
-    db.delete(Todo.TABLENAME, where: 'id = ?', whereArgs: [id]);
-  }
-
-  insertTodo(Todo todo) async {
-    final db2 = await database;
-    var res = await db2.insert(Todo.TABLENAME, todo.toMap(),
-        conflictAlgorithm: ConflictAlgorithm.replace);
-    return res;
-  }
-
-  Future<List<Todo>> retrieveTodos() async {
-    final db2 = await database;
-
-    final List<Map<String, dynamic>> maps2 = await db2.query(Todo.TABLENAME);
-
-    return List.generate(maps2.length, (i) {
-      return Todo(
-        id: maps2[i]['id'],
-        title: maps2[i]['title'],
-        content: maps2[i]['content'],
-      );
-    });
-  }
-
-  updateTodo(Todo todo) async {
-    final db2 = await database;
-
-    await db2.update(Todo.TABLENAME, todo.toMap(),
-        where: 'id = ?',
-        whereArgs: [todo.id],
-        conflictAlgorithm: ConflictAlgorithm.replace);
-  }
-
-  deleteTodo(int id) async {
-    var db2 = await database;
-    db2.delete(Todo.TABLENAME, where: 'id = ?', whereArgs: [id]);
-  }
+  // insertUser(User user) async {
+  //   final db = await database;
+  //   var res = await db.insert(Todo.TABLENAME, user.toJson(),
+  //       conflictAlgorithm: ConflictAlgorithm.replace);
+  //   return res;
+  // }
+  //
+  // Future<List<User>> retrieveUsers() async {
+  //   final db = await database;
+  //
+  //   final List<Map<String, dynamic>> maps = await db.query(User.TABLENAME);
+  //
+  //   return List.generate(maps.length, (i) {
+  //     return User(
+  //       id: maps[i]['user_id'],
+  //      email: maps[i]['user_email'],
+  //      password: maps[i]['content'],
+  //     );
+  //   });
+  // }
+  //
+  // updateUser(Todo todo) async {
+  //   final db = await database;
+  //
+  //   await db.update(Todo.TABLENAME, todo.toMap(),
+  //       where: 'id = ?',
+  //       whereArgs: [todo.id],
+  //       conflictAlgorithm: ConflictAlgorithm.replace);
+  // }
+  //
+  // deleteUser(int id) async {
+  //   var db = await database;
+  //   db.delete(Todo.TABLENAME, where: 'id = ?', whereArgs: [id]);
+  // }
+  //
+  // insertTodo(Todo todo) async {
+  //   final db2 = await database;
+  //   var res = await db2.insert(Todo.TABLENAME, todo.toMap(),
+  //       conflictAlgorithm: ConflictAlgorithm.replace);
+  //   return res;
+  // }
+  //
+  // Future<List<Todo>> retrieveTodos() async {
+  //   final db2 = await database;
+  //
+  //   final List<Map<String, dynamic>> maps2 = await db2.query(Todo.TABLENAME);
+  //
+  //   return List.generate(maps2.length, (i) {
+  //     return Todo(
+  //       id: maps2[i]['id'],
+  //       title: maps2[i]['title'],
+  //       content: maps2[i]['content'],
+  //     );
+  //   });
+  // }
+  //
+  // updateTodo(Todo todo) async {
+  //   final db2 = await database;
+  //
+  //   await db2.update(Todo.TABLENAME, todo.toMap(),
+  //       where: 'id = ?',
+  //       whereArgs: [todo.id],
+  //       conflictAlgorithm: ConflictAlgorithm.replace);
+  // }
+  //
+  // deleteTodo(int id) async {
+  //   var db2 = await database;
+  //   db2.delete(Todo.TABLENAME, where: 'id = ?', whereArgs: [id]);
+  // }
 }
