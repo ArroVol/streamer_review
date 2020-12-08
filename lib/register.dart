@@ -1,6 +1,6 @@
 import 'dart:io';
-
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:streamer_review/main.dart';
 import 'package:streamer_review/secure_storage/secure_storage.dart';
 import 'package:streamer_review/helper/database_helper.dart' as DBHelper;
@@ -99,9 +99,13 @@ class RegisterForm extends State<Register> {
         icon: Icon(Icons.person),
         hintText: 'Enter your mobile number',
       ),
+      keyboardType: TextInputType.number,
+      inputFormatters: <TextInputFormatter>[
+        FilteringTextInputFormatter.digitsOnly
+      ],
       style: TextStyle(color: Colors.white),
 
-      // autofocus: false,
+      autofocus: true,
     );
 
 

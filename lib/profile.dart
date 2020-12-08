@@ -83,6 +83,27 @@ class _ProfileState extends State<Profile> {
                 fontWeight: FontWeight.bold,
               ),
             ),
+            Divider(
+              height: 10,
+              color: Colors.grey,
+            ),
+            SizedBox(height: 10),
+
+            Text(
+              'Phone Number',
+              style: TextStyle(color: Colors.blueGrey, letterSpacing: 2.0),
+
+            ),
+            SizedBox(height: 10),
+            Text(
+              phoneNumber.toString(),
+              style: TextStyle(
+                color: Colors.lightGreenAccent,
+                letterSpacing: 2.0,
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
             SizedBox(height: 30),
             Row(
               children: <Widget>[
