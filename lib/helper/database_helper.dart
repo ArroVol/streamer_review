@@ -209,7 +209,7 @@ class DatabaseHelper2 {
     Database db = await DatabaseHelper2.instance.database;
     // raw query
     List<Map> result = await db.rawQuery(
-        'SELECT * FROM broadcaster_tags WHERE broadcaster_id=?',
+        'SELECT * FROM broadcaster_tags WHERE fk_broadcaster_id=?',
         [broadcasterId]);
     return result;
   }
@@ -482,7 +482,7 @@ class DatabaseHelper2 {
     Database db = await DatabaseHelper2.instance.database;
     // raw query
     List<Map> result = await db.rawQuery(
-        'SELECT * FROM broadcaster_tags WHERE broadcaster_id=?',
+        'SELECT * FROM broadcaster_tags WHERE fk_broadcaster_id=?',
         [broadcasterId]);
     return result;
   }

@@ -15,10 +15,10 @@ class Profile extends StatefulWidget {
 class _ProfileState extends State<Profile> {
   final SecureStorage secureStorage = SecureStorage();
 
-  int numOfReviews;
-  String userEmail;
-  String userName;
-  String phoneNumber;
+  int numOfReviews = 0;
+  String userEmail = '';
+  String userName = '';
+  String phoneNumber = '';
 
   void getUser() async {
     DatabaseHelper2 d = DBHelper.DatabaseHelper2.instance;
