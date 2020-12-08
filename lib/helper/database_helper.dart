@@ -465,10 +465,10 @@ class DatabaseHelper2 {
 
     // raw query
     List<Map> result = await db.rawQuery(
-        'SELECT * FROM broadcaster_tags WHERE broadcaster_id=?',
+        'SELECT * FROM broadcaster_tags WHERE fk_broadcaster_id=?',
         [broadcasterId]);
     await db.rawQuery(
-        'INSERT INTO broadcaster_tags (tag_name, fk_broadcaster_id) VALUES(?, ?)',
+        'INSERT INTO broadcaster_tags (fk_tag_name, fk_broadcaster_id) VALUES(?, ?)',
         [tagName, broadcasterId]);
     // await db.rawQuery('UPDATE reviews SET satisfaction_rating = ?, entertainment_rating = ?, interactiveness_rating = ?, skill_rating = ? WHERE fk_broadcaster_id = ? AND fk_user_id = ?', [satisfaction_rating, entertainment_rating, interactiveness_rating, skill_rating, broadcaster_id, user_id]);
 
