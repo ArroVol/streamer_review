@@ -216,6 +216,7 @@ class LoginScreen extends StatelessWidget {
         print('Username is available');
         print(newUser.userName);
         print(newUser.email);
+        _email = loginData.name.toLowerCase();
         DatabaseHelper2.instance.insertUser(newUser);
         signedUp = true;
         return _loginUser(loginData);
@@ -232,8 +233,7 @@ class LoginScreen extends StatelessWidget {
           // Navigator.pushReplacementNamed(context, '/main_screen');
 
         Navigator.of(context).pushReplacement(FadePageRoute(
-            // builder: (context) => Register(),
-            builder: (context) => MainScreen(),
+            builder: (context) => Register(),
           )
         );
         } else {

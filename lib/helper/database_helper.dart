@@ -476,7 +476,7 @@ class DatabaseHelper2 {
     return result;
   }
 
-  Future<List<Map<String, dynamic>>> selectAllBroadcasterTagsByBroadcaster(
+  Future<List<Map<String, dynamic>>> selectAllBroadcasterTagsByBroadcasterwithTag(
       broadcasterId, tagName) async {
     // get a reference to the database
     Database db = await DatabaseHelper2.instance.database;

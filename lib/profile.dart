@@ -5,6 +5,7 @@ import 'customize_home.dart';
 import 'helper/database_helper.dart';
 import 'custom_route.dart';
 import 'login.dart';
+import 'model/user.dart';
 
 class Profile extends StatefulWidget {
   @override
@@ -16,20 +17,39 @@ class _ProfileState extends State<Profile> {
 
   int numOfReviews;
   String userEmail;
+  String userName;
+  String phoneNumber;
+
+  void getUser() async {
+    DatabaseHelper2 d = DBHelper.DatabaseHelper2.instance;
+    String userEmail2 = await d.getUserEmail();
+    List<User> userList = await d.getUserByEmail(userEmail2);
+    print("in profiles get username....");
+    print(userList.first.userName);
+  }
 
   Future<int> getNumReviews() async {
     DatabaseHelper2 d = DBHelper.DatabaseHelper2.instance;
     var numOfReviews2 = await d.getNumUserReviews();
     var userEmail2 = await d.getUserEmail();
-    setState(() {
-      numOfReviews = numOfReviews2;
-      userEmail = userEmail2;
-    });
+    var userName2 = await secureStorage.readSecureData('userName');
+    var phoneNumber2 = await secureStorage.readSecureData('phoneNumber');
+    if (mounted) {
+      setState(() {
+        numOfReviews = numOfReviews2;
+        userEmail = userEmail2;
+        userName = userName2;
+        phoneNumber = phoneNumber2;
+        print(userName);
+        print(phoneNumber);
+      });
+    }
   }
 
   @override
   void initState() {
     getNumReviews();
+    getUser();
     super.initState();
   }
 
@@ -38,11 +58,7 @@ class _ProfileState extends State<Profile> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.black54,
-        title: Text('User',
-        style: TextStyle(
-          color: Colors.lightGreenAccent,
-          letterSpacing: 1.5,
-        ),),
+        title: Text('Settings'),
         centerTitle: true,
         elevation: 0,
       ),
@@ -54,7 +70,7 @@ class _ProfileState extends State<Profile> {
           children: <Widget>[
             Center(
               child: CircleAvatar(
-                backgroundImage: AssetImage('assets/example.jpg'),
+                backgroundImage: AssetImage('assets/gooby.jpg'),
                 radius: 40,
               ),
             ),
@@ -68,11 +84,30 @@ class _ProfileState extends State<Profile> {
             ),
             SizedBox(height: 10),
             Text(
-              'ExampleUser1234',
+              userName.toString(),
               style: TextStyle(
                 color: Colors.lightGreenAccent,
                 letterSpacing: 2.0,
-                fontSize: 28,
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            Divider(
+              height: 10,
+              color: Colors.grey,
+            ),
+            SizedBox(height: 10),
+            Text(
+              'Phone Number',
+              style: TextStyle(color: Colors.blueGrey, letterSpacing: 2.0),
+            ),
+            SizedBox(height: 10),
+            Text(
+              phoneNumber.toString(),
+              style: TextStyle(
+                color: Colors.lightGreenAccent,
+                letterSpacing: 2.0,
+                fontSize: 20,
                 fontWeight: FontWeight.bold,
               ),
             ),
@@ -110,7 +145,8 @@ class _ProfileState extends State<Profile> {
             ),
             OutlineButton(
               onPressed: () {
-                Navigator.push(context, MaterialPageRoute(builder: (context) => CustomizeHome()));
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => CustomizeHome()));
               },
               child: Container(
                 height: 30,
@@ -129,6 +165,8 @@ class _ProfileState extends State<Profile> {
               onPressed: () {
                 secureStorage.deleteSecureData('email');
                 secureStorage.deleteSecureData('password');
+                secureStorage.deleteSecureData('userName');
+                secureStorage.deleteSecureData('phoneNumber');
 
                 Navigator.of(context, rootNavigator: true)
                     .pushReplacement(FadePageRoute(
@@ -153,4 +191,11 @@ class _ProfileState extends State<Profile> {
       ),
     );
   }
+
+// Future _getUserName() async {
+//   print("in get");
+//   // String email = await secureStorage.readSecureData("email");
+//   print(email);
+// }
+
 }

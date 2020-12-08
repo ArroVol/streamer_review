@@ -1,264 +1,306 @@
-import 'package:flushbar/flushbar.dart';
+import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:path/path.dart';
-
-import 'package:provider/provider.dart';
+import 'package:flutter/services.dart';
+import 'package:streamer_review/main.dart';
+import 'package:streamer_review/secure_storage/secure_storage.dart';
+import 'package:streamer_review/helper/database_helper.dart' as DBHelper;
 
 import 'custom_route.dart';
+import 'helper/database_helper.dart';
 import 'main_screen.dart';
 import 'model/user.dart';
 
-class Register extends StatelessWidget {
-  static const routeName = '/auth';
+
+class RegisterApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Retrieve Text Input',
+      home: Register(),
+    );
+  }
+}
+
+// Define a custom Form widget.
+class Register extends StatefulWidget {
+  @override
+ RegisterForm createState() => RegisterForm();
+}
+
+// Define a corresponding State class.
+// This class holds the data related to the Form.
+class RegisterForm extends State<Register> {
+
   bool verifiedRegistration = false;
+
+  final SecureStorage secureStorage = SecureStorage();
+  User updatedUser = new User();
+
+  bool phoneVerified = false;
+  bool userNameVerified = false;
+
+  String userName;
+  String phoneNumber;
+
+  String userNameUnSubmitted;
+  String phoneNumberUnSubmitted;
+
+  // Create a text controller and use it to retrieve the current value
+  // of the TextField.
+  final myController = TextEditingController();
+
+  @override
+  void dispose() {
+    // Clean up the controller when the widget is disposed.
+    myController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
-    final formKey = new GlobalKey<FormState>();
-
-    String _username, _password, _confirmPassword;
 
     final usernameField = TextField(
 
-      textInputAction: TextInputAction.go,
+      style: TextStyle(color: Colors.black),
       onSubmitted: (value) {
         print("search");
         print(value);
+        userName = value;
+        DatabaseHelper2 d = DBHelper.DatabaseHelper2.instance;
+      },
+      onChanged: (userNameOnChanged){
+        userNameUnSubmitted = userNameOnChanged;
       },
       decoration: const InputDecoration(
         icon: Icon(Icons.person),
-        // border: InputBorder.none,
-
-        hintText: 'Enter a username',
-        // labelText: 'Name *',
-      ),
-      // obscureText: true,
-      autofocus: true,
-      // onSaved: (String value) {
-      //   // This optional block of code can be used to run
-      //   // code when the user saves the form.
-      // },
-      // validator: (String value) {
-      //   if (value.isEmpty) {
-      //     print('its empty');
-      //     return "Please enter a username..";
-      //   }
-      //   if (value.contains('@')) {
-      //     return "Do not use @";
-      //   }
-      //   if (RegExp(r"^[a-zA-Z0-9]+$").hasMatch(value)) {
-      //     return "Do not use any special characters";
-      //   }
-      //   // validator: (value) => value.isEmpty ? "Please enter a username" : null;
-      //   // onSaved: (value) => _password = value,
-      //   return value.contains('@') ? 'Do not use the @ char.' : null;
-      // },
-    );
-
-
-
-    final usernameField2 = TextFormField(
-
-      textInputAction: TextInputAction.go,
-
-      decoration: const InputDecoration(
-        icon: Icon(Icons.person),
-        // border: InputBorder.none,
-
         hintText: 'Enter a username',
       ),
+      // keyboardType: TextInputType.number,
+      inputFormatters: [
+        FilteringTextInputFormatter.deny(' '),
+        LengthLimitingTextInputFormatter(16),
+        WhitelistingTextInputFormatter(RegExp("[a-zA-Z0-9]")),
+      ],
       autofocus: true,
-      onSaved: (String value) {
-        // This optional block of code can be used to run
-        // code when the user saves the form.
-      },
-      validator: (String value){
-          return value.contains('@') ? 'Do not use the @ char.' : null;
-      },
-      // validator: (String value) {
-      //   if (value.isEmpty) {
-      //     print('its empty');
-      //     return "Please enter a username..";
-      //   }
-      //   if (value.contains('@')) {
-      //     return "Do not use @";
-      //   }
-      //   if (RegExp(r"^[a-zA-Z0-9]+$").hasMatch(value)) {
-      //     return "Do not use any special characters";
-      //   }
-      //   validator: (value) => value.isEmpty ? "Please enter a username" : null;
-      //   onSaved: (value) => _password = value,
-      //   return value.contains('@') ? 'Do not use the @ char.' : null;
-      // },
     );
 
-
-
-
-
-
-
-
-    final phoneNumberField = TextFormField(
-      decoration: const InputDecoration(
-        icon: Icon(Icons.phone_android),
-        hintText: 'Enter your phone number',
-        // labelText: 'Name *',
-      ),
-      onSaved: (String value) {
-        // This optional block of code can be used to run
-        // code when the user saves the form.
-      },
-      validator: (value) {
-        print("this is the phone number");
+    final confirmPhoneNumber = TextField(
+      // textInputAction: TextInputAction.go,
+      onSubmitted: (value) {
+        print("search");
         print(value);
-        if (value.isEmpty) {
-          return "Please enter a userggname..";
-        }
-        // validator: (value) => value.isEmpty ? "Please enter a username" : null;
-        // onSaved: (value) => _password = value,
-        return value.contains('@') ? 'Do not use the @ char.' : null;
+        phoneNumber = value;
+        DatabaseHelper2 d = DBHelper.DatabaseHelper2.instance;
+        // checkPhoneNumber(value);
       },
-    );
-
-    // final confirmPhoneNumber = TextFormField(
-    //   autofocus: false,
-    //   validator: (value) => value.isEmpty ? "Your password is required" : null,
-    //   onSaved: (value) => _confirmPassword = value,
-    //   obscureText: true,
-    //   // decoration: buildInputDecoration("Confirm password", Icons.lock),
-    //   decoration: InputDecoration(),
-    //
-    // );
-    final confirmPhoneNumber = TextFormField(
+      onChanged: (phoneNumberOnChanged){
+       phoneNumberUnSubmitted = phoneNumberOnChanged;
+      },
       decoration: const InputDecoration(
         icon: Icon(Icons.phone_android),
-        hintText: 'Verify phone number',
-        // labelText: 'Name *',
+        hintText: 'Enter your mobile number',
       ),
-      onSaved: (String value) {
-        // This optional block of code can be used to run
-        // code when the user saves the form.
-      },
-      validator: (String value) {
-        if (value.isEmpty) {
-          return "Please enter a username..";
-        }
-        // validator: (value) => value.isEmpty ? "Please enter a username" : null;
-        // onSaved: (value) => _password = value,
-        return value.contains('@') ? 'Do not use the @ char.' : null;
-      },
+      keyboardType: TextInputType.number,
+      inputFormatters: <TextInputFormatter>[
+        FilteringTextInputFormatter.digitsOnly,
+        LengthLimitingTextInputFormatter(11),
+      ],
+      style: TextStyle(color: Colors.black),
+      autofocus: true,
     );
+
     final loginButon = Material(
       elevation: 5.0,
       borderRadius: BorderRadius.circular(30.0),
-      color: Color(0xff01A0C7),
+      color: Colors.lightGreenAccent,
+      // color: Color(0xff01A0C7),
       child: MaterialButton(
-        minWidth: MediaQuery.of(context).size.width,
+        minWidth: MediaQuery
+            .of(context)
+            .size
+            .width,
         padding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
+
+        textColor: Colors.lightGreenAccent,
         onPressed: () {
-          print('pressed');
-          // Navigator.pushReplacementNamed(context, '/main_screen');
-          if (verifiedRegistration) {
-            Navigator.of(context).pushReplacement(FadePageRoute(
-              builder: (context) => MainScreen(),
-            ));
+          print('pressed login button');
+          print(phoneNumber);
+          if(phoneNumber == null && phoneNumberUnSubmitted != null){
+            print("switching for onchanged for phone number");
+            phoneNumber = phoneNumberUnSubmitted;
+            print(phoneNumber);
           }
+          checkFields();
+          // if(phoneNumber != null) {
+          //   print("not null number...");
+          //   checkPhoneNumber(phoneNumber);
+          // }
+          //
+          // if(userName == null && userNameUnSubmitted != null){
+          //   print("switching for onchanged for user name");
+          //   userName = userNameUnSubmitted;
+          //   print(userName);
+          // }
+          // print('user name: $userName');
+          // if(userName != null) {
+          //   checkUserName(userName);
+          // }
+          // checkVerified();
+          // if (userNameVerified && phoneVerified) {
+          //   print("verified");
+          //   secureStorage.writeSecureData('userName', userName);
+          //   secureStorage.writeSecureData('phoneNumber', phoneNumber);
+          //   Navigator.of(context).pushReplacement(FadePageRoute(
+          //     builder: (context) => MainScreen(),
+          //   ));
+          // } else {
+          //   print('fields arent completed');
+          // }
         },
         child: Text(
           "Complete Registration",
           textAlign: TextAlign.center,
+          style: TextStyle(color: Colors.black.withOpacity(0.6), fontSize: 20),
         ),
       ),
     );
-
-    var loading = Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: <Widget>[
-        CircularProgressIndicator(),
-        Text(" Registering ... Please wait")
-      ],
-    );
-
-    final forgotLabel = Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: <Widget>[
-        // FlatButton(
-        //   padding: EdgeInsets.all(0.0),
-        //   child: Text("Forgot password?",
-        //       style: TextStyle(fontWeight: FontWeight.w300)),
-        //   onPressed: () {},
-        // ),
-        FlatButton(
-          padding: EdgeInsets.only(left: 0.0),
-          child: Text("Complete Registration",
-              style: TextStyle(fontWeight: FontWeight.w300)),
-          onPressed: () {
-            print('pressed');
-            // Navigator.pushReplacementNamed(context, '/main_screen');
-            Navigator.of(context).pushReplacement(FadePageRoute(
-              builder: (context) => MainScreen(),
-            ));
-          },
-        )
-      ],
-    );
-
-    return SafeArea(
-      child: Scaffold(
-        body: SingleChildScrollView(
-          child: Container(
-            padding: EdgeInsets.all(40.0),
-            child: Form(
-              key: formKey,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  SizedBox(height: 215.0),
-                  Text(
-                    "Username",
-                    style: TextStyle(
-                      color: Colors.deepPurple,
-                      fontSize: 22.0,
-                      fontWeight: FontWeight.bold,
-                    ),
+    return Scaffold(
+      body: SingleChildScrollView(
+        child: Container(
+          padding: EdgeInsets.all(40.0),
+          child: Form(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                SizedBox(height: 115.0),
+                Text(
+                  "Username",
+                  style: TextStyle(
+                    letterSpacing: 2.0,
+                    fontSize: 22.0,
+                    color: Colors.lightGreenAccent,
                   ),
-                  SizedBox(height: 5.0),
-                  usernameField,
-                  SizedBox(height: 15.0),
-                  Text(
-                    "Phone number",
-                    style: TextStyle(
-                      color: Colors.deepPurple,
-                      fontSize: 22.0,
-                      fontWeight: FontWeight.bold,
-                    ),
+                ),
+
+                SizedBox(height: 5.0),
+                usernameField,
+                SizedBox(height: 15.0),
+                SizedBox(height: 15.0),
+                Text(
+                  "Phone number",
+                  style: TextStyle(
+                    letterSpacing: 2.0,
+                    fontSize: 22.0,
+                    color: Colors.lightGreenAccent,
+                    // fontWeight: FontWeight.bold,
                   ),
-                  SizedBox(height: 10.0),
-                  phoneNumberField,
-                  SizedBox(height: 15.0),
-                  Text(
-                    "Confirm phone number",
-                    style: TextStyle(
-                      color: Colors.deepPurple,
-                      fontSize: 22.0,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  SizedBox(height: 10.0),
-                  confirmPhoneNumber,
-                  // SizedBox(height: 20.0),
-                  // auth.registeredInStatus == Status.Registering
-                  //     ? loading
-                  //     : longButtons("Register", doRegister),
-                  SizedBox(height: 5.0),
-                  loginButon
-                ],
-              ),
+                ),
+                SizedBox(height: 10.0),
+                confirmPhoneNumber,
+                SizedBox(height: 25.0),
+                loginButon,
+
+              ],
             ),
           ),
         ),
       ),
+      backgroundColor: Colors.grey[700],
+
     );
   }
+
+  /// This method checks to see if the user entered a phone number that already exists in the DB
+  ///
+  /// [userName], the user name of the user.
+  Future<bool> checkUserName(String userName) async {
+    String email = await secureStorage.readSecureData("email");
+    print("in user check");
+    if (!await DatabaseHelper2.instance.checkByUserName(userName)) {
+      print("the user name doesnt exist");
+      userNameVerified = true;
+      print("done");
+    } else {
+      print("the user name already exists");
+    }
+  }
+  /// This method checks to see if the user entered a phone number that already exists in the DB
+  ///
+  /// [phoneNumber], the phoneNumber of the user.
+  Future<bool> checkPhoneNumber(String phoneNumber) async {
+    String email = await secureStorage.readSecureData("email");
+    print("in phone check");
+    print(phoneNumber);
+    if (!await DatabaseHelper2.instance.userRepository.checkByPhoneNumber(phoneNumber)) {
+      print("the phone Number doesnt exist");
+      List<User> pulledUser = await DatabaseHelper2.instance.getUserByEmail(
+          email);
+      // print(pulledUser.first.phoneNumber);
+      // print(pulledUser.first.id);
+      // updatedUser.phoneNumber = phoneNumber;
+      // await DatabaseHelper2.instance.updateUser(updatedUser);
+      phoneVerified = true;
+      print("done again ");
+    } else {
+      print("the phone number already exists in the db");
+    }
+  }
+
+  void checkVerified() async {
+    String email = await secureStorage.readSecureData("email");
+    sleep(const Duration(seconds:1));
+
+    print(userNameVerified);
+    print(phoneVerified);
+    if (userNameVerified && phoneVerified) {
+      print("verified");
+      secureStorage.writeSecureData('userName', userName);
+      secureStorage.writeSecureData('phoneNumber', phoneNumber);
+      List<User> pulledUser = await DatabaseHelper2.instance.getUserByEmail(
+          email);
+      print(pulledUser.first.phoneNumber);
+      print(pulledUser.first.id);
+      updatedUser.email = pulledUser.first.email;
+      updatedUser.password = pulledUser.first.password;
+      updatedUser.userName = userName;
+      updatedUser.id = pulledUser.first.id;
+      updatedUser.phoneNumber = phoneNumber;
+      await DatabaseHelper2.instance.updateUser(updatedUser);
+      Navigator.of(context).pushReplacement(FadePageRoute(
+        builder: (context) => MainScreen(),
+      ));
+    } else {
+      print('fields arent completed');
+    }
+  }
+
+  void checkFields() async {
+    if(phoneNumber != null) {
+      print("not null number...");
+     await checkPhoneNumber(phoneNumber);
+    }
+
+    if(userName == null && userNameUnSubmitted != null){
+      print("switching for onchanged for user name");
+      userName = userNameUnSubmitted;
+      print(userName);
+    }
+    print('user name: $userName');
+    if(userName != null) {
+     await checkUserName(userName);
+    }
+
+    await checkVerified();
+    if (userNameVerified && phoneVerified) {
+      print("verified");
+      secureStorage.writeSecureData('userName', userName);
+      secureStorage.writeSecureData('phoneNumber', phoneNumber);
+      Navigator.of(context).pushReplacement(FadePageRoute(
+        builder: (context) => MainScreen(),
+      ));
+    } else {
+      print('fields arent completed');
+    }
+  }
+
 }
