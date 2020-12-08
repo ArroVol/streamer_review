@@ -120,28 +120,31 @@ class StreamerReview extends State<ReviewPage> {
     old_entertainment_rating = oldReview[0]['entertainment_rating'];
     old_interaction_rating = oldReview[0]['interactiveness_rating'];
     old_skill_rating = oldReview[0]['skill_rating'];
-    setState(() {
-      if(oldReview != null) {
-        old_satisfaction_rating = oldReview[0]['satisfaction_rating'];
-        satisfaction_rating = oldReview[0]['satisfaction_rating'].toDouble();
-        old_entertainment_rating = oldReview[0]['entertainment_rating'];
-        entertainment_rating = oldReview[0]['entertainment_rating'].toDouble();
-        old_interaction_rating = oldReview[0]['interactiveness_rating'];
-        interaction_rating = oldReview[0]['interactiveness_rating'].toDouble();
-        old_skill_rating = oldReview[0]['skill_rating'];
-        skill_rating = oldReview[0]['skill_rating'].toDouble();
-      } else{
-        old_satisfaction_rating = 1;
-        satisfaction_rating = 1;
-        old_entertainment_rating = 1;
-        entertainment_rating = 1;
-        old_interaction_rating = 1;
-        interaction_rating = 1;
-        old_skill_rating = 1;
-        skill_rating = 1;
-      }
-
-    });
+    if (mounted) {
+      setState(() {
+        if (oldReview != null) {
+          old_satisfaction_rating = oldReview[0]['satisfaction_rating'];
+          satisfaction_rating = oldReview[0]['satisfaction_rating'].toDouble();
+          old_entertainment_rating = oldReview[0]['entertainment_rating'];
+          entertainment_rating =
+              oldReview[0]['entertainment_rating'].toDouble();
+          old_interaction_rating = oldReview[0]['interactiveness_rating'];
+          interaction_rating =
+              oldReview[0]['interactiveness_rating'].toDouble();
+          old_skill_rating = oldReview[0]['skill_rating'];
+          skill_rating = oldReview[0]['skill_rating'].toDouble();
+        } else {
+          old_satisfaction_rating = 1;
+          satisfaction_rating = 1;
+          old_entertainment_rating = 1;
+          entertainment_rating = 1;
+          old_interaction_rating = 1;
+          interaction_rating = 1;
+          old_skill_rating = 1;
+          skill_rating = 1;
+        }
+      });
+    }
   }
 
   @override

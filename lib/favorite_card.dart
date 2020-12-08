@@ -41,7 +41,7 @@ class _FavoriteCard extends State<FavoriteCard> {
   int user_id = 1;
   BroadcasterFromDB b;
   bool offline = false;
-  String userName;
+  String userName = '';
 
   // Future<Streamer> getData() async {
   //   var url = "https://api.twitch.tv/helix/users?id=" + streamerId;

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:streamer_review/edit_user_settings.dart';
 import 'package:streamer_review/secure_storage/secure_storage.dart';
 import 'package:streamer_review/helper/database_helper.dart' as DBHelper;
 import 'customize_home.dart';
@@ -179,6 +180,26 @@ class _ProfileState extends State<Profile> {
                 child: Align(
                   alignment: Alignment.center,
                   child: Text('Logout',
+                      style: TextStyle(
+                          color: Colors.lightGreenAccent[100],
+                          fontSize: 18,
+                          letterSpacing: 1)),
+                ),
+
+
+              ),
+            ),
+            OutlineButton(
+              onPressed: () {
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => EditUserSettings()));
+              },
+              child: Container(
+                height: 30,
+                width: 100,
+                child: Align(
+                  alignment: Alignment.center,
+                  child: Text('Edit User',
                       style: TextStyle(
                           color: Colors.lightGreenAccent[100],
                           fontSize: 18,

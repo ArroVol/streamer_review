@@ -167,6 +167,16 @@ class RegisterForm extends State<Register> {
       ),
     );
     return Scaffold(
+      appBar: AppBar(
+        title: Text(
+          'Finalize Account',
+          style: TextStyle(
+            letterSpacing: 1.5,
+            color: Colors.lightGreenAccent,
+          ),
+        ),
+        backgroundColor: Colors.black54,
+      ),
       body: SingleChildScrollView(
         child: Container(
           padding: EdgeInsets.all(40.0),
