@@ -27,7 +27,6 @@ class _HomeScreenState extends State<HomeScreen> {
       RefreshController(initialRefresh: false);
 
   void _onRefresh() async {
-
     getList().then(updateCategoryList);
     // if failed,use refreshFailed()
     _refreshController.refreshCompleted();
@@ -138,9 +137,11 @@ class _HomeScreenState extends State<HomeScreen> {
     list.add(FeaturedStreamer());
     list.add(Divider(color: Colors.black45));
     for (Category c in categoryList) {
-      if(c.selected){
+      if (c.selected) {
         list.add(Text(c.category));
-        list.add(ExpansionTile(children: [ExpansionRowContainer()],));
+        list.add(ExpansionTile(
+          children: [ExpansionRowContainer()],
+        ));
         // list.add(Divider(color: Colors.black45));
       }
       print(c.category);
@@ -153,7 +154,12 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Future<String> getList() async {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-    return sharedPreferences.getString('categories');
+    String response = sharedPreferences.getString('categories');
+    if (response == null){
+      createPreferences();
+      response = sharedPreferences.getString('categories');
+    }
+    return response;
   }
 
   static List<Category> decode(String toDecodeCategories) =>
@@ -166,6 +172,32 @@ class _HomeScreenState extends State<HomeScreen> {
       this.categoryList = decode(categoriesString);
     });
   }
+
+  void createPreferences() async {
+    List<Category> categories = [
+      new Category('Favorites', true),
+      new Category('Random', true),
+      new Category('Gaming', true),
+      new Category('Food & Drinks', true),
+      new Category('Sports & Fitness', true),
+      new Category('Talk Shows & Podcasts', true),
+      new Category('Just Chatting', true),
+      new Category('Makers & Crafting', true),
+      new Category('Tabletop RPGs', true),
+      new Category('Science & Technologies', true),
+      new Category('Music & Performing Arts', true),
+      new Category('Beauty & Body Art', true)
+    ];
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    String encodedCategories = encode(categories);
+    sharedPreferences.setString('categories', encodedCategories);
+  }
+
+  static String encode(List<Category> listOfCategories) => json.encode(
+        listOfCategories
+            .map<Map<String, dynamic>>((category) => Category.toMap(category))
+            .toList(),
+      );
 }
 
 class StreamerSearch extends SearchDelegate<String> {
