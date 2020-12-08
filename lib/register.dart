@@ -56,17 +56,20 @@ class RegisterForm extends State<Register> {
     super.dispose();
   }
 
+  final FocusNode fOne = FocusNode();
+  final FocusNode fTwo = FocusNode();
+
   @override
   Widget build(BuildContext context) {
 
     final usernameField = TextField(
-
       style: TextStyle(color: Colors.black),
+      focusNode: fOne,
       onSubmitted: (value) {
-        print("search");
         print(value);
         userName = value;
-        DatabaseHelper2 d = DBHelper.DatabaseHelper2.instance;
+        fOne.unfocus();
+        FocusScope.of(context).requestFocus(fTwo);
       },
       onChanged: (userNameOnChanged){
         userNameUnSubmitted = userNameOnChanged;
@@ -86,8 +89,8 @@ class RegisterForm extends State<Register> {
 
     final confirmPhoneNumber = TextField(
       // textInputAction: TextInputAction.go,
+      focusNode: fTwo,
       onSubmitted: (value) {
-        print("search");
         print(value);
         phoneNumber = value;
         DatabaseHelper2 d = DBHelper.DatabaseHelper2.instance;
@@ -120,7 +123,6 @@ class RegisterForm extends State<Register> {
             .size
             .width,
         padding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
-
         textColor: Colors.lightGreenAccent,
         onPressed: () {
           print('pressed login button');

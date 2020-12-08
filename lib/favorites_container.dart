@@ -49,9 +49,11 @@ class _FavoritesContainer extends State<FavoritesContainer> {
       }
     }
     if (streamerList != null) {
-      setState(() {
-        favList = streamerList;
-      });
+      if (mounted) {
+        setState(() {
+          favList = streamerList;
+        });
+      }
     }
     // print('HERE');
     print(favList.length);
