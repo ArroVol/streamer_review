@@ -24,7 +24,7 @@ import 'DatabaseCreator.dart';
 class DatabaseHelper2 {
   //These are not given a type because it will automatically take the type that it is given first to it
   // Database name and database version are specified.
-  static final _dbName = 'myDatabase25.db';
+  static final _dbName = 'myDatabase26.db';
 
   static final _dbVersion = 1;
   static final _tableName = '_user_table';
@@ -138,10 +138,15 @@ class DatabaseHelper2 {
     db.execute('''
       CREATE TABLE broadcaster_tags(
       tags_id INTEGER PRIMARY KEY AUTOINCREMENT,
-      tag_name TEXT,
+      fk_tag_name TEXT,
+      fk_user_id INTEGER,
       fk_broadcaster_id INTEGER,
       FOREIGN KEY (fk_broadcaster_id)
-        REFERENCES broadcaster_table(broadcaster_id)
+        REFERENCES broadcaster_table(broadcaster_id),
+      FOREIGN KEY (fk_user_id)
+        REFERENCES _user_table(_id),
+      FOREIGN KEY (fk_tag_name)
+        REFERENCES tag_names(tag_name)
       )
       ''');
 
@@ -517,6 +522,21 @@ class DatabaseHelper2 {
     // raw query
     List<Map> result = await db
         .rawQuery('SELECT * FROM reviews WHERE fk_user_id=?', [userId]);
+
+    int numOfReviews = result.length;
+
+    return numOfReviews;
+  }
+
+  Future<int> getNumOfTagsCreated() async {
+    String userEmail = await secureStorage.readSecureData("email");
+    int userId = await DatabaseHelper2.instance.getUserIdByEmail(userEmail);
+    // get a reference to the database
+    Database db = await DatabaseHelper2.instance.database;
+
+    // raw query
+    List<Map> result = await db
+        .rawQuery('SELECT * FROM broadcaster_tags WHERE fk_user_id=?', [userId]);
 
     int numOfReviews = result.length;
 

@@ -16,19 +16,30 @@ Future<void> main() async {
     String email = await secureStorage.readSecureData("email");
     print(email);
     if (email != null) {
-      print('passed if check, its not null');
       print("***FOUND EMAIL***");
       print("***$email***");
 
-      // home: Profile();
-      runApp(MaterialApp(
-        initialRoute: '/main_screen',
-        routes: {
-          '/register': (context) => Register(),
-          '/login': (context) => LoginScreen(),
-          '/main_screen': (context) => MainScreen(),
-        },
-      ));
+      String userName = await secureStorage.readSecureData('userName');
+      if(userName == null){
+        runApp(MaterialApp(
+          initialRoute: '/register',
+          routes: {
+            '/register': (context) => Register(),
+            '/login': (context) => LoginScreen(),
+            '/main_screen': (context) => MainScreen(),
+          },
+        ));
+      } else {
+        // home: Profile();
+        runApp(MaterialApp(
+          initialRoute: '/main_screen',
+          routes: {
+            '/register': (context) => Register(),
+            '/login': (context) => LoginScreen(),
+            '/main_screen': (context) => MainScreen(),
+          },
+        ));
+      }
     } else {
       print("***THERE IS NOT AN EMAIL SAVED***");
       // home: LoginScreen();

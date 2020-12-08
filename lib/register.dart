@@ -61,15 +61,12 @@ class RegisterForm extends State<Register> {
 
     final usernameField = TextField(
 
-      style: TextStyle(color: Colors.white),
-
-      // textInputAction: TextInputAction.go,
+      style: TextStyle(color: Colors.black),
       onSubmitted: (value) {
         print("search");
         print(value);
         userName = value;
         DatabaseHelper2 d = DBHelper.DatabaseHelper2.instance;
-        // checkUserName(value);
       },
       onChanged: (userNameOnChanged){
         userNameUnSubmitted = userNameOnChanged;
@@ -77,9 +74,13 @@ class RegisterForm extends State<Register> {
       decoration: const InputDecoration(
         icon: Icon(Icons.person),
         hintText: 'Enter a username',
-        // color: Colors.lightGreenAccent,
-
       ),
+      // keyboardType: TextInputType.number,
+      inputFormatters: [
+        FilteringTextInputFormatter.deny(' '),
+        LengthLimitingTextInputFormatter(16),
+        WhitelistingTextInputFormatter(RegExp("[a-zA-Z0-9]")),
+      ],
       autofocus: true,
     );
 
@@ -96,23 +97,23 @@ class RegisterForm extends State<Register> {
        phoneNumberUnSubmitted = phoneNumberOnChanged;
       },
       decoration: const InputDecoration(
-        icon: Icon(Icons.person),
+        icon: Icon(Icons.phone_android),
         hintText: 'Enter your mobile number',
       ),
       keyboardType: TextInputType.number,
       inputFormatters: <TextInputFormatter>[
-        FilteringTextInputFormatter.digitsOnly
+        FilteringTextInputFormatter.digitsOnly,
+        LengthLimitingTextInputFormatter(11),
       ],
-      style: TextStyle(color: Colors.white),
-
+      style: TextStyle(color: Colors.black),
       autofocus: true,
     );
-
 
     final loginButon = Material(
       elevation: 5.0,
       borderRadius: BorderRadius.circular(30.0),
-      color: Color(0xff01A0C7),
+      color: Colors.lightGreenAccent,
+      // color: Color(0xff01A0C7),
       child: MaterialButton(
         minWidth: MediaQuery
             .of(context)
@@ -120,8 +121,7 @@ class RegisterForm extends State<Register> {
             .width,
         padding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
 
-        // textColor: Colors.lightGreenAccent,
-        // color: Colors.lightGreenAccent,
+        textColor: Colors.lightGreenAccent,
         onPressed: () {
           print('pressed login button');
           print(phoneNumber);
@@ -130,35 +130,37 @@ class RegisterForm extends State<Register> {
             phoneNumber = phoneNumberUnSubmitted;
             print(phoneNumber);
           }
-          if(phoneNumber != null) {
-            print("not null number...");
-            checkPhoneNumber(phoneNumber);
-          }
-
-          if(userName == null && userNameUnSubmitted != null){
-            print("switching for onchanged for user name");
-            userName = userNameUnSubmitted;
-            print(userName);
-          }
-          print('user name: $userName');
-          if(userName != null) {
-            checkUserName(userName);
-          }
-
-          // sleep(const Duration(seconds:1));
-          checkVerified();
-          if (userNameVerified && phoneVerified) {
-            print("verified");
-            Navigator.of(context).pushReplacement(FadePageRoute(
-              builder: (context) => MainScreen(),
-            ));
-          } else {
-            print('fields arent completed');
-          }
+          checkFields();
+          // if(phoneNumber != null) {
+          //   print("not null number...");
+          //   checkPhoneNumber(phoneNumber);
+          // }
+          //
+          // if(userName == null && userNameUnSubmitted != null){
+          //   print("switching for onchanged for user name");
+          //   userName = userNameUnSubmitted;
+          //   print(userName);
+          // }
+          // print('user name: $userName');
+          // if(userName != null) {
+          //   checkUserName(userName);
+          // }
+          // checkVerified();
+          // if (userNameVerified && phoneVerified) {
+          //   print("verified");
+          //   secureStorage.writeSecureData('userName', userName);
+          //   secureStorage.writeSecureData('phoneNumber', phoneNumber);
+          //   Navigator.of(context).pushReplacement(FadePageRoute(
+          //     builder: (context) => MainScreen(),
+          //   ));
+          // } else {
+          //   print('fields arent completed');
+          // }
         },
         child: Text(
           "Complete Registration",
           textAlign: TextAlign.center,
+          style: TextStyle(color: Colors.black.withOpacity(0.6), fontSize: 20),
         ),
       ),
     );
@@ -170,11 +172,11 @@ class RegisterForm extends State<Register> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                SizedBox(height: 215.0),
+                SizedBox(height: 115.0),
                 Text(
                   "Username",
                   style: TextStyle(
-                    letterSpacing: 1.5,
+                    letterSpacing: 2.0,
                     fontSize: 22.0,
                     color: Colors.lightGreenAccent,
                   ),
@@ -187,7 +189,7 @@ class RegisterForm extends State<Register> {
                 Text(
                   "Phone number",
                   style: TextStyle(
-                    letterSpacing: 1.5,
+                    letterSpacing: 2.0,
                     fontSize: 22.0,
                     color: Colors.lightGreenAccent,
                     // fontWeight: FontWeight.bold,
@@ -195,14 +197,15 @@ class RegisterForm extends State<Register> {
                 ),
                 SizedBox(height: 10.0),
                 confirmPhoneNumber,
-                SizedBox(height: 5.0),
-                loginButon
+                SizedBox(height: 25.0),
+                loginButon,
+
               ],
             ),
           ),
         ),
       ),
-      backgroundColor: Colors.black54,
+      backgroundColor: Colors.grey[700],
 
     );
   }
@@ -245,20 +248,49 @@ class RegisterForm extends State<Register> {
 
   void checkVerified() async {
     String email = await secureStorage.readSecureData("email");
-    List<User> pulledUser = await DatabaseHelper2.instance.getUserByEmail(
-        email);
-    print(pulledUser.first.phoneNumber);
-    print(pulledUser.first.id);
-    updatedUser.email = pulledUser.first.email;
-    updatedUser.password = pulledUser.first.password;
-    updatedUser.userName = userName;
-    updatedUser.id = pulledUser.first.id;
-    updatedUser.phoneNumber = phoneNumber;
-    await DatabaseHelper2.instance.updateUser(updatedUser);
     sleep(const Duration(seconds:1));
 
     print(userNameVerified);
     print(phoneVerified);
+    if (userNameVerified && phoneVerified) {
+      print("verified");
+      secureStorage.writeSecureData('userName', userName);
+      secureStorage.writeSecureData('phoneNumber', phoneNumber);
+      List<User> pulledUser = await DatabaseHelper2.instance.getUserByEmail(
+          email);
+      print(pulledUser.first.phoneNumber);
+      print(pulledUser.first.id);
+      updatedUser.email = pulledUser.first.email;
+      updatedUser.password = pulledUser.first.password;
+      updatedUser.userName = userName;
+      updatedUser.id = pulledUser.first.id;
+      updatedUser.phoneNumber = phoneNumber;
+      await DatabaseHelper2.instance.updateUser(updatedUser);
+      Navigator.of(context).pushReplacement(FadePageRoute(
+        builder: (context) => MainScreen(),
+      ));
+    } else {
+      print('fields arent completed');
+    }
+  }
+
+  void checkFields() async {
+    if(phoneNumber != null) {
+      print("not null number...");
+     await checkPhoneNumber(phoneNumber);
+    }
+
+    if(userName == null && userNameUnSubmitted != null){
+      print("switching for onchanged for user name");
+      userName = userNameUnSubmitted;
+      print(userName);
+    }
+    print('user name: $userName');
+    if(userName != null) {
+     await checkUserName(userName);
+    }
+
+    await checkVerified();
     if (userNameVerified && phoneVerified) {
       print("verified");
       secureStorage.writeSecureData('userName', userName);

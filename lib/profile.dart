@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:streamer_review/main.dart';
 import 'package:streamer_review/secure_storage/secure_storage.dart';
 import 'package:streamer_review/helper/database_helper.dart' as DBHelper;
 import 'customize_home.dart';
 import 'helper/database_helper.dart';
 import 'custom_route.dart';
 import 'login.dart';
+import 'model/user.dart';
 
 class Profile extends StatefulWidget {
 
@@ -21,6 +21,15 @@ class _ProfileState extends State<Profile> {
   String userEmail;
   String userName;
   String phoneNumber;
+
+  void getUser() async{
+    DatabaseHelper2 d = DBHelper.DatabaseHelper2.instance;
+    String userEmail2 = await d.getUserEmail();
+    List<User> userList = await d.getUserByEmail(userEmail2);
+    print("in profiles get username....");
+    print(userList.first.userName);
+
+  }
 
   Future<int> getNumReviews() async {
     DatabaseHelper2 d = DBHelper.DatabaseHelper2.instance;
@@ -41,6 +50,7 @@ class _ProfileState extends State<Profile> {
   @override
   void initState() {
     getNumReviews();
+    getUser();
     super.initState();
   }
   @override
