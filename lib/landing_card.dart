@@ -97,10 +97,11 @@ class _LandingCard extends State<LandingCard> {
         ),
         child: topStreamer == null
             ? new Container(
+          margin: EdgeInsets.all(15),
           child: new Center(
             child: new SizedBox(
-              width: 75,
-              height: 75,
+              width: 45,
+              height: 45,
               child: CircularProgressIndicator(
                   valueColor:
                   AlwaysStoppedAnimation(Colors.lightGreenAccent)),
@@ -109,10 +110,13 @@ class _LandingCard extends State<LandingCard> {
         )
             : ListTile(
           leading: CircleAvatar(
-            backgroundImage: NetworkImage(
-              topStreamer.profilePictureUrl,
+            radius: 30,
+            backgroundColor: contrastColor,
+            child: CircleAvatar(
+              radius: 27.0,
+              backgroundImage:
+              NetworkImage(topStreamer.profilePictureUrl),
             ),
-            radius: 30.0,
           ),
           title: Text(
             topStreamer.username,
@@ -146,7 +150,7 @@ class _LandingCard extends State<LandingCard> {
         ),
       ),
       decoration: BoxDecoration( //                    <-- BoxDecoration
-        border: Border(bottom: BorderSide(color: Colors.black12)),
+        border: Border(bottom: BorderSide(color: Colors.black)),
       ),
     );
   }

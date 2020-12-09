@@ -1,8 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'favorite_card.dart';
-import 'favorites_container.dart';
-import 'package:streamer_review/favorite_card.dart';
+import 'package:streamer_review/favorites_container.dart';
 import 'package:streamer_review/helper/database_helper.dart' as DBHelper;
 import 'helper/database_helper.dart';
 
@@ -57,18 +55,9 @@ class _FavoritesPage extends State<FavoritesPage> {
         backgroundColor: Colors.grey[850],
       ),
       body: Container(
-        // decoration: BoxDecoration(
-        //     gradient: LinearGradient(
-        //       begin: Alignment.topCenter,
-        //       end: Alignment.bottomCenter,
-        //       colors: [Colors.purple[900], Colors.white],
-        //       stops: [0.2, 1],
-        //     )),
-        child: Container(
           child: FavoritesContainer(),
           // ],
         ),
-      ),
     );
   }
 }

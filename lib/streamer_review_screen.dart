@@ -7,16 +7,15 @@ import 'package:streamer_review/helper/database_helper.dart' as DBHelper;
 import 'package:http/http.dart' as http;
 import 'helper/database_helper.dart';
 
-
-
 class ReviewPage extends StatefulWidget {
   String broadcaster_id;
+
   ReviewPage(String broadcaster_id) {
     this.broadcaster_id = broadcaster_id;
   }
 
   @override
-  StreamerReview  createState() => new StreamerReview (broadcaster_id);
+  StreamerReview createState() => new StreamerReview(broadcaster_id);
 }
 
 class StreamerReview extends State<ReviewPage> {
@@ -29,6 +28,7 @@ class StreamerReview extends State<ReviewPage> {
   List<String> tags = [];
   String dropdownValue = 'Gaming';
   List<int> tagKeys = [];
+
   // int broadcaster_id = 229729353;
   // int broadcaster_id = 48526626;
   // int broadcaster_id = 469790580;
@@ -36,7 +36,7 @@ class StreamerReview extends State<ReviewPage> {
   // int broadcaster_id = 138117508;
   String broadcaster_id;
 
-  int user_id = 1;
+  // int user_id = 1;
 
   int old_satisfaction_rating = 1;
   int old_entertainment_rating = 1;
@@ -45,37 +45,36 @@ class StreamerReview extends State<ReviewPage> {
 
   var oldReview;
 
-  List <MultiSelectDialogItem<int>> multiItem = List();
+  List<MultiSelectDialogItem<int>> multiItem = List();
 
   final valuestopopulate = {
-    1 : 'Gaming',
-    2 : 'Food & Drinks',
-    3 : 'Sports & Fitness',
-    4 : 'Talk Shows & Podcasts',
-    5 : 'Just Chatting',
-    6 : 'Makers & Crafting',
-    7 : 'Tabletop RPGs',
-    8 : 'Science & Technologies',
-    9 : 'Music & Performing Arts',
-    10 : 'Beauty & Body Art',
-    11 : 'Travel & Outdoors',
-    12 : 'ASMR',
+    1: 'Gaming',
+    2: 'Food & Drinks',
+    3: 'Sports & Fitness',
+    4: 'Talk Shows & Podcasts',
+    5: 'Just Chatting',
+    6: 'Makers & Crafting',
+    7: 'Tabletop RPGs',
+    8: 'Science & Technologies',
+    9: 'Music & Performing Arts',
+    10: 'Beauty & Body Art',
+    11: 'Travel & Outdoors',
+    12: 'ASMR',
   };
 
   StreamerReview(String broadcaster_id) {
     this.broadcaster_id = broadcaster_id;
   }
 
-
   Future<void> submitReview(var context) async {
-    if(satisfaction_rating == 0 || entertainment_rating == 0 || interaction_rating == 0 || skill_rating == 0) {
-      Scaffold.of(context).showSnackBar(new SnackBar(
-          content: new Text('ERROR')
-      ));
-
+    if (satisfaction_rating == 0 ||
+        entertainment_rating == 0 ||
+        interaction_rating == 0 ||
+        skill_rating == 0) {
+      Scaffold.of(context)
+          .showSnackBar(new SnackBar(content: new Text('ERROR')));
     } else {
       DatabaseHelper2 d = DBHelper.DatabaseHelper2.instance;
-      
 
       for (var tag in tags) {
         print(tag);
@@ -85,13 +84,12 @@ class StreamerReview extends State<ReviewPage> {
       var x = await d.selectAllBroadcasterTagsByBroadcaster(broadcaster_id);
       print(x);
 
-
       String url = "https://api.twitch.tv/helix/users?id=" + broadcaster_id;
 
       // print(url);
 
       http.Response channelInformation =
-      await http.get(Uri.encodeFull(url), headers: {
+          await http.get(Uri.encodeFull(url), headers: {
         "Authorization": "Bearer 5e46v0tks21zqvnloyua8e76bcsui9",
         "Client-Id": "874uve10v0bcn3rmp2bq4cvz8fb5wj"
       });
@@ -99,21 +97,22 @@ class StreamerReview extends State<ReviewPage> {
       var data = json.decode(channelInformation.body);
       var login = data['data'][0]['login'];
       print(login);
-      await d.insertReview(satisfaction_rating, entertainment_rating, interaction_rating, skill_rating, broadcaster_id, user_id, login);
-      await d.updateBroadcaster(broadcaster_id, user_id, login);
-      if(reviewController.text.isNotEmpty) {
-        await d.insertTextReviews(reviewController.text, new DateTime.now().toString(), broadcaster_id, user_id);
+      await d.insertReview(satisfaction_rating, entertainment_rating,
+          interaction_rating, skill_rating, broadcaster_id, login);
+      await d.updateBroadcaster(broadcaster_id, login);
+      if (reviewController.text.isNotEmpty) {
+        await d.insertTextReviews(reviewController.text,
+            new DateTime.now().toString(), broadcaster_id);
       }
 
       var y = await d.selectTextReviews(broadcaster_id);
       print(y);
     }
-
   }
 
   void getOldReview() async {
     DatabaseHelper2 d = DBHelper.DatabaseHelper2.instance;
-    oldReview = await d.selectReviews(broadcaster_id, user_id);
+    oldReview = await d.selectReviews(broadcaster_id);
     // print(oldReview[0]);
     // print(oldReview[0]['satisfaction_rating'].runtimeType);
     old_satisfaction_rating = oldReview[0]['satisfaction_rating'];
@@ -121,7 +120,7 @@ class StreamerReview extends State<ReviewPage> {
     old_interaction_rating = oldReview[0]['interactiveness_rating'];
     old_skill_rating = oldReview[0]['skill_rating'];
     setState(() {
-      if(oldReview != null) {
+      if (oldReview != null) {
         old_satisfaction_rating = oldReview[0]['satisfaction_rating'];
         satisfaction_rating = oldReview[0]['satisfaction_rating'].toDouble();
         old_entertainment_rating = oldReview[0]['entertainment_rating'];
@@ -130,7 +129,7 @@ class StreamerReview extends State<ReviewPage> {
         interaction_rating = oldReview[0]['interactiveness_rating'].toDouble();
         old_skill_rating = oldReview[0]['skill_rating'];
         skill_rating = oldReview[0]['skill_rating'].toDouble();
-      } else{
+      } else {
         old_satisfaction_rating = 1;
         satisfaction_rating = 1;
         old_entertainment_rating = 1;
@@ -140,7 +139,6 @@ class StreamerReview extends State<ReviewPage> {
         old_skill_rating = 1;
         skill_rating = 1;
       }
-
     });
   }
 
@@ -150,19 +148,16 @@ class StreamerReview extends State<ReviewPage> {
     super.initState();
   }
 
-
-  void populateMultiselect(){
-    for(int v in valuestopopulate.keys){
+  void populateMultiselect() {
+    for (int v in valuestopopulate.keys) {
       multiItem.add(MultiSelectDialogItem(v, valuestopopulate[v]));
     }
   }
-
 
   void _showMultiSelect(BuildContext context) async {
     multiItem = [];
     populateMultiselect();
     final items = multiItem;
-
 
     final selectedValues = await showDialog<Set<int>>(
       context: context,
@@ -178,13 +173,11 @@ class StreamerReview extends State<ReviewPage> {
     getvaluefromkey(selectedValues);
   }
 
-
-
-  void getvaluefromkey(Set selection){
+  void getvaluefromkey(Set selection) {
     tags.clear();
     tagKeys.clear();
-    if(selection != null){
-      for(int x in selection.toList()){
+    if (selection != null) {
+      for (int x in selection.toList()) {
         // print(valuestopopulate[x]);
         tags.add(valuestopopulate[x]);
         tagKeys.add(x);
@@ -194,7 +187,18 @@ class StreamerReview extends State<ReviewPage> {
   }
 
   Widget build(BuildContext context) {
+    getOldReview();
     return Scaffold(
+      backgroundColor: Colors.black,
+      appBar: AppBar(
+          title: Text(
+            'STREVIEW',
+            style:
+                TextStyle(color: Colors.lightGreenAccent, letterSpacing: 1.5),
+          ),
+          actions: <Widget>[],
+          centerTitle: true,
+          backgroundColor: Colors.grey[850]),
       body: SingleChildScrollView(
         physics: NeverScrollableScrollPhysics(),
         child: ConstrainedBox(
@@ -209,19 +213,10 @@ class StreamerReview extends State<ReviewPage> {
                 Column(
                   children: <Widget>[
                     Container(
-                      decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                            begin: Alignment.topCenter,
-                            end: Alignment.bottomCenter,
-                            colors: [Colors.purple[900], Colors.white],
-                            stops: [0.2, 1],
-                          )),
+                      decoration: BoxDecoration(),
                       child: Container(
                         width: double.infinity,
-                        height: MediaQuery
-                            .of(context)
-                            .size
-                            .height * .9,
+                        height: MediaQuery.of(context).size.height * .9,
                         child: ListView(
                           scrollDirection: Axis.vertical,
                           children: <Widget>[
@@ -230,21 +225,21 @@ class StreamerReview extends State<ReviewPage> {
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: <Widget>[
-                                  Text(
-                                    "Reviewing " + username,
-                                    style: TextStyle(
-                                      fontSize: 22.0,
-                                      color: Colors.white,
-                                    ),
-                                  ),
-                                  SizedBox(
-                                    height: 10.0,
-                                  ),
+                                  // Text(
+                                  //   "Reviewing " + username,
+                                  //   style: TextStyle(
+                                  //     fontSize: 22.0,
+                                  //     color: Colors.white,
+                                  //   ),
+                                  // ),
+                                  // SizedBox(
+                                  //   height: 10.0,
+                                  // ),
                                   Card(
                                     margin: EdgeInsets.symmetric(
                                         horizontal: 20.0, vertical: 10.0),
                                     clipBehavior: Clip.antiAlias,
-                                    color: Colors.white,
+                                    color: Colors.transparent,
                                     elevation: 5.0,
                                     child: Padding(
                                       padding: const EdgeInsets.symmetric(
@@ -254,22 +249,36 @@ class StreamerReview extends State<ReviewPage> {
                                           Expanded(
                                             child: Column(
                                               children: <Widget>[
-                                                Text(
-                                                  "Category",
-                                                  style: TextStyle(
-                                                    color: Colors.deepPurple,
-                                                    fontSize: 22.0,
-                                                    fontWeight: FontWeight.bold,
-                                                  ),
-                                                ),
-                                                SizedBox(
-                                                  height: 5.0,
-                                                ),
                                                 RaisedButton(
-                                                  child: Text("Show Categories"),
-                                                  onPressed: () =>
-                                                      _showMultiSelect(context),
-                                                ),
+                                                    onPressed: () =>
+                                                        _showMultiSelect(
+                                                            context),
+                                                    elevation: 0.0,
+                                                    padding:
+                                                        EdgeInsets.all(0.0),
+                                                    child: Ink(
+                                                      decoration: BoxDecoration(
+                                                          color:
+                                                              Colors.grey[850]),
+                                                      child: Container(
+                                                        constraints:
+                                                            BoxConstraints(
+                                                                maxWidth: 150.0,
+                                                                minHeight:
+                                                                    50.0),
+                                                        alignment:
+                                                            Alignment.center,
+                                                        child: Text(
+                                                          "Select Tags",
+                                                          style: TextStyle(
+                                                            color: Colors
+                                                                .lightGreenAccent,
+                                                            fontSize: 18.0,
+                                                            // fontWeight: FontWeight.bold
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    )),
 
                                                 SizedBox(
                                                   height: 5.0,
@@ -285,7 +294,7 @@ class StreamerReview extends State<ReviewPage> {
                                     margin: EdgeInsets.symmetric(
                                         horizontal: 20.0, vertical: 2.0),
                                     clipBehavior: Clip.antiAlias,
-                                    color: Colors.white,
+                                    color: Colors.grey[850],
                                     elevation: 5.0,
                                     child: Padding(
                                       padding: const EdgeInsets.symmetric(
@@ -308,11 +317,14 @@ class StreamerReview extends State<ReviewPage> {
                                                 ),
                                                 RatingBar.builder(
                                                   initialRating:
-                                                  old_satisfaction_rating.toDouble(),
+                                                      old_satisfaction_rating
+                                                          .toDouble(),
                                                   itemCount: 5,
-                                                  itemPadding: EdgeInsets.symmetric(
-                                                      horizontal: 4.0),
-                                                  itemBuilder: (context, index) {
+                                                  itemPadding:
+                                                      EdgeInsets.symmetric(
+                                                          horizontal: 4.0),
+                                                  itemBuilder:
+                                                      (context, index) {
                                                     switch (index) {
                                                       case 0:
                                                         return Icon(
@@ -322,28 +334,37 @@ class StreamerReview extends State<ReviewPage> {
                                                         );
                                                       case 1:
                                                         return Icon(
-                                                          Icons.sentiment_dissatisfied,
-                                                          color: Colors.yellow[900],
+                                                          Icons
+                                                              .sentiment_dissatisfied,
+                                                          color: Colors
+                                                              .yellow[900],
                                                         );
                                                       case 2:
                                                         return Icon(
-                                                          Icons.sentiment_neutral,
-                                                          color: Colors.amber[700],
+                                                          Icons
+                                                              .sentiment_neutral,
+                                                          color:
+                                                              Colors.amber[700],
                                                         );
                                                       case 3:
                                                         return Icon(
-                                                          Icons.sentiment_satisfied,
-                                                          color: Colors.limeAccent[700],
+                                                          Icons
+                                                              .sentiment_satisfied,
+                                                          color: Colors
+                                                              .limeAccent[700],
                                                         );
                                                       case 4:
                                                         return Icon(
-                                                          Icons.sentiment_very_satisfied,
-                                                          color: Colors.greenAccent[700],
+                                                          Icons
+                                                              .sentiment_very_satisfied,
+                                                          color: Colors
+                                                              .greenAccent[700],
                                                         );
                                                     }
                                                   },
                                                   onRatingUpdate: (rating) {
-                                                    satisfaction_rating = rating;
+                                                    satisfaction_rating =
+                                                        rating;
                                                     print(rating);
                                                   },
                                                 ),
@@ -358,7 +379,7 @@ class StreamerReview extends State<ReviewPage> {
                                     margin: EdgeInsets.symmetric(
                                         horizontal: 20.0, vertical: 2.0),
                                     clipBehavior: Clip.antiAlias,
-                                    color: Colors.white,
+                                    color: Colors.grey[850],
                                     elevation: 5.0,
                                     child: Padding(
                                       padding: const EdgeInsets.symmetric(
@@ -381,19 +402,23 @@ class StreamerReview extends State<ReviewPage> {
                                                 ),
                                                 RatingBar.builder(
                                                   initialRating:
-                                                  old_entertainment_rating.toDouble(),
+                                                      old_entertainment_rating
+                                                          .toDouble(),
                                                   minRating: 1,
                                                   direction: Axis.horizontal,
                                                   allowHalfRating: false,
                                                   itemCount: 5,
-                                                  itemPadding: EdgeInsets.symmetric(
-                                                      horizontal: 4.0),
-                                                  itemBuilder: (context, _) => Icon(
+                                                  itemPadding:
+                                                      EdgeInsets.symmetric(
+                                                          horizontal: 4.0),
+                                                  itemBuilder: (context, _) =>
+                                                      Icon(
                                                     Icons.star,
                                                     color: Colors.amber,
                                                   ),
                                                   onRatingUpdate: (rating) {
-                                                    entertainment_rating = rating;
+                                                    entertainment_rating =
+                                                        rating;
                                                     print(rating);
                                                   },
                                                 ),
@@ -408,7 +433,7 @@ class StreamerReview extends State<ReviewPage> {
                                     margin: EdgeInsets.symmetric(
                                         horizontal: 20.0, vertical: 2.0),
                                     clipBehavior: Clip.antiAlias,
-                                    color: Colors.white,
+                                    color: Colors.grey[850],
                                     elevation: 5.0,
                                     child: Padding(
                                       padding: const EdgeInsets.symmetric(
@@ -431,14 +456,17 @@ class StreamerReview extends State<ReviewPage> {
                                                 ),
                                                 RatingBar.builder(
                                                   initialRating:
-                                                  old_interaction_rating.toDouble(),
+                                                      old_interaction_rating
+                                                          .toDouble(),
                                                   minRating: 1,
                                                   direction: Axis.horizontal,
                                                   allowHalfRating: false,
                                                   itemCount: 5,
-                                                  itemPadding: EdgeInsets.symmetric(
-                                                      horizontal: 4.0),
-                                                  itemBuilder: (context, _) => Icon(
+                                                  itemPadding:
+                                                      EdgeInsets.symmetric(
+                                                          horizontal: 4.0),
+                                                  itemBuilder: (context, _) =>
+                                                      Icon(
                                                     Icons.star,
                                                     color: Colors.amber,
                                                   ),
@@ -458,7 +486,7 @@ class StreamerReview extends State<ReviewPage> {
                                     margin: EdgeInsets.symmetric(
                                         horizontal: 20.0, vertical: 2.0),
                                     clipBehavior: Clip.antiAlias,
-                                    color: Colors.white,
+                                    color: Colors.grey[850],
                                     elevation: 5.0,
                                     child: Padding(
                                       padding: const EdgeInsets.symmetric(
@@ -481,14 +509,17 @@ class StreamerReview extends State<ReviewPage> {
                                                 ),
                                                 RatingBar.builder(
                                                   initialRating:
-                                                  old_skill_rating.toDouble(),
+                                                      old_skill_rating
+                                                          .toDouble(),
                                                   minRating: 1,
                                                   direction: Axis.horizontal,
                                                   allowHalfRating: false,
                                                   itemCount: 5,
-                                                  itemPadding: EdgeInsets.symmetric(
-                                                      horizontal: 4.0),
-                                                  itemBuilder: (context, _) => Icon(
+                                                  itemPadding:
+                                                      EdgeInsets.symmetric(
+                                                          horizontal: 4.0),
+                                                  itemBuilder: (context, _) =>
+                                                      Icon(
                                                     Icons.star,
                                                     color: Colors.amber,
                                                   ),
@@ -508,7 +539,7 @@ class StreamerReview extends State<ReviewPage> {
                                     margin: EdgeInsets.symmetric(
                                         horizontal: 20.0, vertical: 2.0),
                                     clipBehavior: Clip.antiAlias,
-                                    color: Colors.white,
+                                    color: Colors.grey[850],
                                     elevation: 5.0,
                                     child: Padding(
                                       padding: const EdgeInsets.symmetric(
@@ -532,7 +563,10 @@ class StreamerReview extends State<ReviewPage> {
                                                 TextField(
                                                   controller: reviewController,
                                                   maxLines: 8,
-                                                  decoration: InputDecoration.collapsed(hintText: "Enter your text here"),
+                                                  decoration:
+                                                      InputDecoration.collapsed(
+                                                          hintText:
+                                                              "Enter your text here"),
                                                 ),
                                               ],
                                             ),
@@ -545,86 +579,49 @@ class StreamerReview extends State<ReviewPage> {
                                     margin: EdgeInsets.symmetric(
                                         horizontal: 20.0, vertical: 2.0),
                                     clipBehavior: Clip.antiAlias,
-                                    color: Colors.white,
+                                    color: Colors.transparent,
                                     elevation: 5.0,
                                     child: Padding(
                                       padding: const EdgeInsets.symmetric(
                                           horizontal: 8.0, vertical: 15.0),
                                       child: new ButtonBar(
-                                        alignment: MainAxisAlignment.spaceBetween,
+                                        alignment:
+                                            MainAxisAlignment.spaceEvenly,
                                         children: <Widget>[
-                                          RaisedButton(
-                                              onPressed: () {
-                                                Navigator.pop(context);
-                                              },
-                                              shape: RoundedRectangleBorder(
-                                                  borderRadius:
-                                                  BorderRadius.circular(80.0)),
-                                              elevation: 0.0,
-                                              padding: EdgeInsets.all(0.0),
-                                              child: Ink(
-                                                decoration: BoxDecoration(
-                                                  gradient: LinearGradient(
-                                                      begin: Alignment.centerRight,
-                                                      end: Alignment.centerLeft,
-                                                      colors: [
-                                                        Colors.deepPurpleAccent,
-                                                        Colors.deepPurple[700]
-                                                      ]),
-                                                  borderRadius:
-                                                  BorderRadius.circular(30.0),
-                                                ),
-                                                child: Container(
-                                                  constraints: BoxConstraints(
-                                                      maxWidth: 125.0, minHeight: 50.0),
-                                                  alignment: Alignment.center,
-                                                  child: Text(
-                                                    "BACK",
-                                                    style: TextStyle(
-                                                        color: Colors.white,
-                                                        fontSize: 22.0,
-                                                        fontWeight: FontWeight.bold),
-                                                  ),
-                                                ),
-                                              )),
                                           RaisedButton(
                                               onPressed: () {
                                                 submitReview(context);
                                                 Navigator.pop(context);
                                               },
-                                              shape: RoundedRectangleBorder(
-                                                  borderRadius:
-                                                  BorderRadius.circular(80.0)),
+                                              // shape: RoundedRectangleBorder(
+                                              //     borderRadius:
+                                              //         BorderRadius.circular(80.0)),
                                               elevation: 0.0,
                                               padding: EdgeInsets.all(0.0),
                                               child: Ink(
                                                 decoration: BoxDecoration(
-                                                  gradient: LinearGradient(
-                                                      begin: Alignment.centerRight,
-                                                      end: Alignment.centerLeft,
-                                                      colors: [
-                                                        Colors.deepPurpleAccent,
-                                                        Colors.deepPurple[700]
-                                                      ]),
-                                                  borderRadius:
-                                                  BorderRadius.circular(30.0),
-                                                ),
+                                                    color: Colors
+                                                        .lightGreenAccent),
                                                 child: Container(
                                                   constraints: BoxConstraints(
-                                                      maxWidth: 125.0, minHeight: 50.0),
+                                                      maxWidth: 150.0,
+                                                      minHeight: 50.0),
                                                   alignment: Alignment.center,
                                                   child: Text(
-                                                    "SUBMIT",
+                                                    "Submit",
                                                     style: TextStyle(
-                                                        color: Colors.white,
-                                                        fontSize: 22.0,
-                                                        fontWeight: FontWeight.bold),
+                                                      color: Colors.grey[850],
+                                                      fontSize: 18.0,
+                                                      // fontWeight: FontWeight.bold
+                                                    ),
                                                   ),
                                                 ),
                                               )),
+                                          SizedBox(
+                                            height: 200.0,
+                                          ),
                                         ],
                                       ),
-
                                     ),
                                   ),
                                 ],
@@ -637,8 +634,6 @@ class StreamerReview extends State<ReviewPage> {
                   ],
                 ),
                 // CONTENT HERE
-
-
               ],
             ),
           ),
@@ -646,7 +641,6 @@ class StreamerReview extends State<ReviewPage> {
       ),
     );
   }
-
 }
 
 class MultiSelectDialogItem<V> {
@@ -657,7 +651,8 @@ class MultiSelectDialogItem<V> {
 }
 
 class MultiSelectDialog<V> extends StatefulWidget {
-  MultiSelectDialog({Key key, this.items, this.initialSelectedValues}) : super(key: key);
+  MultiSelectDialog({Key key, this.items, this.initialSelectedValues})
+      : super(key: key);
 
   final List<MultiSelectDialogItem<V>> items;
   final Set<V> initialSelectedValues;
@@ -730,5 +725,3 @@ class _MultiSelectDialogState<V> extends State<MultiSelectDialog<V>> {
     );
   }
 }
-
-

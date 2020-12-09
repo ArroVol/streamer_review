@@ -192,11 +192,6 @@ class _FavoriteCard extends State<FavoriteCard> {
           child: Column(
             children: <Widget>[
               ListTile(
-                //       leading: CircleAvatar(
-                //         backgroundImage:
-                //             NetworkImage(topStreamer.profilePictureUrl),
-                //         radius: 30.0,
-                //       ),
                 title: Text(
                   userName.toUpperCase(),
                   textAlign: TextAlign.center,

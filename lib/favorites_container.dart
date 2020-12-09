@@ -17,7 +17,7 @@ class _FavoritesContainer extends State<FavoritesContainer> {
   Widget build(BuildContext context) {
     getStreamerList();
     return Container(
-      height: 500,
+      height: 1000,
       child: ListView(
         scrollDirection: Axis.vertical,
         children: favList,
@@ -36,15 +36,9 @@ class _FavoritesContainer extends State<FavoritesContainer> {
 
 
     if (getStreamerList != null) {
-      // print(getStreamerList.length);
       for (int i = 0; i < getStreamerList.length; i++) {
         temp = getStreamerList[i]["fk_broadcaster_id"];
-        // print("Temp: " +
-        //     temp.toString() +
-        //     "-------------------------------------------------------------------------------------------------------------------");
         FavoriteCard favCard = new FavoriteCard(temp.toString());
-        // print(
-        //     "new card was supposedly made?----------------------------------------------------------------------------------");
         streamerList.add(favCard);
       }
     }
@@ -53,8 +47,6 @@ class _FavoritesContainer extends State<FavoritesContainer> {
         favList = streamerList;
       });
     }
-    // print('HERE');
-    print(favList.length);
     return streamerList;
   }
 

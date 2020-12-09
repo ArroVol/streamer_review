@@ -3,6 +3,7 @@ import 'package:streamer_review/profile.dart';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:streamer_review/view_reviews.dart';
 
 import 'favorites.dart';
 import 'home.dart';
@@ -20,6 +21,7 @@ class _MainScreenState extends State<MainScreen> {
     // StreamerPage(),
     // HomePage(),
     FavoritesPage(),
+    ReviewsPage(),
     // SettingsPage(),
     Profile(),
   ];
@@ -37,7 +39,6 @@ class _MainScreenState extends State<MainScreen> {
         showUnselectedLabels: false,
         iconSize: 30,
         items: [
-
           BottomNavigationBarItem(
             icon: Icon(
               Icons.home,
@@ -49,17 +50,6 @@ class _MainScreenState extends State<MainScreen> {
               color: Colors.lightGreenAccent,
             ),
           ),
-          // BottomNavigationBarItem(
-          //   icon: Icon(
-          //     Icons.search,
-          //     color: Colors.grey,
-          //   ),
-          //   title: Text('SEARCH'),
-          //   activeIcon: Icon(
-          //     Icons.search,
-          //     color: Colors.deepPurple[800],
-          //   ),
-          // ),
           BottomNavigationBarItem(
             icon: Icon(
               Icons.favorite,
@@ -68,6 +58,17 @@ class _MainScreenState extends State<MainScreen> {
             title: Text('FAVORITES'),
             activeIcon: Icon(
               Icons.favorite,
+              color: Colors.lightGreenAccent,
+            ),
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(
+              Icons.rate_review,
+              color: Colors.grey,
+            ),
+            title: Text('REVIEWS'),
+            activeIcon: Icon(
+              Icons.rate_review,
               color: Colors.lightGreenAccent,
             ),
           ),
@@ -83,7 +84,7 @@ class _MainScreenState extends State<MainScreen> {
             ),
           ),
         ],
-        selectedItemColor:   Colors.deepPurple[800],
+        selectedItemColor:   Colors.lightGreenAccent,
         onTap: (index) {
           setState(() {
             _selectedIndex = index;
@@ -95,7 +96,7 @@ class _MainScreenState extends State<MainScreen> {
           _buildOffstageNavigator(0),
           _buildOffstageNavigator(1),
           _buildOffstageNavigator(2),
-          // _buildOffstageNavigator(3),
+          _buildOffstageNavigator(3),
         ],
       ),
     );
@@ -109,6 +110,7 @@ class _MainScreenState extends State<MainScreen> {
           // StreamerPage(),
           // HomePage(),
           FavoritesPage(),
+          ReviewsPage(),
           Profile(),
           // SettingsPage(),
         ].elementAt(index);

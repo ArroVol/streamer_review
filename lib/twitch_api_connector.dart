@@ -75,7 +75,7 @@ class TwitchAPIConnector {
     }, onError: (error) {
       print(error);
     });
-    await d.updateBroadcaster(broadcaster_id, user_id, login);
+    await d.updateBroadcaster(broadcaster_id, login);
     var url2 = "https://api.twitch.tv/helix/search/channels?query=" + login;
     http.Response channelInformation2 =
     await http.get(Uri.encodeFull(url2), headers: {
