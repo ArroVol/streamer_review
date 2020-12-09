@@ -494,7 +494,7 @@ class DatabaseHelper2 {
 
     // raw query
     List<Map> result = await db
-        .rawQuery('SELECT * FROM broadcaster_tags WHERE tag_name=?', [tagName]);
+        .rawQuery('SELECT * FROM broadcaster_tags WHERE fk_tag_name=?', [tagName]);
     // await db.rawQuery('UPDATE reviews SET satisfaction_rating = ?, entertainment_rating = ?, interactiveness_rating = ?, skill_rating = ? WHERE fk_broadcaster_id = ? AND fk_user_id = ?', [satisfaction_rating, entertainment_rating, interactiveness_rating, skill_rating, broadcaster_id, user_id]);
     return result;
   }

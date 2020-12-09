@@ -9,13 +9,23 @@ import 'helper/database_helper.dart';
 import 'package:http/http.dart' as http;
 
 class ExpansionRowContainer extends StatefulWidget {
+  String dbTag;
+  ExpansionRowContainer(String dbTag){
+    this.dbTag = dbTag;
+  }
+
   @override
-  _ExpansionRowContainerState createState() => _ExpansionRowContainerState();
+  _ExpansionRowContainerState createState() => _ExpansionRowContainerState(dbTag);
 }
 
 class _ExpansionRowContainerState extends State<ExpansionRowContainer> {
   List<StreamerThumb> streamerThumb = [];
   String imageURL;
+  String dbTag;
+
+  _ExpansionRowContainerState(String dbTag){
+    this.dbTag = dbTag;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -55,18 +65,18 @@ class _ExpansionRowContainerState extends State<ExpansionRowContainer> {
 
   Future<List<StreamerThumb>> getStreamerList() async {
     DatabaseHelper2 d = DBHelper.DatabaseHelper2.instance;
-    var streamerMap = await d.selectAllBroadcasters();
+    var streamerMap = await d.selectAllBroadcastersByBroadcasterTag(dbTag);
     List<StreamerThumb> streamerList = new List<StreamerThumb>();
 
     for (int i = 0; i < streamerMap.length; i++) {
-      // var streamerOverallRating = await streamerMap
+      var broadcasterMap = await d.selectBroadcaster(streamerMap[i]['fk_broadcaster_id']);
       var streamerImageURL =
-      await updateImage(streamerMap[i]['broadcaster_id'].toString());
+      await updateImage(broadcasterMap.first['broadcaster_id'].toString());
       Color ambientColor = await getImagePalette(streamerImageURL);
       var numberOfViewers = await getStreamerCurrentViewers(
-          streamerMap[i]['broadcaster_id'].toString());
+          broadcasterMap.first['broadcaster_id'].toString());
       StreamerThumb streamerThumb = new StreamerThumb(
-          streamerMap[i]['broadcaster_name'],
+          broadcasterMap.first['broadcaster_name'],
           streamerImageURL,
           ambientColor,
           numberOfViewers);
@@ -118,12 +128,9 @@ class _ExpansionRowContainerState extends State<ExpansionRowContainer> {
       "Client-Id": "874uve10v0bcn3rmp2bq4cvz8fb5wj"
     });
     var data = json.decode(channelInformation.body);
-    print(data);
     if (data['data'].isNotEmpty) {
-      print('was not null');
       return (data['data'][0]['viewer_count']);
     } else {
-      print('was null');
       return -1;
     }
     return 10;

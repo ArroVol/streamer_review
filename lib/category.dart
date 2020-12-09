@@ -1,8 +1,7 @@
 class Category {
   String category;
+  String dbTag;
   bool selected;
-  int position;
-
   // Category(String category, bool selected){
   //   this.category = category;
   //   this.selected = selected;
@@ -11,9 +10,10 @@ class Category {
   Category.forJson({
     this.category,
     this.selected,
+    this.dbTag,
   });
 
-  Category(String category, bool selected){
+  Category(String category, bool selected, String dbTag){
     this.category = category;
     this.selected = selected;
 
@@ -23,12 +23,14 @@ class Category {
     return Category.forJson(
       category: jsonData['category'],
       selected: jsonData['selected'],
+      dbTag: jsonData['dbTag'],
     );
   }
 
   static Map<String, dynamic> toMap(Category category) => {
     'category': category.category,
     'selected': category.selected,
+    'dbTag': category.dbTag,
   };
 }
 

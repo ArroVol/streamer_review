@@ -41,7 +41,6 @@ class _StreamerThumb extends State<StreamerThumb> {
     this.contrastColor =
     ambientColor.computeLuminance() > 0.5 ? Colors.black : Colors.white;
     this.numberOfViewers = numberOfViewers;
-    print(numberOfViewers);
   }
 
   @override
@@ -53,7 +52,6 @@ class _StreamerThumb extends State<StreamerThumb> {
       shape: RoundedRectangleBorder(),
       child: new InkWell(
         onTap: () {
-          print("Streamer card clicked");
           Navigator.push(
               context,
               MaterialPageRoute(

@@ -3,16 +3,11 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:streamer_review/expansion_row_container.dart';
-import 'package:streamer_review/streamer_thumb.dart';
-import 'package:streamer_review/push_notifications.dart';
 import 'package:streamer_review/search.dart';
-import 'package:streamer_review/widgets/anotherMain.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 import 'category.dart';
-import 'custom_route.dart';
 import 'featuredStreamer.dart';
-import 'login.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -65,68 +60,6 @@ class _HomeScreenState extends State<HomeScreen> {
             child: ListView(
               scrollDirection: Axis.vertical,
               children: uniqueUserDisplay(),
-              // children: <Widget>[
-              //   FeaturedStreamer(),
-              //   Divider(
-              //     height: 10,
-              //     color: Colors.black38,
-              //   ),
-              //   Text('Favorites'),
-              //   ExpansionTile(
-              //     trailing: Icon(Icons.add_sharp),
-              //     children: [
-              //       ExpansionRowContainer(),
-              //     ],
-              //   ),
-              //   Divider(
-              //     color: Colors.black38,
-              //   ),
-              //   Text('Top Rated Streamers'),
-              //   ExpansionTile(
-              //     children: [
-              //       ExpansionRowContainer(),
-              //     ],
-              //   ),
-              //   Divider(
-              //     color: Colors.black38,
-              //   ),
-              //   Text('Streaming Now'),
-              //   ExpansionTile(
-              //     children: [
-              //       ExpansionRowContainer(),
-              //     ],
-              //   ),
-              //   Divider(
-              //     color: Colors.black38,
-              //   ),
-              //   Text('Up and Coming'),
-              //   ExpansionTile(
-              //     children: [
-              //       ExpansionRowContainer(),
-              //     ],
-              //   ),
-              //   Divider(
-              //     color: Colors.black38,
-              //   ),
-              //   Text('Tag - Funny'),
-              //   ExpansionTile(
-              //     children: [
-              //       ExpansionRowContainer(),
-              //     ],
-              //   ),
-              //   Divider(
-              //     color: Colors.black38,
-              //   ),
-              //   Text('Tag - Competitive'),
-              //   ExpansionTile(
-              //     children: [
-              //       ExpansionRowContainer(),
-              //     ],
-              //   ),
-              //   Divider(
-              //     color: Colors.black38,
-              //   ),
-              // ],
             ),
           ),
         ));
@@ -139,13 +72,10 @@ class _HomeScreenState extends State<HomeScreen> {
     for (Category c in categoryList) {
       if (c.selected) {
         list.add(Text(c.category));
-        list.add(ExpansionTile(
-          children: [ExpansionRowContainer()],
-        ));
+        list.add(ExpansionRowContainer(c.category),
+        );
         // list.add(Divider(color: Colors.black45));
       }
-      print(c.category);
-      print(c.selected);
     }
     // String categories = getList();
 
@@ -175,18 +105,18 @@ class _HomeScreenState extends State<HomeScreen> {
 
   void createPreferences() async {
     List<Category> categories = [
-      new Category('Favorites', true),
-      new Category('Random', true),
-      new Category('Gaming', true),
-      new Category('Food & Drinks', true),
-      new Category('Sports & Fitness', true),
-      new Category('Talk Shows & Podcasts', true),
-      new Category('Just Chatting', true),
-      new Category('Makers & Crafting', true),
-      new Category('Tabletop RPGs', true),
-      new Category('Science & Technologies', true),
-      new Category('Music & Performing Arts', true),
-      new Category('Beauty & Body Art', true)
+      new Category('Favorites', true, 'Gaming'),
+      new Category('Random', true, 'Random'),
+      new Category('Gaming', true, 'Gaming'),
+      new Category('Food & Drinks', true, 'Food & Drink'),
+      new Category('Sports & Fitness', true, 'Sports & Fitness'),
+      new Category('Talk Shows & Podcasts', true, 'Talk Shows & Podcasts'),
+      new Category('Just Chatting', true,'Just Chatting'),
+      new Category('Makers & Crafting', true, 'Makers & Crafting'),
+      new Category('Tabletop RPGs', true, 'Tabletop RPGs'),
+      new Category('Science & Technologies', true, 'Science & Technologies'),
+      new Category('Music & Performing Arts', true, 'Music & Performing Arts'),
+      new Category('Beauty & Body Art', true, 'Beauty & Body Art')
     ];
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     String encodedCategories = encode(categories);
@@ -254,165 +184,3 @@ class StreamerSearch extends SearchDelegate<String> {
     );
   }
 }
-
-
-
-
-
-// import 'package:flutter/material.dart';
-// import 'package:streamer_review/expansion_row_container.dart';
-// import 'package:streamer_review/streamer_thumb.dart';
-// import 'package:streamer_review/push_notifications.dart';
-// import 'package:streamer_review/search.dart';
-// import 'package:streamer_review/widgets/anotherMain.dart';
-//
-// import 'custom_route.dart';
-// import 'featuredStreamer.dart';
-// import 'login.dart';
-//
-// class HomeScreen extends StatelessWidget {
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//         backgroundColor: Colors.grey[500],
-//         appBar: AppBar(
-//             title: Text(
-//               'STREVIEW',
-//               style:
-//               TextStyle(color: Colors.lightGreenAccent, letterSpacing: 1.5),
-//             ),
-//             actions: <Widget>[
-//               IconButton(
-//                   icon: Icon(Icons.search),
-//                   onPressed: () {
-//                     showSearch(context: context, delegate: SearchPage());
-//                   })
-//             ],
-//             centerTitle: true,
-//             backgroundColor: Colors.black54),
-//         body: Padding(
-//           padding: EdgeInsets.fromLTRB(10, 20, 10, 20),
-//           child: ListView(
-//             scrollDirection: Axis.vertical,
-//             children: <Widget>[
-//               FeaturedStreamer(),
-//               Divider(
-//                 height: 10,
-//                 color: Colors.black38,
-//               ),
-//               Text('Favorites'),
-//               ExpansionTile(
-//                 trailing: Icon(Icons.add_sharp),
-//                 children: [
-//                   ExpansionRowContainer(),
-//                 ],
-//               ),
-//               Divider(
-//                 color: Colors.black38,
-//               ),
-//               Text('Top Rated Streamers'),
-//               ExpansionTile(
-//                 children: [
-//                   ExpansionRowContainer(),
-//                 ],
-//               ),
-//               Divider(
-//                 color: Colors.black38,
-//               ),
-//               Text('Streaming Now'),
-//               ExpansionTile(
-//                 children: [
-//                   ExpansionRowContainer(),
-//                 ],
-//               ),
-//               Divider(
-//                 color: Colors.black38,
-//               ),
-//               Text('Up and Coming'),
-//               ExpansionTile(
-//                 children: [
-//                   ExpansionRowContainer(),
-//                 ],
-//               ),
-//               Divider(
-//                 color: Colors.black38,
-//               ),
-//               Text('Tag - Funny'),
-//               ExpansionTile(
-//                 children: [
-//                   ExpansionRowContainer(),
-//                 ],
-//               ),
-//               Divider(
-//                 color: Colors.black38,
-//               ),
-//               Text('Tag - Competitive'),
-//               ExpansionTile(
-//                 children: [
-//                   ExpansionRowContainer(),
-//                 ],
-//               ),
-//               Divider(
-//                 color: Colors.black38,
-//               ),
-//             ],
-//           ),
-//         ));
-//   }
-// }
-//
-// class StreamerSearch extends SearchDelegate<String> {
-//   final streamerList = [
-//     'ninja',
-//     'streamer2',
-//     'streamer1',
-//     'streamer4',
-//     'streamer3',
-//   ];
-//
-//   final recentStreamerList = ['ninja'];
-//
-//   @override
-//   List<Widget> buildActions(BuildContext context) {
-//     //what actions will occur
-//     return [
-//       IconButton(
-//           icon: Icon(Icons.delete),
-//           onPressed: () {
-//             query = '';
-//           })
-//     ];
-//   }
-//
-//   @override
-//   Widget buildLeading(BuildContext context) {
-//     // icon showing on left
-//     return IconButton(
-//         icon: AnimatedIcon(
-//           icon: AnimatedIcons.menu_arrow,
-//           progress: transitionAnimation,
-//         ),
-//         onPressed: () {
-//           close(context, null);
-//         });
-//   }
-//
-//   @override
-//   Widget buildResults(BuildContext context) {
-//     // show results
-//     throw UnimplementedError();
-//   }
-//
-//   @override
-//   Widget buildSuggestions(BuildContext context) {
-//     final searchResults = query.isEmpty ? recentStreamerList : streamerList;
-//     return ListView.builder(
-//       itemBuilder: (context, index) =>
-//           ListTile(
-//             leading: Icon(Icons.gamepad),
-//             title: Text(searchResults[index]),
-//           ),
-//       itemCount: searchResults.length,
-//     );
-//   }
-// }

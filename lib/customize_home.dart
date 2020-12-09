@@ -14,18 +14,18 @@ class CustomizeHome extends StatefulWidget {
 
 class _CustomizeHomeState extends State<CustomizeHome> {
   List<Category> categories = [
-    new Category('Favorites', true),
-    new Category('Random', true),
-    new Category('Gaming', true),
-    new Category('Food & Drinks', true),
-    new Category('Sports & Fitness', true),
-    new Category('Talk Shows & Podcasts', true),
-    new Category('Just Chatting', true),
-    new Category('Makers & Crafting', true),
-    new Category('Tabletop RPGs', true),
-    new Category('Science & Technologies', true),
-    new Category('Music & Performing Arts', true),
-    new Category('Beauty & Body Art', true)
+    new Category('Favorites', true, 'Gaming'),
+    new Category('Random', true, 'Random'),
+    new Category('Gaming', true, 'Gaming'),
+    new Category('Food & Drinks', true, 'Food & Drink'),
+    new Category('Sports & Fitness', true, 'Sports & Fitness'),
+    new Category('Talk Shows & Podcasts', true, 'Talk Shows & Podcasts'),
+    new Category('Just Chatting', true,'Just Chatting'),
+    new Category('Makers & Crafting', true, 'Makers & Crafting'),
+    new Category('Tabletop RPGs', true, 'Tabletop RPGs'),
+    new Category('Science & Technologies', true, 'Science & Technologies'),
+    new Category('Music & Performing Arts', true, 'Music & Performing Arts'),
+    new Category('Beauty & Body Art', true, 'Beauty & Body Art')
   ];
 
   List<SwitchListTile> categoryList = new List<SwitchListTile>();
