@@ -7,6 +7,8 @@ import 'helper/database_helper.dart';
 import 'custom_route.dart';
 import 'login.dart';
 import 'model/user.dart';
+import 'package:pull_to_refresh/pull_to_refresh.dart';
+
 
 class Profile extends StatefulWidget {
   @override
@@ -21,12 +23,24 @@ class _ProfileState extends State<Profile> {
   String userName = '';
   String phoneNumber = '';
 
-  void getUser() async {
+  Future<User> getUser() async {
     DatabaseHelper2 d = DBHelper.DatabaseHelper2.instance;
     String userEmail2 = await d.getUserEmail();
     List<User> userList = await d.getUserByEmail(userEmail2);
     print("in profiles get username....");
     print(userList.first.userName);
+    var userName2 = await secureStorage.readSecureData('userName');
+    var phoneNumber2 = await secureStorage.readSecureData('phoneNumber');
+    return userList.first;
+  }
+
+  RefreshController _refreshController =
+  RefreshController(initialRefresh: false);
+
+  void _onRefresh() async {
+    getNumReviews().then((value) => null);
+    // if failed,use refreshFailed()
+    _refreshController.refreshCompleted();
   }
 
   Future<int> getNumReviews() async {

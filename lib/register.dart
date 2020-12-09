@@ -1,10 +1,8 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:streamer_review/main.dart';
 import 'package:streamer_review/secure_storage/secure_storage.dart';
 import 'package:streamer_review/helper/database_helper.dart' as DBHelper;
-
 import 'custom_route.dart';
 import 'helper/database_helper.dart';
 import 'main_screen.dart';
@@ -44,6 +42,11 @@ class RegisterForm extends State<Register> {
 
   String userNameUnSubmitted;
   String phoneNumberUnSubmitted;
+
+  String userTaken = 'The username is already taken';
+  String phoneTaken = 'The mobile number is already taken';
+  String complete = 'Your account has been registered';
+  String displayText = '';
 
   // Create a text controller and use it to retrieve the current value
   // of the TextField.
@@ -126,13 +129,24 @@ class RegisterForm extends State<Register> {
         textColor: Colors.lightGreenAccent,
         onPressed: () {
           print('pressed login button');
-          print(phoneNumber);
-          if(phoneNumber == null && phoneNumberUnSubmitted != null){
-            print("switching for onchanged for phone number");
-            phoneNumber = phoneNumberUnSubmitted;
-            print(phoneNumber);
-          }
           checkFields();
+          final snackBar = SnackBar(
+            content: Text(displayText.toString()),
+            duration: Duration(seconds: 5),
+            action: SnackBarAction(
+              label: 'Undo',
+              onPressed: () {
+                // Some code to undo the change.
+              },
+            ),
+          );
+          Scaffold.of(context).showSnackBar(snackBar);
+          // print(phoneNumber);
+          // if(phoneNumber == null && phoneNumberUnSubmitted != null){
+          //   print("switching for onchanged for phone number");
+          //   phoneNumber = phoneNumberUnSubmitted;
+          //   print(phoneNumber);
+          // }
           // if(phoneNumber != null) {
           //   print("not null number...");
           //   checkPhoneNumber(phoneNumber);
@@ -221,6 +235,36 @@ class RegisterForm extends State<Register> {
 
     );
   }
+  showAlertDialog(BuildContext context) {
+
+    // set up the buttons
+    Widget cancelButton = FlatButton(
+      child: Text("Cancel"),
+      onPressed:  () {},
+    );
+    Widget continueButton = FlatButton(
+      child: Text("Continue"),
+      onPressed:  () {},
+    );
+
+    // set up the AlertDialog
+    AlertDialog alert = AlertDialog(
+      title: Text("AlertDialog"),
+      content: Text("Would you like to continue learning how to use Flutter alerts?"),
+      actions: [
+        cancelButton,
+        continueButton,
+      ],
+    );
+
+    // show the dialog
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return alert;
+      },
+    );
+  }
 
   /// This method checks to see if the user entered a phone number that already exists in the DB
   ///
@@ -234,6 +278,7 @@ class RegisterForm extends State<Register> {
       print("done");
     } else {
       print("the user name already exists");
+      displayText = userTaken;
     }
   }
   /// This method checks to see if the user entered a phone number that already exists in the DB
@@ -255,6 +300,7 @@ class RegisterForm extends State<Register> {
       print("done again ");
     } else {
       print("the phone number already exists in the db");
+      displayText = phoneTaken;
     }
   }
 
@@ -315,4 +361,32 @@ class RegisterForm extends State<Register> {
     }
   }
 
+}
+
+class SnackBarPage extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: RaisedButton(
+        child: Text('Show SnackBar', style: TextStyle(fontSize: 25.0),),
+        textColor: Colors.white,
+        color: Colors.redAccent,
+        padding: EdgeInsets.all(8.0),
+        splashColor: Colors.grey,
+        onPressed: () {
+          final snackBar = SnackBar(
+            content: Text('Hey! This is a SnackBar message.'),
+            duration: Duration(seconds: 5),
+            action: SnackBarAction(
+              label: 'Undo',
+              onPressed: () {
+                // Some code to undo the change.
+              },
+            ),
+          );
+          Scaffold.of(context).showSnackBar(snackBar);
+        },
+      ),
+    );
+  }
 }

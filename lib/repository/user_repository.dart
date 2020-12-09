@@ -210,7 +210,7 @@ class UserRepository {
   Future<bool> checkByUserName(String userName) async {
     Database db = await DatabaseHelper2.instance.database;
     List<Map<String, dynamic>> userPulled = await db
-        .query('_user_table', where: 'email = ?', whereArgs: [userName]);
+        .query('_user_table', where: 'user_name = ?', whereArgs: [userName]);
     if (userPulled.isNotEmpty) {
       print('The user name: $userName matches one in the db');
       return true;
