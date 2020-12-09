@@ -139,10 +139,24 @@ class DatabaseHelper2 {
       favorites_id INTEGER PRIMARY KEY AUTOINCREMENT, 
       review_content TEXT,
       submission_date TEXT,
+      score INTEGER,
       fk_broadcaster_id INTEGER,
       fk_user_id INTEGER,
        FOREIGN KEY (fk_broadcaster_id)
         REFERENCES broadcaster_table(broadcaster_id),
+       FOREIGN KEY (fk_user_id)
+         REFERENCES _user_table(_id)  
+        )
+      ''');
+
+    db.execute('''
+      CREATE TABLE user_text_review_scores(
+      temp_id INTEGER PRIMARY KEY AUTOINCREMENT, 
+      score INTEGER,
+      fk_review_id INTEGER,
+      fk_user_id INTEGER,
+       FOREIGN KEY (fk_review_id)
+        REFERENCES text_reviews(favorites_id),
        FOREIGN KEY (fk_user_id)
          REFERENCES _user_table(_id)  
         )
@@ -497,12 +511,61 @@ class DatabaseHelper2 {
     Database db = await DatabaseHelper2.instance.database;
 
     await db.rawQuery(
-        'INSERT INTO text_reviews (review_content, submission_date, fk_broadcaster_id, fk_user_id) VALUES(?, ?, ?, ?)',
+        'INSERT INTO text_reviews (review_content, submission_date, score, fk_broadcaster_id, fk_user_id) VALUES(?, ?, ?, ?, ?)',
         [
           review_content,
           submission_date,
+          0,
           broadcaster_id,
           user_id
+        ]);
+  }
+
+  Future<void> insertTextReviewScore(review_id, user_id, score) async{
+    Database db = await DatabaseHelper2.instance.database;
+    int count;
+    List<Map> result = await db.rawQuery(
+      'SELECT * FROM user_text_review_scores WHERE fk_review_id=? AND fk_user_id=?',
+      [review_id, user_id],
+    );
+    count = result.length;
+    print(result);
+    print('COUNT ' + count.toString());
+
+    // raw query
+    if (count == 0) {
+      await db.rawQuery(
+          'INSERT INTO user_text_review_scores (score, fk_review_id, fk_user_id) VALUES(?, ?, ?)',
+          [
+            score,
+            review_id,
+            user_id
+          ]);
+    } else {
+      await db.rawQuery(
+          'UPDATE user_text_review_scores SET score = ? WHERE fk_review_id = ? AND fk_user_id = ?',
+          [
+            score,
+            review_id,
+            user_id
+          ]);
+    }
+
+    int tempScore = 0;
+    var results2 = await db.rawQuery(
+        'SELECT * FROM user_text_review_scores WHERE fk_review_id = ?',
+        [
+          review_id
+        ]);
+
+    for(var f in results2) {
+      tempScore += f['score'];
+    }
+    await db.rawQuery(
+        'UPDATE text_reviews SET score = ? WHERE favorites_id = ?',
+        [
+          tempScore,
+          review_id,
         ]);
   }
 
