@@ -191,13 +191,13 @@ class _ReviewCard extends State<ReviewCard> {
                           setState(() {});
                         },
                       ),
-                      IconButton(
-                        icon: Icon(Icons.delete, color: Colors.grey[400]),
-                        onPressed: () {
-                          deleteReview();
-                          setState(() {});
-                        },
-                      ),
+                      // IconButton(
+                      //   icon: Icon(Icons.delete, color: Colors.grey[400]),
+                      //   onPressed: () {
+                      //     deleteReview();
+                      //     setState(() {});
+                      //   },
+                      // ),
                       IconButton(
                         icon: Icon(Icons.edit, color: Colors.grey[400]),
                         onPressed: () {
@@ -206,10 +206,12 @@ class _ReviewCard extends State<ReviewCard> {
 
                           Navigator.push(context, MaterialPageRoute(builder: (context) => ReviewPage(
                               streamerId))).then((value) {
-                            getData();
-                            // setState(() {
-                            //   // refresh state
-                            // });
+                            // getData();
+                            setState(() {
+                              getData();
+
+                              // refresh state
+                            });
                           });
                         },
                       ),
