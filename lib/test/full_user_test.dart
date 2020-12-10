@@ -101,10 +101,22 @@ class _MyHomePageState extends State<AaronsMain2> {
             //     child: Text('insert')),
             FlatButton(
                 onPressed: () async {
-                  List<Map<String, dynamic>> queryRows =
+                  List<Map<String, dynamic>> user =
                   await DatabaseHelper2.instance.queryAllUsers();
-                  print(queryRows);
-                  print(DatabaseHelper2.directoryPath);
+                  print(user);
+                  List<User> userList = [];
+                  List.generate(user.length, (i) {
+                    userList.add(User(
+                      id: user[i]['_id'],
+                      email: user[i]['email'],
+                      password: user[i]['password'],
+                      userName: user[i]['user_name'],
+                      phoneNumber: user[i]['phone_number'],
+                    ));
+                  });
+                  int id = userList.first.id;
+                  // print(userList.first.broadcasterName);
+                  assert(userList.first.email == "bnew@gmail.com");
 
                 },
                 child: Text('query all users')),

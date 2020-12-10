@@ -6,20 +6,10 @@ import 'package:streamer_review/register.dart';
 import 'package:streamer_review/secure_storage/secure_storage.dart';
 import 'package:streamer_review/users.dart';
 import 'custom_route.dart';
-import 'home.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-
-
 import 'main_screen.dart';
 import 'model/user.dart';
 
-
-// const users = const {
-//   'reviewer@gmail.com': 'reviewer',
-//   'complainer@gmail.com': 'icomplain1234',
-// };
-
+/// Creates the log in screen state.
 class LoginScreen extends StatelessWidget {
 
   // final _storage = FlutterSecureStorage();
@@ -34,11 +24,11 @@ class LoginScreen extends StatelessWidget {
 
   Duration get loginTime => Duration(milliseconds: timeDilation.ceil() * 2250);
 
-
   static User loadUsers() {
-
   }
-
+  /// Logs in the user
+  ///
+  /// [data], the username and password from the user.
   Future<String> _loginUser(LoginData data) {
 
     return Future.delayed(loginTime).then((_) async {
@@ -52,6 +42,9 @@ class LoginScreen extends StatelessWidget {
     });
   }
 
+  /// Recovers the password for the user, not yet implemented.
+  ///
+  /// [name], the users username/email
   Future<String> _recoverPassword(String name) {
     return Future.delayed(loginTime).then((_) {
       if (!mockUsers.containsKey(name)) {
@@ -61,6 +54,7 @@ class LoginScreen extends StatelessWidget {
     });
   }
 
+  // builds the widget.
   @override
   Widget build(BuildContext context) {
     final inputBorder = BorderRadius.vertical(

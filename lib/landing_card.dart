@@ -1,16 +1,15 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:streamer_review/streamer.dart';
 import 'package:streamer_review/streamer_screen.dart';
 import 'dart:async';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:streamer_review/helper/database_helper.dart' as DBHelper;
-import 'helper/database_helper.dart';
 import 'model/broadcaster_from_db.dart';
 import 'package:palette_generator/palette_generator.dart';
 
+/// Creates the landing card state.
 class LandingCard extends StatefulWidget {
   String streamerId;
 

@@ -59,33 +59,6 @@ class _MyHomePageState extends State<AaronsMain2> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
 
-            new TextField(
-              decoration:
-              new InputDecoration.collapsed(hintText: "input broadcaster id"),
-              style: TextStyle(
-                color: Colors.deepPurple,
-                fontSize: 18.0,
-                fontWeight: FontWeight.bold,
-              ),
-              onSubmitted: (iD) {
-                print("Submitted ID:  $iD");
-                _setId(int.parse(iD));
-              },
-            ),
-            new TextField(
-              decoration:
-              new InputDecoration.collapsed(hintText: "input user Id"),
-              style: TextStyle(
-                color: Colors.deepPurple,
-                fontSize: 18.0,
-                fontWeight: FontWeight.bold,
-              ),
-              onSubmitted: (String userId) {
-                print("Submitted:  $userId");
-                _setUserId(int.parse(userId));
-              },
-            ),
-
             FlatButton(
                 onPressed: () async {
                   List<Map<String, dynamic>> queryRows =

@@ -7,8 +7,6 @@ import 'package:streamer_review/repository/user_favorites_repository.dart';
 import 'package:streamer_review/repository/user_repository.dart';
 import 'package:streamer_review/widgets/anotherMain.dart';
 
-// import 'model/user.dart';
-
 void main() {
   runApp(MyApp());
   print(DatabaseHelper2.directoryPath);
@@ -108,7 +106,7 @@ class _MyHomePageState extends State<AaronsMain2> {
                 child: Text('query all tag names')),
             FlatButton(
                 onPressed: () async {
-                  List<Map<String, dynamic>> queryRows =  await DatabaseHelper2.instance.broadcasterTagRepository.selectAllBroadcastersByBroadcasterTag('Gaming');
+                  List<Map<String, dynamic>> queryRows =  await DatabaseHelper2.instance.broadcasterTagRepository.selectAllBroadcastersByBroadcasterTag('Just Chatting');
                   print(queryRows);
                 },
                 child: Text('select all broadcasters by tag: gaming')),

@@ -9,14 +9,13 @@ import 'helper/database_helper.dart';
 import 'main_screen.dart';
 import 'model/user.dart';
 
-///
-///
+/// Creates the state to edit user settings.
 class EditUserSettings extends StatefulWidget {
   @override
   _EditUserSettings createState() => _EditUserSettings();
 }
 
-///
+/// The class that controls the user's edits to their account.
 class _EditUserSettings extends State<EditUserSettings> {
   bool verifiedRegistration = false;
 
@@ -25,19 +24,15 @@ class _EditUserSettings extends State<EditUserSettings> {
 
   bool phoneVerified = false;
   bool userNameVerified = false;
+  bool changed = false;
 
   String userName;
   String phoneNumber;
 
-  String userNameUnSubmitted;
-  String phoneNumberUnSubmitted;
   String userTaken = 'The username is already taken';
   String phoneTaken = 'The mobile number is already taken';
   String updated = 'Your account has been updated';
-  String displayText = 'Default';
-
-  final FocusNode fOne = FocusNode();
-  final FocusNode fTwo = FocusNode();
+  String displayText = '';
 
   // Create a text controller and use it to retrieve the current value
   // of the TextField.
@@ -45,28 +40,22 @@ class _EditUserSettings extends State<EditUserSettings> {
   final myController2 = TextEditingController();
 
 
-  ///
+  /// Builds the account edit widget.
   @override
   Widget build(BuildContext context) {
+    // The text field to enter in a new username.
     final usernameField = TextField(
       style: TextStyle(color: Colors.black),
 
       controller: myController,
-      // focusNode: fOne,
       onSubmitted: (value) {
         print(value);
         userName = value;
-        // fOne.unfocus();
-        // FocusScope.of(context).requestFocus(fTwo);
-      },
-      onChanged: (userNameOnChanged) {
-        userNameUnSubmitted = userNameOnChanged;
       },
       decoration: const InputDecoration(
         icon: Icon(Icons.person),
         hintText: 'Enter new username',
       ),
-      // keyboardType: TextInputType.number,
       inputFormatters: [
         FilteringTextInputFormatter.deny(' '),
         LengthLimitingTextInputFormatter(16),
@@ -75,18 +64,12 @@ class _EditUserSettings extends State<EditUserSettings> {
       autofocus: true,
     );
 
+    // The text field to enter in a new mobile number.
     final confirmPhoneNumber = TextField(
       controller: myController2,
-      // textInputAction: TextInputAction.go,
-      // focusNode: fTwo,
       onSubmitted: (value) {
         print(value);
         phoneNumber = value;
-        DatabaseHelper2 d = DBHelper.DatabaseHelper2.instance;
-        // checkPhoneNumber(value);
-      },
-      onChanged: (phoneNumberOnChanged) {
-        phoneNumberUnSubmitted = phoneNumberOnChanged;
       },
       decoration: const InputDecoration(
         icon: Icon(Icons.phone_android),
@@ -101,6 +84,7 @@ class _EditUserSettings extends State<EditUserSettings> {
       autofocus: true,
     );
 
+    // The login button that controls the snack bar
     final loginButon = Material(
       elevation: 5.0,
       borderRadius: BorderRadius.circular(30.0),
@@ -110,14 +94,13 @@ class _EditUserSettings extends State<EditUserSettings> {
         minWidth: MediaQuery.of(context).size.width,
         padding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
         textColor: Colors.lightGreenAccent,
-        onPressed: () {
+        onPressed: () async {
           print('pressed confirm button');
-          // SnackBar();
-          checkFields();
-
+          await checkFields();
+          sleep(const Duration(milliseconds: 400));
           final snackBar = SnackBar(
             content: Text(displayText.toString()),
-            duration: Duration(seconds: 5),
+            duration: Duration(seconds: 4),
             action: SnackBarAction(
               label: 'Undo',
               onPressed: () {
@@ -180,29 +163,6 @@ class _EditUserSettings extends State<EditUserSettings> {
                 confirmPhoneNumber,
                 SizedBox(height: 25.0),
                 loginButon,
-                // RaisedButton(
-                //   child: Text(
-                //     'Show SnackBar',
-                //     style: TextStyle(fontSize: 25.0),
-                //   ),
-                //   textColor: Colors.white,
-                //   color: Colors.redAccent,
-                //   padding: EdgeInsets.all(8.0),
-                //   splashColor: Colors.grey,
-                //   onPressed: () {
-                //     final snackBar = SnackBar(
-                //       content: Text('Hey! This is a SnackBar message.'),
-                //       duration: Duration(seconds: 5),
-                //       action: SnackBarAction(
-                //         label: 'Undo',
-                //         onPressed: () {
-                //           // Some code to undo the change.
-                //         },
-                //       ),
-                //     );
-                //     Scaffold.of(context).showSnackBar(snackBar);
-                //   },
-                // ),
               ],
             ),
           ),
@@ -212,6 +172,7 @@ class _EditUserSettings extends State<EditUserSettings> {
     );
   }
 
+  // alert dialog box.
   showAlertDialog(BuildContext context) {
     // set up the buttons
     Widget cancelButton = FlatButton(
@@ -259,6 +220,7 @@ class _EditUserSettings extends State<EditUserSettings> {
   // );
   // });
 
+  // Checks the username and phone number fields for input.
   void checkFields() async {
     if (userName == null) {
       print("username is null");
@@ -273,24 +235,13 @@ class _EditUserSettings extends State<EditUserSettings> {
       print(phoneNumber);
       await checkPhoneNumber(phoneNumber);
     }
-
-    await checkVerified();
-    // if (userNameVerified && phoneVerified) {
-    //   print("verified");
-    //   secureStorage.writeSecureData('userName', userName);
-    //   secureStorage.writeSecureData('phoneNumber', phoneNumber);
-    //   Navigator.of(context).pushReplacement(FadePageRoute(
-    //     builder: (context) => MainScreen(),
-    //   ));
-    // } else {
-    //   print('fields arent completed');
-    // }
+    checkVerified();
   }
 
+  // Clears the text on submission of both text fields.
   void clearText() {
     myController.clear();
     myController2.clear();
-
   }
 
   /// This method checks to see if the user entered a phone number that already exists in the DB
@@ -333,17 +284,18 @@ class _EditUserSettings extends State<EditUserSettings> {
     return phoneVerified;
   }
 
-  ///
+  /// This class places the verified changes, if any, into an updated user and then into the database.
   void checkVerified() async {
     String email = await secureStorage.readSecureData("email");
-    sleep(const Duration(seconds: 2));
+    sleep(const Duration(milliseconds: 1200));
     print(userNameVerified);
     print(phoneVerified);
     if (userNameVerified) {
       print("username verified");
+      print(userName);
       secureStorage.writeSecureData('userName', userName);
       List<User> pulledUser =
-          await DatabaseHelper2.instance.getUserByEmail(email);
+      await DatabaseHelper2.instance.getUserByEmail(email);
       print(pulledUser.first.phoneNumber);
       print(pulledUser.first.id);
       updatedUser.email = pulledUser.first.email;
@@ -352,7 +304,12 @@ class _EditUserSettings extends State<EditUserSettings> {
       updatedUser.id = pulledUser.first.id;
       updatedUser.phoneNumber = pulledUser.first.phoneNumber;
       await DatabaseHelper2.instance.updateUser(updatedUser);
-
+      changed = true;
+      Profile().createState().setState(() {
+      });
+      // Profile().createState().setState(() {
+      // });
+    }
       if (phoneVerified) {
         print("phone verified");
         secureStorage.writeSecureData('phoneNumber', phoneNumber);
@@ -366,12 +323,25 @@ class _EditUserSettings extends State<EditUserSettings> {
         updatedUser.id = pulledUser.first.id;
         updatedUser.phoneNumber = phoneNumber;
         await DatabaseHelper2.instance.updateUser(updatedUser);
+        changed = true;
+        // Profile().createState().setState(() {
+        // });
       } else {
-        print('not verified');
+        print('phone num not verified');
+      }
+
+      if(changed){
+        // Navigator
+        //     .of(context)
+        //     .pushReplacement(MaterialPageRoute(builder: (BuildContext context) => Profile()));
+        // Navigator.of(context).pushReplacement(FadePageRoute(
+        //   builder: (context) => Profile(),
+        // ));
       }
     }
-  }
 
+
+  // The list of categories for tags.
   List<String> categories = [
     'Gaming',
     'Food & Drinks',

@@ -194,14 +194,7 @@ class DatabaseHelper2 {
         ''' INSERT INTO broadcaster_table (broadcaster_id, broadcaster_name)
     VALUES(229729353, 'criticalrole')
     ''');
-    // addDummyData();
   }
-
-
-  // Future<void> deleteDb() async {
-  //   final Database db = await _holder.db;
-  //   // delete database
-  // }
 
   Future<List<Map<String, dynamic>>> selectAllBroadcasterTagsByBroadcaster(
       broadcasterId) async {
@@ -494,7 +487,7 @@ class DatabaseHelper2 {
 
     // raw query
     List<Map> result = await db
-        .rawQuery('SELECT * FROM broadcaster_tags WHERE tag_name=?', [tagName]);
+        .rawQuery('SELECT * FROM broadcaster_tags WHERE fk_tag_name=?', [tagName]);
     // await db.rawQuery('UPDATE reviews SET satisfaction_rating = ?, entertainment_rating = ?, interactiveness_rating = ?, skill_rating = ? WHERE fk_broadcaster_id = ? AND fk_user_id = ?', [satisfaction_rating, entertainment_rating, interactiveness_rating, skill_rating, broadcaster_id, user_id]);
     return result;
   }
@@ -531,6 +524,7 @@ class DatabaseHelper2 {
   Future<int> getNumOfTagsCreated() async {
     String userEmail = await secureStorage.readSecureData("email");
     int userId = await DatabaseHelper2.instance.getUserIdByEmail(userEmail);
+    print('the user id: $userId');
     // get a reference to the database
     Database db = await DatabaseHelper2.instance.database;
 
@@ -539,6 +533,7 @@ class DatabaseHelper2 {
         .rawQuery('SELECT * FROM broadcaster_tags WHERE fk_user_id=?', [userId]);
 
     int numOfReviews = result.length;
+    print('The num of reviews: $numOfReviews');
 
     return numOfReviews;
   }

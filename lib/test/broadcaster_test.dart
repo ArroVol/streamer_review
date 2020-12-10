@@ -1,15 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:streamer_review/helper/DatabaseHelper.dart';
 import 'package:streamer_review/helper/database_helper.dart';
+import 'package:streamer_review/model/broadcaster.dart';
 import 'package:streamer_review/model/user.dart';
 import 'package:streamer_review/repository/broadcaster_repository.dart';
 import 'package:streamer_review/repository/user_favorites_repository.dart';
 import 'package:streamer_review/repository/user_repository.dart';
-import 'package:streamer_review/widgets/anotherMain.dart';
-
-import '../main.dart';
-
-// import 'model/user.dart';
 
 void main() {
   runApp(MyApp());
@@ -83,9 +78,6 @@ class _MyHomePageState extends State<AaronsMain2> {
                 fontSize: 18.0,
                 fontWeight: FontWeight.bold,
               ),
-              // onChanged: (String text) {
-              // print("Text => $text");
-              // },
               onSubmitted: (String password) {
                 print("Submitted:  $password");
                 _setPassword(password);
@@ -97,99 +89,67 @@ class _MyHomePageState extends State<AaronsMain2> {
                   List<Map<String, dynamic>> queryRows =
                   await DatabaseHelper2.instance.selectAllBroadcasters();
                   print(queryRows);
-                },
+                  List<Broadcaster> userList = [];
+                  List.generate(1, (i) {
+                    userList.add(Broadcaster(
+                      // id: queryRows[i]['_id'],
+                      broadcasterName: queryRows[i]['broadcaster_name'],
+                      // password: queryRows[i]['password'],
+                      // userName: queryRows[i]['user_name'],
+                      // phoneNumber: queryRows[i]['phone_number'],
+                    )
+                    );
+                  });
+                 // print(userList.first.broadcasterName);
+                assert(userList.first.broadcasterName == 'nickmercs');
+                  },
                 child: Text('query all broadcasters')),
 
-            // FlatButton(
-            //     onPressed: () async {
-            //       List<Map<String, dynamic>> queryRows = await DatabaseHelper2.instance.selectBroadcaster(_iD);
-            //       print(queryRows);
-            //     },
-            //     child: Text('query selected broadcaster')),
-
             FlatButton(
                 onPressed: () async {
-                  // secureStorage.writeSecureData("email", "goobytest@gmail.com");
-                  await DatabaseHelper2.instance.insertFavorite(229729353);
-                },
-                child: Text('insert favorite')),
-            FlatButton(
-                onPressed: () async {
-                  List<Map<String, dynamic>> queryRows = await DatabaseHelper2.instance.queryAllFavorites();
-                print(queryRows);
-                  },
-                child: Text('query favorite')),
-            FlatButton(
-                onPressed: () async {
-                  List<Map<String, dynamic>> queryRows =
+                  List<Map<String, dynamic>> user =
                   await DatabaseHelper2.instance.queryAllUsers();
-                  print(queryRows);
+                  print(user);
                   print(DatabaseHelper2.directoryPath);
-
+                  List<User> userList = [];
+                  List.generate(user.length, (i) {
+                    userList.add(User(
+                      id: user[i]['_id'],
+                      email: user[i]['email'],
+                      password: user[i]['password'],
+                      userName: user[i]['user_name'],
+                      phoneNumber: user[i]['phone_number'],
+                    ));
+                  });
+                  int id = userList.first.id;
+                  // print(userList.first.broadcasterName);
+                  assert(userList.first.email == "bnew@gmail.com");
                 },
                 child: Text('query all users')),
-            // FlatButton(
-            //     onPressed: () async {
-            //       await DatabaseHelper2.instance.insertBroadcaster(0, 0,0 ,0, 222555, 7);
-            //     },
-            //     child: Text('insert broadcaster')),
-            // FlatButton(
-            //     onPressed: () async {
-            //       await DatabaseHelper2.instance.insertBroadcasterTag(222555, 'funny');
-            //     },
-            //     child: Text('insert broadcaster tag ')),
-            FlatButton(
-                onPressed: () async {
-                  List<Map<String, dynamic>> queryRows = await DatabaseHelper2.instance.queryAllFavorites();
-                  print(queryRows);
-                },
-                child: Text('query all favorites')),
-            FlatButton(
-                onPressed: () async {
-                  List<Map<String, dynamic>> queryRows = await DatabaseHelper2.instance.selectReviews(229729353, 1);
-                  print(queryRows);
-                },
-                child: Text('select reviews')),
-            FlatButton(
-                onPressed: () async {
-                  int queryRows = await DatabaseHelper2.instance.insertReview(0, 0,0,0, 229729353, 1, 1);
-                  print(queryRows);
-                },
-                child: Text('insert reviews')),
-            FlatButton(
-                onPressed: () async {
-                  await DatabaseHelper2.instance.clearReviews();
-                },
-                child: Text('clear reviews')),
+
+
             FlatButton(
                 onPressed: () async {
                   await DatabaseHelper2.instance.updateBroadcaster(229729353, 1, 1);
                 },
                 child: Text('update broadcaster')),
+
             FlatButton(
                 onPressed: () async {
-                  List<Map<String, dynamic>> queryRows =  await DatabaseHelper2.instance.broadcasterTagRepository.insertBroadcasterTag(69420, 'Just Chatting', 1);
-                  print(queryRows);
+
+                  int result = await DatabaseHelper2.instance.broadcasterRepository.insertBroadcaster(0, 0, 0, 0, _iD);
+                assert(result != 0);
                 },
-                child: Text('insert broadcaster tag')),
+                child: Text('insert new broadcaster ')),
             FlatButton(
                 onPressed: () async {
-                  List<Map<String, dynamic>> queryRows =  await DatabaseHelper2.instance.broadcasterTagRepository.selectAllTags();
-                  print(queryRows);
+                int result =  await DatabaseHelper2.instance.broadcasterRepository.insertBroadcaster(0, 0, 0, 0, 15564828);
+               assert(result == 0);
                 },
-                child: Text('query all broadcaster tag')),
-            FlatButton(
-                onPressed: () async {
-                  List<Map<String, dynamic>> queryRows =  await DatabaseHelper2.instance.broadcasterTagRepository.queryAllfromTagNames();
-                  print(queryRows);
-                },
-                child: Text('query all tag names')),
-            FlatButton(
-                onPressed: () async {
-                  await DatabaseHelper2.instance.broadcasterRepository.insertBroadcaster(0, 0, 0, 0, _iD);
-                },
-                child: Text('insert broadcaster ')),
+                child: Text('attempt insert broadcaster that already exists ')),
           ],
+
+
 
         ),
       ),

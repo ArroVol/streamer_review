@@ -1,24 +1,17 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:streamer_review/expansion_row_container.dart';
-import 'package:streamer_review/streamer_thumb.dart';
-import 'package:streamer_review/push_notifications.dart';
 import 'package:streamer_review/search.dart';
-import 'package:streamer_review/widgets/anotherMain.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
-
 import 'category.dart';
-import 'custom_route.dart';
 import 'featuredStreamer.dart';
-import 'login.dart';
-
+/// Creates the home screen state.
 class HomeScreen extends StatefulWidget {
   @override
   _HomeScreenState createState() => _HomeScreenState();
 }
-
+/// This class
 class _HomeScreenState extends State<HomeScreen> {
   List<Widget> listOfWidgets = new List<Widget>();
   List<Category> categoryList = new List<Category>();
