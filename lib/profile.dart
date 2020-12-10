@@ -88,7 +88,7 @@ class _ProfileState extends State<Profile> {
   /// The widget profile.
   @override
   Widget build(BuildContext context) {
-    getNumReviews();
+    // getNumReviews();
 
     return ValueListenableBuilder<ThemeModel>(
         valueListenable: _notifier,
@@ -110,7 +110,7 @@ class _ProfileState extends State<Profile> {
               backgroundColor: Colors.grey[500],
 
               body: Padding(
-                padding: EdgeInsets.fromLTRB(30, 40, 30, 0),
+                padding: EdgeInsets.fromLTRB(30, 20, 30, 0),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
