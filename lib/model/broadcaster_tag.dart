@@ -5,7 +5,6 @@ import 'package:sqflite/sqflite.dart' show Database;
 import 'package:dbutils/sqllitedb.dart' show DBInterface;
 
 /// The class for tags given by users to the broadcasters
-///
 class BroadcasterTag{
 
   int id;

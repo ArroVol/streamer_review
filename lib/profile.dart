@@ -46,8 +46,6 @@ class _ProfileState extends State<Profile> {
     _refreshController.refreshCompleted();
   }
 
-
-
   /// Gets the number of reviews the user has submitted
   Future<int> getNumReviews() async {
     DatabaseHelper2 d = DBHelper.DatabaseHelper2.instance;

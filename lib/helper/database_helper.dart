@@ -253,21 +253,18 @@ class DatabaseHelper2 {
         .query('_user_table', where: 'user_name = ?', whereArgs: [userName]);
     final userMap = user.asMap();
 
-    final user1 = userMap[0];
-
-    // for (String key in user.keys){
-    //   print(key);
-    //   print(testMap[key]);
-    // }
-    return List.generate(user.length, (i) {
-      return User(
-        id: user[i]['_id'],
-        email: user[i]['email'],
-        password: user[i]['password'],
-        userName: user[i]['user_name'],
-        phoneNumber: user[i]['phone_number'],
-      );
-    });
+    if(user.length > 0) {
+      return List.generate(user.length, (i) {
+        return User(
+          id: user[i]['_id'],
+          email: user[i]['email'],
+          password: user[i]['password'],
+          userName: user[i]['user_name'],
+          phoneNumber: user[i]['phone_number'],
+        );
+      });
+    }
+    return null;
     // return User(
     //   id: maps[i]['user_id'],
     //   email: maps[i]['user_email'],
@@ -282,18 +279,21 @@ class DatabaseHelper2 {
     final userMap = user.asMap();
     final user1 = userMap[0];
 
-    List<User> userList = [];
-    List.generate(user.length, (i) {
-      userList.add(User(
-        id: user[i]['_id'],
-        // email: user[i]['email'],
-        // password: user[i]['password'],
-        // userName: user[i]['user_name'],
-        // phoneNumber: user[i]['phone_number'],
-      ));
-    });
-    int id = userList.first.id;
-    return id;
+    if (user.length > 0) {
+      List<User> userList = [];
+      List.generate(user.length, (i) {
+        userList.add(User(
+          id: user[i]['_id'],
+          // email: user[i]['email'],
+          // password: user[i]['password'],
+          // userName: user[i]['user_name'],
+          // phoneNumber: user[i]['phone_number'],
+        ));
+      });
+      int id = userList.first.id;
+      return id;
+    }
+    return 0;
   }
   Future<int> getUserIdByEmail(String email) async {
     Database db = await instance.database;

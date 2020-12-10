@@ -1,21 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:streamer_review/helper/DatabaseHelper.dart';
 import 'package:streamer_review/helper/database_helper.dart';
-import 'package:streamer_review/model/user.dart';
+import 'package:streamer_review/model/favorites.dart';
 import 'package:streamer_review/repository/broadcaster_repository.dart';
 import 'package:streamer_review/repository/user_favorites_repository.dart';
 import 'package:streamer_review/repository/user_repository.dart';
-import 'package:streamer_review/widgets/anotherMain.dart';
-
 import '../main.dart';
 
-// import 'model/user.dart';
-
+/// Entry point to the user favorites test page.
 void main() {
   runApp(MyApp());
   print(DatabaseHelper2.directoryPath);
 }
-
+/// The class creates the widget for the test page
 class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
@@ -31,7 +27,7 @@ class MyApp extends StatelessWidget {
     );
   }
 }
-
+/// Creates the my home page state for testing.
 class AaronsMain2 extends StatefulWidget {
   AaronsMain2({Key key, this.title}) : super(key: key);
 
@@ -40,7 +36,7 @@ class AaronsMain2 extends StatefulWidget {
   @override
   _MyHomePageState createState() => _MyHomePageState();
 }
-
+/// This class gets the repositories as well as creates the variables.
 class _MyHomePageState extends State<AaronsMain2> {
   UserFavoritesRepository _userFavoritesRepository = new UserFavoritesRepository();
   BroadcasterRepository _broadcasterRepository = new BroadcasterRepository();
@@ -55,7 +51,7 @@ class _MyHomePageState extends State<AaronsMain2> {
     Widget titleSection = Container();
     return Scaffold(
       appBar: AppBar(
-        title: Text('BROADCASTER TEST'),
+        title: Text('User Favorite TEST'),
       ),
       body: Center(
         child: Column(
@@ -106,10 +102,25 @@ class _MyHomePageState extends State<AaronsMain2> {
                 },
                 child: Text('query all users')),
 
+            /// Test 1
+            ///
+            /// querying all favorites from the database.
             FlatButton(
                 onPressed: () async {
-                  List<Map<String, dynamic>> queryRows = await DatabaseHelper2.instance.queryAllFavorites();
-                  print(queryRows);
+                  List<Map<String, dynamic>> user = await DatabaseHelper2.instance.queryAllFavorites();
+                  print(user);
+                  List<Favorites> userList = [];
+                  List.generate(user.length, (i) {
+                    userList.add(Favorites(
+                      favoritesId: user[i]['favorites_id'],
+                      broadcasterId: user[i]['fk_broadcaster_id'],
+                      userId: user[i]['fk_user_id'],
+                    ));
+                  });
+                  // print(userList.first.broadcasterName);
+                  assert(userList.first.broadcasterId == 19571641);
+                  assert(userList.first.userId == 2);
+
                 },
                 child: Text('query all favorites')),
             FlatButton(

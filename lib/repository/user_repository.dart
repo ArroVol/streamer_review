@@ -68,6 +68,23 @@ class UserRepository {
       );
     });
   }
+  /// Gets a user object by an id.
+  ///
+  /// [id], the passed in id.
+  Future<List<User>> getUserById(int id) async {
+    Database db = await DatabaseHelper2.instance.database;
+    List<Map<String, dynamic>> user = await db
+        .query('_user_table', where: '_id = ?', whereArgs: [id]);
+    return List.generate(user.length, (i) {
+      return User(
+        id: user[i]['_id'],
+        email: user[i]['email'],
+        password: user[i]['password'],
+        userName: user[i]['user_name'],
+        phoneNumber: user[i]['phone_number'],
+      );
+    });
+  }
 
   /// Gets the user object from the database by an email.
   ///

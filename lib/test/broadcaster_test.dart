@@ -6,11 +6,12 @@ import 'package:streamer_review/repository/broadcaster_repository.dart';
 import 'package:streamer_review/repository/user_favorites_repository.dart';
 import 'package:streamer_review/repository/user_repository.dart';
 
+/// Entry point to the braodcaster test page.
 void main() {
   runApp(MyApp());
   print(DatabaseHelper2.directoryPath);
 }
-
+/// The class creates the widget for the test page
 class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
@@ -26,16 +27,14 @@ class MyApp extends StatelessWidget {
     );
   }
 }
-
+/// Creates the my home page state for testing.
 class AaronsMain2 extends StatefulWidget {
   AaronsMain2({Key key, this.title}) : super(key: key);
-
   final String title;
-
   @override
   _MyHomePageState createState() => _MyHomePageState();
 }
-
+/// This class gets the repositories as well as creates the variables.
 class _MyHomePageState extends State<AaronsMain2> {
   UserFavoritesRepository _userFavoritesRepository = new UserFavoritesRepository();
   BroadcasterRepository _broadcasterRepository = new BroadcasterRepository();
@@ -84,6 +83,9 @@ class _MyHomePageState extends State<AaronsMain2> {
               },
             ),
 
+            /// Test 1
+            ///
+            /// querying all boradcasters from the database.
             FlatButton(
                 onPressed: () async {
                   List<Map<String, dynamic>> queryRows =
@@ -104,7 +106,9 @@ class _MyHomePageState extends State<AaronsMain2> {
                 assert(userList.first.broadcasterName == 'nickmercs');
                   },
                 child: Text('query all broadcasters')),
-
+            /// Test 2
+            ///
+            /// querying all users from the database.
             FlatButton(
                 onPressed: () async {
                   List<Map<String, dynamic>> user =
@@ -127,13 +131,17 @@ class _MyHomePageState extends State<AaronsMain2> {
                 },
                 child: Text('query all users')),
 
-
+            /// Test 3
+            ///
+            /// updating the broadcaster
             FlatButton(
                 onPressed: () async {
                   await DatabaseHelper2.instance.updateBroadcaster(229729353, 1, 1);
                 },
                 child: Text('update broadcaster')),
-
+            /// Test 4
+            ///
+            /// inserting the broadcaster
             FlatButton(
                 onPressed: () async {
 
@@ -141,6 +149,9 @@ class _MyHomePageState extends State<AaronsMain2> {
                 assert(result != 0);
                 },
                 child: Text('insert new broadcaster ')),
+            /// Test 5
+            ///
+            /// testing insert fail when the broadcaster already exists in the database.
             FlatButton(
                 onPressed: () async {
                 int result =  await DatabaseHelper2.instance.broadcasterRepository.insertBroadcaster(0, 0, 0, 0, 15564828);
