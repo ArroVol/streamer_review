@@ -191,7 +191,7 @@ class _ProfileState extends State<Profile> {
                       ],
                     ),
                     OutlineButton(
-                      
+
                       onPressed: () {
                         Navigator.push(context,
                             MaterialPageRoute(builder: (context) =>

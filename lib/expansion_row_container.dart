@@ -1,8 +1,6 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:palette_generator/palette_generator.dart';
-// import 'file:///C:/Users/Brendan/AndroidStudioProjects/lab4/streamer_review/lib/widgets/streamer_thumb.dart';
 import 'package:streamer_review/helper/database_helper.dart' as DBHelper;
 import 'package:streamer_review/streamer_thumb.dart';
 import 'helper/database_helper.dart';
@@ -83,9 +81,11 @@ class _ExpansionRowContainerState extends State<ExpansionRowContainer> {
       streamerList.add(streamerThumb);
     }
     if (streamerList != null) {
-      setState(() {
-        streamerThumb = streamerList;
-      });
+      if (mounted) {
+        setState(() {
+          streamerThumb = streamerList;
+        });
+      }
     }
     return streamerList;
   }
