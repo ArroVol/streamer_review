@@ -1,17 +1,15 @@
 import 'dart:async';
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:streamer_review/streamer_screen.dart';
-
 import 'category.dart';
 
+/// Creates the state for the customizations for what categories you see on the home screen.
 class CustomizeHome extends StatefulWidget {
   @override
   _CustomizeHomeState createState() => _CustomizeHomeState();
 }
-
+/// The list of 10 categories
 class _CustomizeHomeState extends State<CustomizeHome> {
   List<Category> categories = [
     new Category('Favorites', true),
@@ -30,11 +28,12 @@ class _CustomizeHomeState extends State<CustomizeHome> {
 
   List<SwitchListTile> categoryList = new List<SwitchListTile>();
 
+  /// initializes the state
   @override
   void initState() {
     getList().then(updateCategories);
   }
-
+/// Builds the widget.
   @override
   Widget build(BuildContext context) {
     return Scaffold(

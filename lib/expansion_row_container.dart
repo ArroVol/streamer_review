@@ -1,18 +1,16 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:palette_generator/palette_generator.dart';
-// import 'file:///C:/Users/Brendan/AndroidStudioProjects/lab4/streamer_review/lib/widgets/streamer_thumb.dart';
 import 'package:streamer_review/helper/database_helper.dart' as DBHelper;
 import 'package:streamer_review/streamer_thumb.dart';
 import 'helper/database_helper.dart';
 import 'package:http/http.dart' as http;
-
+/// Creates the state for the container state.
 class ExpansionRowContainer extends StatefulWidget {
   @override
   _ExpansionRowContainerState createState() => _ExpansionRowContainerState();
 }
-
+/// The class that populates the container with streamer images.
 class _ExpansionRowContainerState extends State<ExpansionRowContainer> {
   List<StreamerThumb> streamerThumb = [];
   String imageURL;
