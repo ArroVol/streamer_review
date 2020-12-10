@@ -108,7 +108,7 @@ class _ProfileState extends State<Profile> {
               backgroundColor: Colors.grey[500],
 
               body: Padding(
-                padding: EdgeInsets.fromLTRB(30, 40, 30, 0),
+                padding: EdgeInsets.fromLTRB(30, 20, 30, 0),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
@@ -119,7 +119,7 @@ class _ProfileState extends State<Profile> {
                       ),
                     ),
                     Divider(
-                      height: 60,
+                      height: 40,
                       color: Colors.grey[800],
                     ),
                     Text(
@@ -157,7 +157,7 @@ class _ProfileState extends State<Profile> {
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    SizedBox(height: 30),
+                    SizedBox(height: 20),
                     Row(
                       children: <Widget>[
                         Icon(
@@ -191,13 +191,15 @@ class _ProfileState extends State<Profile> {
                       ],
                     ),
                     OutlineButton(
+                      
                       onPressed: () {
                         Navigator.push(context,
                             MaterialPageRoute(builder: (context) =>
                                 CustomizeHome()));
                       },
                       child: Container(
-                        height: 30,
+
+                        height: 40,
                         width: 100,
                         child: Align(
                           alignment: Alignment.center,
@@ -228,12 +230,12 @@ class _ProfileState extends State<Profile> {
                         ),
                       ),
                     ),
-                    new ButtonBar(
-
-                      mainAxisSize: MainAxisSize.min,
-                      // alignment: MainAxisAlignment.center,
-                      // this will take space as minimum as posible(to center)
-                      children: <Widget>[
+                    // new ButtonBar(
+                    //
+                    //   mainAxisSize: MainAxisSize.min,
+                    //   // alignment: MainAxisAlignment.center,
+                    //   // this will take space as minimum as posible(to center)
+                    //   children: <Widget>[
                         OutlineButton(
                           onPressed: () {
                             AppSettings.openAppSettings();
@@ -288,8 +290,8 @@ class _ProfileState extends State<Profile> {
                         //     AppSettings.openAppSettings();
                         //   },
                         // ),
-                      ],
-                    ),
+                      // ],
+                    // ),
                     OutlineButton(
                       onPressed: () {
                         AppSettings.openNotificationSettings();
