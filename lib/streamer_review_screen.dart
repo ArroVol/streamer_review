@@ -5,6 +5,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:streamer_review/helper/database_helper.dart' as DBHelper;
 import 'package:http/http.dart' as http;
+import 'package:streamer_review/main.dart';
 import 'helper/database_helper.dart';
 
 
@@ -68,18 +69,22 @@ class StreamerReview extends State<ReviewPage> {
 
 
   Future<void> submitReview(var context) async {
+    DatabaseHelper2 d = DBHelper.DatabaseHelper2.instance;
+    String email = await secureStorage.readSecureData('email');
+    print(email);
+    int userId = await d.getUserIdByEmail(email);
+    print(userId);
     if(satisfaction_rating == 0 || entertainment_rating == 0 || interaction_rating == 0 || skill_rating == 0) {
       Scaffold.of(context).showSnackBar(new SnackBar(
           content: new Text('ERROR')
       ));
 
     } else {
-      DatabaseHelper2 d = DBHelper.DatabaseHelper2.instance;
-      
 
       for (var tag in tags) {
         print(tag);
-        await d.insertBroadcasterTag(broadcaster_id, tag);
+        d.broadcasterTagRepository.insertBroadcasterTag(broadcaster_id, tag, userId);
+        // await d.insertBroadcasterTag(broadcaster_id, tag);
       }
 
       var x = await d.selectAllBroadcasterTagsByBroadcaster(broadcaster_id);
@@ -120,28 +125,31 @@ class StreamerReview extends State<ReviewPage> {
     old_entertainment_rating = oldReview[0]['entertainment_rating'];
     old_interaction_rating = oldReview[0]['interactiveness_rating'];
     old_skill_rating = oldReview[0]['skill_rating'];
-    setState(() {
-      if(oldReview != null) {
-        old_satisfaction_rating = oldReview[0]['satisfaction_rating'];
-        satisfaction_rating = oldReview[0]['satisfaction_rating'].toDouble();
-        old_entertainment_rating = oldReview[0]['entertainment_rating'];
-        entertainment_rating = oldReview[0]['entertainment_rating'].toDouble();
-        old_interaction_rating = oldReview[0]['interactiveness_rating'];
-        interaction_rating = oldReview[0]['interactiveness_rating'].toDouble();
-        old_skill_rating = oldReview[0]['skill_rating'];
-        skill_rating = oldReview[0]['skill_rating'].toDouble();
-      } else{
-        old_satisfaction_rating = 1;
-        satisfaction_rating = 1;
-        old_entertainment_rating = 1;
-        entertainment_rating = 1;
-        old_interaction_rating = 1;
-        interaction_rating = 1;
-        old_skill_rating = 1;
-        skill_rating = 1;
-      }
-
-    });
+    if (mounted) {
+      setState(() {
+        if (oldReview != null) {
+          old_satisfaction_rating = oldReview[0]['satisfaction_rating'];
+          satisfaction_rating = oldReview[0]['satisfaction_rating'].toDouble();
+          old_entertainment_rating = oldReview[0]['entertainment_rating'];
+          entertainment_rating =
+              oldReview[0]['entertainment_rating'].toDouble();
+          old_interaction_rating = oldReview[0]['interactiveness_rating'];
+          interaction_rating =
+              oldReview[0]['interactiveness_rating'].toDouble();
+          old_skill_rating = oldReview[0]['skill_rating'];
+          skill_rating = oldReview[0]['skill_rating'].toDouble();
+        } else {
+          old_satisfaction_rating = 1;
+          satisfaction_rating = 1;
+          old_entertainment_rating = 1;
+          entertainment_rating = 1;
+          old_interaction_rating = 1;
+          interaction_rating = 1;
+          old_skill_rating = 1;
+          skill_rating = 1;
+        }
+      });
+    }
   }
 
   @override
@@ -677,13 +685,15 @@ class _MultiSelectDialogState<V> extends State<MultiSelectDialog<V>> {
   }
 
   void _onItemCheckedChange(V itemValue, bool checked) {
-    setState(() {
-      if (checked) {
-        _selectedValues.add(itemValue);
-      } else {
-        _selectedValues.remove(itemValue);
-      }
-    });
+    if (mounted) {
+      setState(() {
+        if (checked) {
+          _selectedValues.add(itemValue);
+        } else {
+          _selectedValues.remove(itemValue);
+        }
+      });
+    }
   }
 
   void _onCancelTap() {

@@ -6,29 +6,41 @@ import 'package:streamer_review/profile.dart';
 import 'package:streamer_review/register.dart';
 import 'package:streamer_review/secure_storage/secure_storage.dart';
 
-
 final SecureStorage secureStorage = SecureStorage();
-final FlutterSecureStorage _secureStorage = FlutterSecureStorage();
 
+/// The entry point to the program
+///
+/// This method checks to see if there is an email stored in from a user that previously logged in.
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  // if secure storage has data inside of it.
   if (secureStorage != null) {
     String email = await secureStorage.readSecureData("email");
     print(email);
     if (email != null) {
-      print('passed if check, its not null');
       print("***FOUND EMAIL***");
-      print("***$email***");
 
-      // home: Profile();
-      runApp(MaterialApp(
-        initialRoute: '/main_screen',
-        routes: {
-          '/register': (context) => Register(),
-          '/login': (context) => LoginScreen(),
-          '/main_screen': (context) => MainScreen(),
-        },
-      ));
+      String userName = await secureStorage.readSecureData('userName');
+      if(userName == null){
+        runApp(MaterialApp(
+          initialRoute: '/register',
+          routes: {
+            '/register': (context) => Register(),
+            '/login': (context) => LoginScreen(),
+            '/main_screen': (context) => MainScreen(),
+          },
+        ));
+      } else {
+        // home: Profile();
+        runApp(MaterialApp(
+          initialRoute: '/main_screen',
+          routes: {
+            '/register': (context) => Register(),
+            '/login': (context) => LoginScreen(),
+            '/main_screen': (context) => MainScreen(),
+          },
+        ));
+      }
     } else {
       print("***THERE IS NOT AN EMAIL SAVED***");
       // home: LoginScreen();
@@ -43,7 +55,7 @@ Future<void> main() async {
     }
   }
 }
-
+/// This class builds the widget.
 class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override

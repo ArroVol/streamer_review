@@ -1,17 +1,18 @@
-
 import 'package:streamer_review/profile.dart';
-
+import 'package:streamer_review/register.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-
 import 'favorites.dart';
 import 'home.dart';
 
+/// This class creates the main screen widget.
+///
+/// This class builds the top search bar as well as bottom navigation bar
 class MainScreen extends StatefulWidget {
   @override
   _MainScreenState createState() => _MainScreenState();
 }
-
+/// The bottom navbar consists of 3 routes to the home page, favorites page, and profile page.
 class _MainScreenState extends State<MainScreen> {
   int _selectedIndex = 0;
 
@@ -22,8 +23,10 @@ class _MainScreenState extends State<MainScreen> {
     FavoritesPage(),
     // SettingsPage(),
     Profile(),
+    Register(),
   ];
 
+  // Builds the widget.
   @override
   Widget build(BuildContext context) {
 
@@ -110,6 +113,7 @@ class _MainScreenState extends State<MainScreen> {
           // HomePage(),
           FavoritesPage(),
           Profile(),
+          // Register()
           // SettingsPage(),
         ].elementAt(index);
       },

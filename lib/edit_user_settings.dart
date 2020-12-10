@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:streamer_review/profile.dart';
 import 'package:streamer_review/secure_storage/secure_storage.dart';
 import 'package:streamer_review/helper/database_helper.dart' as DBHelper;
 import 'custom_route.dart';
@@ -8,27 +9,14 @@ import 'helper/database_helper.dart';
 import 'main_screen.dart';
 import 'model/user.dart';
 
-/// The build for the register app
-class RegisterApp extends StatelessWidget {
+/// Creates the state to edit user settings.
+class EditUserSettings extends StatefulWidget {
   @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Retrieve Text Input',
-      home: Register(),
-    );
-  }
+  _EditUserSettings createState() => _EditUserSettings();
 }
 
-/// Define a custom Form widget.
-class Register extends StatefulWidget {
-  @override
- RegisterForm createState() => RegisterForm();
-}
-
-// Define a corresponding State class.
-// This class holds the data related to the Form.
-class RegisterForm extends State<Register> {
-
+/// The class that controls the user's edits to their account.
+class _EditUserSettings extends State<EditUserSettings> {
   bool verifiedRegistration = false;
 
   final SecureStorage secureStorage = SecureStorage();
@@ -36,53 +24,38 @@ class RegisterForm extends State<Register> {
 
   bool phoneVerified = false;
   bool userNameVerified = false;
+  bool changed = false;
 
   String userName;
   String phoneNumber;
 
-  String userNameUnSubmitted;
-  String phoneNumberUnSubmitted;
-
   String userTaken = 'The username is already taken';
   String phoneTaken = 'The mobile number is already taken';
-  String complete = 'Your account has been registered';
+  String updated = 'Your account has been updated';
   String displayText = '';
 
   // Create a text controller and use it to retrieve the current value
   // of the TextField.
   final myController = TextEditingController();
+  final myController2 = TextEditingController();
 
-  @override
-  void dispose() {
-    // Clean up the controller when the widget is disposed.
-    myController.dispose();
-    super.dispose();
-  }
 
-  final FocusNode fOne = FocusNode();
-  final FocusNode fTwo = FocusNode();
-
-  // The widget for the register page.
+  /// Builds the account edit widget.
   @override
   Widget build(BuildContext context) {
-
+    // The text field to enter in a new username.
     final usernameField = TextField(
       style: TextStyle(color: Colors.black),
-      focusNode: fOne,
+
+      controller: myController,
       onSubmitted: (value) {
         print(value);
         userName = value;
-        fOne.unfocus();
-        FocusScope.of(context).requestFocus(fTwo);
-      },
-      onChanged: (userNameOnChanged){
-        userNameUnSubmitted = userNameOnChanged;
       },
       decoration: const InputDecoration(
         icon: Icon(Icons.person),
-        hintText: 'Enter a username',
+        hintText: 'Enter new username',
       ),
-      // keyboardType: TextInputType.number,
       inputFormatters: [
         FilteringTextInputFormatter.deny(' '),
         LengthLimitingTextInputFormatter(16),
@@ -91,21 +64,16 @@ class RegisterForm extends State<Register> {
       autofocus: true,
     );
 
+    // The text field to enter in a new mobile number.
     final confirmPhoneNumber = TextField(
-      // textInputAction: TextInputAction.go,
-      focusNode: fTwo,
+      controller: myController2,
       onSubmitted: (value) {
         print(value);
         phoneNumber = value;
-        DatabaseHelper2 d = DBHelper.DatabaseHelper2.instance;
-        // checkPhoneNumber(value);
-      },
-      onChanged: (phoneNumberOnChanged){
-       phoneNumberUnSubmitted = phoneNumberOnChanged;
       },
       decoration: const InputDecoration(
         icon: Icon(Icons.phone_android),
-        hintText: 'Enter your mobile number',
+        hintText: 'Enter new mobile number',
       ),
       keyboardType: TextInputType.number,
       inputFormatters: <TextInputFormatter>[
@@ -116,25 +84,23 @@ class RegisterForm extends State<Register> {
       autofocus: true,
     );
 
-    // the login button
+    // The login button that controls the snack bar
     final loginButon = Material(
       elevation: 5.0,
       borderRadius: BorderRadius.circular(30.0),
       color: Colors.lightGreenAccent,
       // color: Color(0xff01A0C7),
       child: MaterialButton(
-        minWidth: MediaQuery
-            .of(context)
-            .size
-            .width,
+        minWidth: MediaQuery.of(context).size.width,
         padding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
         textColor: Colors.lightGreenAccent,
-        onPressed: () {
-          print('pressed login button');
-          checkFields();
+        onPressed: () async {
+          print('pressed confirm button');
+          await checkFields();
+          sleep(const Duration(milliseconds: 400));
           final snackBar = SnackBar(
             content: Text(displayText.toString()),
-            duration: Duration(seconds: 5),
+            duration: Duration(seconds: 4),
             action: SnackBarAction(
               label: 'Undo',
               onPressed: () {
@@ -143,9 +109,11 @@ class RegisterForm extends State<Register> {
             ),
           );
           Scaffold.of(context).showSnackBar(snackBar);
+          clearText();
+          // Profile();
         },
         child: Text(
-          "Complete Registration",
+          "Accept Changes",
           textAlign: TextAlign.center,
           style: TextStyle(color: Colors.black.withOpacity(0.6), fontSize: 20),
         ),
@@ -154,7 +122,7 @@ class RegisterForm extends State<Register> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          'Finalize Account',
+          'Edit User Settings',
           style: TextStyle(
             letterSpacing: 1.5,
             color: Colors.lightGreenAccent,
@@ -171,20 +139,19 @@ class RegisterForm extends State<Register> {
               children: [
                 SizedBox(height: 115.0),
                 Text(
-                  "Username",
+                  "Change Username",
                   style: TextStyle(
                     letterSpacing: 2.0,
                     fontSize: 22.0,
                     color: Colors.lightGreenAccent,
                   ),
                 ),
-
                 SizedBox(height: 5.0),
                 usernameField,
                 SizedBox(height: 15.0),
                 SizedBox(height: 15.0),
                 Text(
-                  "Phone number",
+                  "Change Phone number",
                   style: TextStyle(
                     letterSpacing: 2.0,
                     fontSize: 22.0,
@@ -196,32 +163,34 @@ class RegisterForm extends State<Register> {
                 confirmPhoneNumber,
                 SizedBox(height: 25.0),
                 loginButon,
-
               ],
             ),
           ),
         ),
       ),
       backgroundColor: Colors.grey[700],
-
     );
   }
-  showAlertDialog(BuildContext context) {
 
+  // alert dialog box.
+  showAlertDialog(BuildContext context) {
     // set up the buttons
     Widget cancelButton = FlatButton(
       child: Text("Cancel"),
-      onPressed:  () {},
+      onPressed: () {
+        Navigator.of(context).pop();
+        // Navigator.of(context).pop(true);
+      },
     );
     Widget continueButton = FlatButton(
       child: Text("Continue"),
-      onPressed:  () {},
+      onPressed: () {},
     );
 
     // set up the AlertDialog
     AlertDialog alert = AlertDialog(
-      title: Text("AlertDialog"),
-      content: Text("Would you like to continue learning how to use Flutter alerts?"),
+      title: Text("Change Settings"),
+      content: Text("Are you sure you want to change your settings??"),
       actions: [
         cancelButton,
         continueButton,
@@ -232,9 +201,47 @@ class RegisterForm extends State<Register> {
     showDialog(
       context: context,
       builder: (BuildContext context) {
+        // Future.delayed(Duration(seconds: 8), () {
+        //   Navigator.of(context).pop(true);
+        // });
         return alert;
       },
     );
+  }
+
+  // showDialog(
+  // context: context,
+  // builder: (context) {
+  // Future.delayed(Duration(seconds: 5), () {
+  // Navigator.of(context).pop(true);
+  // });
+  // return AlertDialog(
+  // title: Text('Title'),
+  // );
+  // });
+
+  // Checks the username and phone number fields for input.
+  void checkFields() async {
+    if (userName == null) {
+      print("username is null");
+    } else {
+      print('user name: $userName');
+      await checkUserName(userName);
+    }
+
+    if (phoneNumber == null) {
+      print("null number...");
+    } else {
+      print(phoneNumber);
+      await checkPhoneNumber(phoneNumber);
+    }
+    checkVerified();
+  }
+
+  // Clears the text on submission of both text fields.
+  void clearText() {
+    myController.clear();
+    myController2.clear();
   }
 
   /// This method checks to see if the user entered a phone number that already exists in the DB
@@ -243,15 +250,18 @@ class RegisterForm extends State<Register> {
   Future<bool> checkUserName(String userName) async {
     String email = await secureStorage.readSecureData("email");
     print("in user check");
-    if (!await DatabaseHelper2.instance.checkByUserName(userName)) {
+    if (!await DatabaseHelper2.instance.userRepository.checkByUserName(userName)) {
       print("the user name doesnt exist");
       userNameVerified = true;
       print("done");
+      displayText = updated;
     } else {
       print("the user name already exists");
       displayText = userTaken;
+      userNameVerified = false;
     }
   }
+
   /// This method checks to see if the user entered a phone number that already exists in the DB
   ///
   /// [phoneNumber], the phoneNumber of the user.
@@ -259,110 +269,120 @@ class RegisterForm extends State<Register> {
     String email = await secureStorage.readSecureData("email");
     print("in phone check");
     print(phoneNumber);
-    if (!await DatabaseHelper2.instance.userRepository.checkByPhoneNumber(phoneNumber)) {
+    if (!await DatabaseHelper2.instance.userRepository
+        .checkByPhoneNumber(phoneNumber)) {
       print("the phone Number doesnt exist");
-      List<User> pulledUser = await DatabaseHelper2.instance.getUserByEmail(
-          email);
-      // print(pulledUser.first.phoneNumber);
-      // print(pulledUser.first.id);
-      // updatedUser.phoneNumber = phoneNumber;
-      // await DatabaseHelper2.instance.updateUser(updatedUser);
       phoneVerified = true;
       print("done again ");
+      displayText = updated;
+
     } else {
-      print("the phone number already exists in the db");
       displayText = phoneTaken;
+      print("the phone number already exists in the db");
+      phoneVerified = false;
     }
+    return phoneVerified;
   }
 
-  /// This method verifies what user setting is to be updated.
+  /// This class places the verified changes, if any, into an updated user and then into the database.
   void checkVerified() async {
     String email = await secureStorage.readSecureData("email");
-    sleep(const Duration(seconds:1));
-
+    sleep(const Duration(milliseconds: 1200));
     print(userNameVerified);
     print(phoneVerified);
-    if (userNameVerified && phoneVerified) {
-      print("verified");
+    if (userNameVerified) {
+      print("username verified");
+      print(userName);
       secureStorage.writeSecureData('userName', userName);
-      secureStorage.writeSecureData('phoneNumber', phoneNumber);
-      List<User> pulledUser = await DatabaseHelper2.instance.getUserByEmail(
-          email);
+      List<User> pulledUser =
+      await DatabaseHelper2.instance.getUserByEmail(email);
       print(pulledUser.first.phoneNumber);
       print(pulledUser.first.id);
       updatedUser.email = pulledUser.first.email;
       updatedUser.password = pulledUser.first.password;
       updatedUser.userName = userName;
       updatedUser.id = pulledUser.first.id;
-      updatedUser.phoneNumber = phoneNumber;
+      updatedUser.phoneNumber = pulledUser.first.phoneNumber;
       await DatabaseHelper2.instance.updateUser(updatedUser);
-      Navigator.of(context).pushReplacement(FadePageRoute(
-        builder: (context) => MainScreen(),
-      ));
-    } else {
-      print('fields arent completed');
+      changed = true;
+      Profile().createState().setState(() {
+      });
+      // Profile().createState().setState(() {
+      // });
     }
-  }
+      if (phoneVerified) {
+        print("phone verified");
+        secureStorage.writeSecureData('phoneNumber', phoneNumber);
+        List<User> pulledUser =
+            await DatabaseHelper2.instance.getUserByEmail(email);
+        print(pulledUser.first.phoneNumber);
+        print(pulledUser.first.id);
+        updatedUser.email = pulledUser.first.email;
+        updatedUser.password = pulledUser.first.password;
+        updatedUser.userName = pulledUser.first.userName;
+        updatedUser.id = pulledUser.first.id;
+        updatedUser.phoneNumber = phoneNumber;
+        await DatabaseHelper2.instance.updateUser(updatedUser);
+        changed = true;
+        // Profile().createState().setState(() {
+        // });
+      } else {
+        print('phone num not verified');
+      }
 
-  /// This method checks both of the fields for updates.
-  void checkFields() async {
-    if(phoneNumber != null) {
-      print("not null number...");
-     await checkPhoneNumber(phoneNumber);
+      if(changed){
+        // Navigator
+        //     .of(context)
+        //     .pushReplacement(MaterialPageRoute(builder: (BuildContext context) => Profile()));
+        // Navigator.of(context).pushReplacement(FadePageRoute(
+        //   builder: (context) => Profile(),
+        // ));
+      }
     }
 
-    if(userName == null && userNameUnSubmitted != null){
-      print("switching for onchanged for user name");
-      userName = userNameUnSubmitted;
-      print(userName);
-    }
-    print('user name: $userName');
-    if(userName != null) {
-     await checkUserName(userName);
-    }
 
-    await checkVerified();
-    if (userNameVerified && phoneVerified) {
-      print("verified");
-      secureStorage.writeSecureData('userName', userName);
-      secureStorage.writeSecureData('phoneNumber', phoneNumber);
-      Navigator.of(context).pushReplacement(FadePageRoute(
-        builder: (context) => MainScreen(),
-      ));
-    } else {
-      print('fields arent completed');
-    }
-  }
-
+  // The list of categories for tags.
+  List<String> categories = [
+    'Gaming',
+    'Food & Drinks',
+    'Sports & Fitness',
+    'Talk Shows & Podcasts',
+    'Just Chatting',
+    'Makers & Crafting',
+    'Tabletop RPGs',
+    'Science & Technologies',
+    'Music & Performing Arts',
+    'Beauty & Body Art'
+  ];
 }
 
-/// The snackbar widget.
-///
-/// This displays whether or not the profile was updated.
-class SnackBarPage extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: RaisedButton(
-        child: Text('Show SnackBar', style: TextStyle(fontSize: 25.0),),
-        textColor: Colors.white,
-        color: Colors.redAccent,
-        padding: EdgeInsets.all(8.0),
-        splashColor: Colors.grey,
-        onPressed: () {
-          final snackBar = SnackBar(
-            content: Text('Hey! This is a SnackBar message.'),
-            duration: Duration(seconds: 5),
-            action: SnackBarAction(
-              label: 'Undo',
-              onPressed: () {
-                // Some code to undo the change.
-              },
-            ),
-          );
-          Scaffold.of(context).showSnackBar(snackBar);
-        },
-      ),
-    );
-  }
-}
+// class SnackBarPage extends StatelessWidget {
+//   @override
+//   Widget build(BuildContext context) {
+//     return Center(
+//       child: RaisedButton(
+//         child: Text(
+//           'Show SnackBar',
+//           style: TextStyle(fontSize: 25.0),
+//         ),
+//         textColor: Colors.white,
+//         color: Colors.redAccent,
+//         padding: EdgeInsets.all(8.0),
+//         splashColor: Colors.grey,
+//         onPressed: () {
+//           final snackBar = SnackBar(
+//             content: Text('Hey! This is a SnackBar message.'),
+//             duration: Duration(seconds: 5),
+//             action: SnackBarAction(
+//               label: 'Undo',
+//               onPressed: () {
+//                 // Some code to undo the change.
+//               },
+//             ),
+//           );
+//           Scaffold.of(context).showSnackBar(snackBar);
+//         },
+//       ),
+//     );
+//   }
+// }

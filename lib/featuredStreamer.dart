@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:streamer_review/streamer_screen.dart';
 
+/// Creates the featured streamer state.
 class FeaturedStreamer extends StatefulWidget {
   @override
   _FeaturedStreamerState createState() => _FeaturedStreamerState();

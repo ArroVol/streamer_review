@@ -4,21 +4,24 @@ import 'package:sqflite/sqflite.dart';
 import 'package:streamer_review/model/broadcaster_tag.dart';
 import 'package:streamer_review/model/user.dart';
 import 'package:streamer_review/repository/broadcaster_repository.dart';
-
-import 'package:streamer_review/streamer.dart';
-import 'package:streamer_review/streamer_thumb.dart';
-import 'dart:convert';
+import 'package:streamer_review/repository/broadcaster_tag_repository.dart';
+import 'package:streamer_review/repository/review_repository.dart';
+import 'package:streamer_review/repository/user_favorites_repository.dart';
+import 'package:streamer_review/repository/user_repository.dart';
 import 'package:streamer_review/secure_storage/secure_storage.dart';
 
 // library for input and output
 import 'dart:io';
 import 'DatabaseCreator.dart';
 ///
+///The class that creates the database.
 ///
+/// Serves to contain all the information about the database as well as instantiation of the tables.
 class DatabaseHelper2 {
   //These are not given a type because it will automatically take the type that it is given first to it
   // Database name and database version are specified.
-  static final _dbName = 'myDatabase24.db';
+  static final _dbName = 'myDatabase26.db';
+
   static final _dbVersion = 1;
   static final _tableName = '_user_table';
   static final _reviewTable = 'reviews';
@@ -26,7 +29,11 @@ class DatabaseHelper2 {
   // The secure storage that holds the user logged in.
   final SecureStorage secureStorage = SecureStorage();
 
-  BroadcasterRepository broadcasterRepository = new BroadcasterRepository();
+  BroadcasterRepository broadcasterRepository = BroadcasterRepository();
+  BroadcasterTagRepository broadcasterTagRepository = BroadcasterTagRepository();
+  UserRepository userRepository = UserRepository();
+  UserFavoritesRepository userFavoritesRepository = UserFavoritesRepository();
+  ReviewRepository reviewRepository = ReviewRepository();
 
   //Fields given to the user table
   static final columnId = '_id';
@@ -127,10 +134,15 @@ class DatabaseHelper2 {
     db.execute('''
       CREATE TABLE broadcaster_tags(
       tags_id INTEGER PRIMARY KEY AUTOINCREMENT,
-      tag_name TEXT,
+      fk_tag_name TEXT,
+      fk_user_id INTEGER,
       fk_broadcaster_id INTEGER,
       FOREIGN KEY (fk_broadcaster_id)
-        REFERENCES broadcaster_table(broadcaster_id)
+        REFERENCES broadcaster_table(broadcaster_id),
+      FOREIGN KEY (fk_user_id)
+        REFERENCES _user_table(_id),
+      FOREIGN KEY (fk_tag_name)
+        REFERENCES tag_names(tag_name)
       )
       ''');
 
@@ -148,6 +160,25 @@ class DatabaseHelper2 {
         )
       ''');
 
+    db.execute('''
+      CREATE TABLE tag_names(
+      tag_id INTEGER PRIMARY KEY AUTOINCREMENT,
+      tag_name TEXT
+      )
+      ''');
+    insertTags(db);
+
+    // db.execute('''
+    //   CREATE TABLE broadcaster_tags(
+    //   tags_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    //   tag_name TEXT,
+    //   fk_broadcaster_id INTEGER,
+    //   FOREIGN KEY (fk_broadcaster_id)
+    //     REFERENCES broadcaster_table(broadcaster_id)
+    //   )
+    //   ''');
+
+
     // db.execute(
     //     ''' INSERT INTO _user_table (email, password, phone_number, user_name)
     // VALUES('gooby@gmail.com', 'gooby4ever', '708-843-6969', 'goobychan')
@@ -156,14 +187,18 @@ class DatabaseHelper2 {
         ''' INSERT INTO broadcaster_table (broadcaster_id, broadcaster_name)
     VALUES(229729353, 'criticalrole')
     ''');
-    // addDummyData();
   }
 
-
-  // Future<void> deleteDb() async {
-  //   final Database db = await _holder.db;
-  //   // delete database
-  // }
+  Future<List<Map<String, dynamic>>> selectAllBroadcasterTagsByBroadcaster(
+      broadcasterId) async {
+    // get a reference to the database
+    Database db = await DatabaseHelper2.instance.database;
+    // raw query
+    List<Map> result = await db.rawQuery(
+        'SELECT * FROM broadcaster_tags WHERE fk_broadcaster_id=?',
+        [broadcasterId]);
+    return result;
+  }
   Future<void> insertUser(User user) async {
     // Get a reference to the database.
     final Database db = await instance.database;
@@ -211,25 +246,18 @@ class DatabaseHelper2 {
         .query('_user_table', where: 'user_name = ?', whereArgs: [userName]);
     final userMap = user.asMap();
 
-    final user1 = userMap[0];
-
-    for (var i = 0; i < 1; i++) {
-      user[i];
+    if(user.length > 0) {
+      return List.generate(user.length, (i) {
+        return User(
+          id: user[i]['_id'],
+          email: user[i]['email'],
+          password: user[i]['password'],
+          userName: user[i]['user_name'],
+          phoneNumber: user[i]['phone_number'],
+        );
+      });
     }
-
-    // for (String key in user.keys){
-    //   print(key);
-    //   print(testMap[key]);
-    // }
-    return List.generate(user.length, (i) {
-      return User(
-        id: user[i]['_id'],
-        email: user[i]['email'],
-        password: user[i]['password'],
-        userName: user[i]['user_name'],
-        phoneNumber: user[i]['phone_number'],
-      );
-    });
+    return null;
     // return User(
     //   id: maps[i]['user_id'],
     //   email: maps[i]['user_email'],
@@ -244,18 +272,21 @@ class DatabaseHelper2 {
     final userMap = user.asMap();
     final user1 = userMap[0];
 
-    List<User> userList = [];
-    List.generate(user.length, (i) {
-      userList.add(User(
-        id: user[i]['_id'],
-        // email: user[i]['email'],
-        // password: user[i]['password'],
-        // userName: user[i]['user_name'],
-        // phoneNumber: user[i]['phone_number'],
-      ));
-    });
-    int id = userList.first.id;
-    return id;
+    if (user.length > 0) {
+      List<User> userList = [];
+      List.generate(user.length, (i) {
+        userList.add(User(
+          id: user[i]['_id'],
+          // email: user[i]['email'],
+          // password: user[i]['password'],
+          // userName: user[i]['user_name'],
+          // phoneNumber: user[i]['phone_number'],
+        ));
+      });
+      int id = userList.first.id;
+      return id;
+    }
+    return 0;
   }
   Future<int> getUserIdByEmail(String email) async {
     Database db = await instance.database;
@@ -383,8 +414,18 @@ class DatabaseHelper2 {
     print(user.toMap());
     Database db = await instance.database;
     String userName = user.userName;
-    List<User> newUser = await getUserByUserName(user.userName);
+    print("this is the username: $userName");
+    print("this is the email: $user.email");
+
+    List<User> newUser = await getUserByEmail(user.email);
+
+    // List<User> newUser = await getUserByUserName(user.userName);
+    // List<Map<String, dynamic>> newUser = await getUserByUserName(user.userName);
+    print(newUser);
+    print(newUser.first);
     int id = newUser.first.id;
+    print("printing ID");
+    print(id);
     // List<Map<String, dynamic >> user = await db.query('_user_table', where: '_id = ?', whereArgs: []);
 
     int updatedCount = await db.rawUpdate('''
@@ -413,7 +454,7 @@ class DatabaseHelper2 {
         'SELECT * FROM broadcaster_tags WHERE fk_broadcaster_id=?',
         [broadcasterId]);
     await db.rawQuery(
-        'INSERT INTO broadcaster_tags (tag_name, fk_broadcaster_id) VALUES(?, ?)',
+        'INSERT INTO broadcaster_tags (fk_tag_name, fk_broadcaster_id) VALUES(?, ?)',
         [tagName, broadcasterId]);
     // await db.rawQuery('UPDATE reviews SET satisfaction_rating = ?, entertainment_rating = ?, interactiveness_rating = ?, skill_rating = ? WHERE fk_broadcaster_id = ? AND fk_user_id = ?', [satisfaction_rating, entertainment_rating, interactiveness_rating, skill_rating, broadcaster_id, user_id]);
 
@@ -421,8 +462,8 @@ class DatabaseHelper2 {
     return result;
   }
 
-  Future<List<Map<String, dynamic>>> selectAllBroadcasterTagsByBroadcaster(
-      broadcasterId) async {
+  Future<List<Map<String, dynamic>>> selectAllBroadcasterTagsByBroadcasterwithTag(
+      broadcasterId, tagName) async {
     // get a reference to the database
     Database db = await DatabaseHelper2.instance.database;
     // raw query
@@ -439,7 +480,7 @@ class DatabaseHelper2 {
 
     // raw query
     List<Map> result = await db
-        .rawQuery('SELECT * FROM broadcaster_tags WHERE tag_name=?', [tagName]);
+        .rawQuery('SELECT * FROM broadcaster_tags WHERE fk_tag_name=?', [tagName]);
     // await db.rawQuery('UPDATE reviews SET satisfaction_rating = ?, entertainment_rating = ?, interactiveness_rating = ?, skill_rating = ? WHERE fk_broadcaster_id = ? AND fk_user_id = ?', [satisfaction_rating, entertainment_rating, interactiveness_rating, skill_rating, broadcaster_id, user_id]);
     return result;
   }
@@ -469,6 +510,23 @@ class DatabaseHelper2 {
         .rawQuery('SELECT * FROM reviews WHERE fk_user_id=?', [userId]);
 
     int numOfReviews = result.length;
+
+    return numOfReviews;
+  }
+
+  Future<int> getNumOfTagsCreated() async {
+    String userEmail = await secureStorage.readSecureData("email");
+    int userId = await DatabaseHelper2.instance.getUserIdByEmail(userEmail);
+    print('the user id: $userId');
+    // get a reference to the database
+    Database db = await DatabaseHelper2.instance.database;
+
+    // raw query
+    List<Map> result = await db
+        .rawQuery('SELECT * FROM broadcaster_tags WHERE fk_user_id=?', [userId]);
+
+    int numOfReviews = result.length;
+    print('The num of reviews: $numOfReviews');
 
     return numOfReviews;
   }
@@ -726,13 +784,8 @@ class DatabaseHelper2 {
     String userEmail = await secureStorage.readSecureData("email");
     int userId = await DatabaseHelper2.instance.getUserIdByEmail(userEmail);
 
-    int deletedRow = await db.delete('user_favorites',
-        where: 'fk_broadcaster_id = ?', whereArgs: [broadcasterId]);
+    int deletedRow = await db.delete('user_favorites', where: 'fk_broadcaster_id = ?', whereArgs: [broadcasterId]);
     return deletedRow;
-
-    // await db.rawQuery(
-    //     'DELETE FROM user_favorites WHERE fk_broadcaster_id = ? AND fk_user_id = ?',
-    //     [broadcasterId, userId]);
   }
 
   Future<bool> isFavorite(int broadcasterId) async {
@@ -864,7 +917,95 @@ class DatabaseHelper2 {
       $columnPassword TEXT )
       ''');
   }
+
+  Future<List<User>> getUserByEmail(String email) async {
+    Database db = await DatabaseHelper2.instance.database;
+    List<Map<String, dynamic>> user = await db
+        .query('_user_table', where: 'email = ?', whereArgs: [email]);
+    return List.generate(user.length, (i) {
+      return User(
+        id: user[i]['_id'],
+        email: user[i]['email'],
+        password: user[i]['password'],
+        userName: user[i]['user_name'],
+        phoneNumber: user[i]['phone_number'],
+      );
+    });
+  }
+  Future<String> getPhoneNumber(String phoneNumber) async {
+    Database db = await DatabaseHelper2.instance.database;
+    List<Map<String, dynamic>> user = await db
+        .query('_user_table', where: 'phone_number = ?', whereArgs: [phoneNumber]);
+    List<User> userList = [];
+    List.generate(user.length, (i) {
+      userList.add(User(
+        // id: user[i]['_id'],
+        // email: user[i]['email'],
+        // password: user[i]['password'],
+        // userName: user[i]['user_name'],
+        phoneNumber: user[i]['phone_number'],
+      ));
+    });
+    print("the length of the user list");
+    print(userList.length);
+    if(userList.length > 0) {
+      String phoneNumberRet = userList.first.phoneNumber;
+      return phoneNumberRet;
+    }
+    return null;
+  }
+  Future<List<Map<String, dynamic>>> queryAllFavorites() async {
+    Database db = await DatabaseHelper2.instance.database;
+    return await db.query("user_favorites");
+  }
+
+  void insertTags(Database db) async {
+    db.execute(
+        ''' INSERT INTO tag_names (tag_name)
+    VALUES('Gaming')
+    ''');
+    db.execute(
+        ''' INSERT INTO tag_names (tag_name)
+    VALUES('Food & Drinks')
+    ''');
+    db.execute(
+        ''' INSERT INTO tag_names (tag_name)
+    VALUES('Sports & Fitness')
+    ''');
+    db.execute(
+        ''' INSERT INTO tag_names (tag_name)
+    VALUES('Talk Shows & Podcasts')
+    ''');
+    db.execute(
+        ''' INSERT INTO tag_names (tag_name)
+    VALUES('Just Chatting')
+    ''');
+    db.execute(
+        ''' INSERT INTO tag_names (tag_name)
+    VALUES('Makers & Crafting')
+    ''');
+    db.execute(
+        ''' INSERT INTO tag_names (tag_name)
+    VALUES('Tabletop RPGs')
+    ''');
+    db.execute(
+        ''' INSERT INTO tag_names (tag_name)
+    VALUES('Science & Technologies')
+    ''');
+    db.execute(
+        ''' INSERT INTO tag_names (tag_name)
+    VALUES('Music & Performing Arts')
+    ''');
+    db.execute(
+        ''' INSERT INTO tag_names (tag_name)
+    VALUES('Beauty & Body Art')
+    ''');
+
+  }
+
 }
+
+
 
 // List<Map<String, dynamic >> mPeople = user.map((m) => Map.of(m)).toList();
 // user.indexOf();
