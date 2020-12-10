@@ -99,7 +99,6 @@ class _ExpansionRowContainerState extends State<ExpansionRowContainer> {
   Future<String> updateImage(String id) async {
     String url = "https://api.twitch.tv/helix/users?id=" + id;
 
-    // print(url);
 
     http.Response channelInformation =
     await http.get(Uri.encodeFull(url), headers: {
@@ -120,7 +119,6 @@ class _ExpansionRowContainerState extends State<ExpansionRowContainer> {
   Future<int> getStreamerCurrentViewers(String id) async {
     String url = 'https://api.twitch.tv/helix/streams?user_id=' + id;
 
-    // print(url);
 
     http.Response channelInformation =
     await http.get(Uri.encodeFull(url), headers: {

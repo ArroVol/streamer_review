@@ -16,9 +16,9 @@ class _FavoritesContainer extends State<FavoritesContainer> {
 
   @override
   Widget build(BuildContext context) {
-    getStreamerList();
+    // getStreamerList();
     return Container(
-      height: 500,
+      height: 1000,
       child: ListView(
         scrollDirection: Axis.vertical,
         children: favList,
@@ -28,24 +28,15 @@ class _FavoritesContainer extends State<FavoritesContainer> {
   /// Gets a list of streamers.
   Future<List<FavoriteCard>> getStreamerList() async {
     List<FavoriteCard> streamerList = new List<FavoriteCard>();
-    // listOfFavs =  getFavStreamers();
-    // getFavStreamers();
 
     DatabaseHelper2 d = DBHelper.DatabaseHelper2.instance;
     var getStreamerList = await d.getFavorites();
-    // print("got streamer list from db");
 
 
     if (getStreamerList != null) {
-      // print(getStreamerList.length);
       for (int i = 0; i < getStreamerList.length; i++) {
         temp = getStreamerList[i]["fk_broadcaster_id"];
-        // print("Temp: " +
-        //     temp.toString() +
-        //     "-------------------------------------------------------------------------------------------------------------------");
         FavoriteCard favCard = new FavoriteCard(temp.toString());
-        // print(
-        //     "new card was supposedly made?----------------------------------------------------------------------------------");
         streamerList.add(favCard);
       }
     }
@@ -64,19 +55,6 @@ class _FavoritesContainer extends State<FavoritesContainer> {
   var temp;
   List<String> idList = new List<String>();
 
-  // void getFavStreamers() async {
-  //   DatabaseHelper2 d = DBHelper.DatabaseHelper2.instance;
-  //   var getStreamerList = await d.getFavorites();
-  //   if (getStreamerList != null) {
-  //     for (int i = 0; i < getStreamerList.length; i++) {
-  //       temp = getStreamerList[i]["fk_broadcaster_id"];
-  //       print("Temp: " +
-  //           temp.toString() +
-  //           "-------------------------------------------------------------------------------------------------------------------");
-  //       idList.add(temp.toString());
-  //     }
-  //   }
-  // }
 
   @override
   void initState() {

@@ -13,6 +13,7 @@ import 'package:streamer_review/secure_storage/secure_storage.dart';
 // library for input and output
 import 'dart:io';
 import 'DatabaseCreator.dart';
+
 ///
 ///The class that creates the database.
 ///
@@ -79,7 +80,6 @@ class DatabaseHelper2 {
   //returns 2 parameters (database, version)
   // create the database if it doesnt exist
   Future _onCreate(Database db, int version) {
-
     secureStorage.deleteSecureData('email');
     secureStorage.deleteSecureData('password');
     //write the query that creates the database
@@ -151,6 +151,7 @@ class DatabaseHelper2 {
       favorites_id INTEGER PRIMARY KEY AUTOINCREMENT, 
       review_content TEXT,
       submission_date TEXT,
+      score INTEGER,
       fk_broadcaster_id INTEGER,
       fk_user_id INTEGER,
        FOREIGN KEY (fk_broadcaster_id)
@@ -161,6 +162,18 @@ class DatabaseHelper2 {
       ''');
 
     db.execute('''
+      CREATE TABLE user_text_review_scores(
+      temp_id INTEGER PRIMARY KEY AUTOINCREMENT, 
+      score INTEGER,
+      fk_review_id INTEGER,
+      fk_user_id INTEGER,
+       FOREIGN KEY (fk_review_id)
+        REFERENCES text_reviews(favorites_id),
+       FOREIGN KEY (fk_user_id)
+         REFERENCES _user_table(_id)  
+        )
+      ''');
+  db.execute('''
       CREATE TABLE tag_names(
       tag_id INTEGER PRIMARY KEY AUTOINCREMENT,
       tag_name TEXT
@@ -178,7 +191,6 @@ class DatabaseHelper2 {
     //   )
     //   ''');
 
-
     // db.execute(
     //     ''' INSERT INTO _user_table (email, password, phone_number, user_name)
     // VALUES('gooby@gmail.com', 'gooby4ever', '708-843-6969', 'goobychan')
@@ -188,6 +200,7 @@ class DatabaseHelper2 {
     VALUES(229729353, 'criticalrole')
     ''');
   }
+
 
   Future<List<Map<String, dynamic>>> selectAllBroadcasterTagsByBroadcaster(
       broadcasterId) async {
@@ -229,7 +242,6 @@ class DatabaseHelper2 {
     //
     // List<Map<String, dynamic >> user = await db.query('_user_table', where: '_id = ?', whereArgs: [id]);
     // return user.isNotEmpty ? User.fromMap(user.first): Null;
-
   }
 
   //Query returns a list of map (must be passed as a type)
@@ -288,10 +300,11 @@ class DatabaseHelper2 {
     }
     return 0;
   }
+
   Future<int> getUserIdByEmail(String email) async {
     Database db = await instance.database;
-    List<Map<String, dynamic>> user = await db
-        .query('_user_table', where: 'email = ?', whereArgs: [email]);
+    List<Map<String, dynamic>> user =
+        await db.query('_user_table', where: 'email = ?', whereArgs: [email]);
     final userMap = user.asMap();
     final user1 = userMap[0];
 
@@ -385,8 +398,6 @@ class DatabaseHelper2 {
 
   //delete the record that has that id
   Future<int> deleteUser(int id) async {
-    print('deleting...');
-    print(id);
     Database db = await instance.database;
     return await db
         .delete('_user_table', where: '$columnId = ?', whereArgs: [id]);
@@ -410,8 +421,6 @@ class DatabaseHelper2 {
   //to update you need to pass the id of which will be updated as well as pass the value
   // takes in a map type parameter
   Future<int> updateUser(User user) async {
-    print("in the update method for user in the database");
-    print(user.toMap());
     Database db = await instance.database;
     String userName = user.userName;
     print("this is the username: $userName");
@@ -458,7 +467,6 @@ class DatabaseHelper2 {
         [tagName, broadcasterId]);
     // await db.rawQuery('UPDATE reviews SET satisfaction_rating = ?, entertainment_rating = ?, interactiveness_rating = ?, skill_rating = ? WHERE fk_broadcaster_id = ? AND fk_user_id = ?', [satisfaction_rating, entertainment_rating, interactiveness_rating, skill_rating, broadcaster_id, user_id]);
 
-
     return result;
   }
 
@@ -485,19 +493,57 @@ class DatabaseHelper2 {
     return result;
   }
 
-  Future<void> tesAss() async {
+  Future<List<Map<String, dynamic>>> selectUserReviews() async {
     // get a reference to the database
+    int count = 0;
     Database db = await DatabaseHelper2.instance.database;
+    String userEmail = await secureStorage.readSecureData("email");
+    int userId = await DatabaseHelper2.instance.getUserIdByEmail(userEmail);
+    // raw query
+    List<Map> result = await db.rawQuery(
+        'SELECT * FROM reviews WHERE fk_user_id=?',
+        [userId]);
 
-    // get all rows
-    List<Map> result = await db.query(DatabaseHelper2._tableName);
-
-    // print the results
-    result.forEach((row) => print(row));
-    // {_id: 1, name: Bob, age: 23}
-    // {_id: 2, name: Mary, age: 32}
-    // {_id: 3, name: Susan, age: 12}
+    return result;
   }
+
+  Future<List<Map<String, dynamic>>> selectUserTextReviews(
+      broadcaster_id) async {
+    // get a reference to the database
+    int count = 0;
+    Database db = await DatabaseHelper2.instance.database;
+    String userEmail = await secureStorage.readSecureData("email");
+    int userId = await DatabaseHelper2.instance.getUserIdByEmail(userEmail);
+    // raw query
+    List<Map> result = await db.rawQuery(
+        'SELECT * FROM text_reviews WHERE fk_user_id=? AND fk_broadcaster_id=?',
+        [userId, broadcaster_id]);
+
+
+    return result;
+  }
+
+  Future<void> clearSelectedReview(int broadcasterId) async {
+    Database db = await DatabaseHelper2.instance.database;
+    String userEmail = await secureStorage.readSecureData("email");
+    int userId = await DatabaseHelper2.instance.getUserIdByEmail(userEmail);
+    List<Map> result = await db.rawQuery(
+      'SELECT * FROM text_reviews WHERE fk_user_id=? AND fk_broadcaster_id=?',
+      [userId, broadcasterId],
+    );
+    var x = result[0]['favorites_id'];
+
+    await db.rawQuery('DELETE FROM reviews WHERE fk_broadcaster_id = ? AND fk_user_id = ?',
+        [broadcasterId, userId]);
+    await db.rawQuery('DELETE FROM text_reviews WHERE fk_broadcaster_id = ? AND fk_user_id = ?',
+        [broadcasterId, userId]);
+    await db.rawQuery(
+        'DELETE FROM user_text_review_scores WHERE temp_id =?',
+        [
+          x
+        ]);
+  }
+
 
   Future<int> getNumUserReviews() async {
     String userEmail = await secureStorage.readSecureData("email");
@@ -506,8 +552,8 @@ class DatabaseHelper2 {
     Database db = await DatabaseHelper2.instance.database;
 
     // raw query
-    List<Map> result = await db
-        .rawQuery('SELECT * FROM reviews WHERE fk_user_id=?', [userId]);
+    List<Map> result =
+        await db.rawQuery('SELECT * FROM reviews WHERE fk_user_id=?', [userId]);
 
     int numOfReviews = result.length;
 
@@ -536,8 +582,7 @@ class DatabaseHelper2 {
     return userEmail;
   }
 
-  Future<List<Map<String, dynamic>>> selectTextReviews(
-      broadcaster_id) async {
+  Future<List<Map<String, dynamic>>> selectTextReviews(broadcaster_id) async {
     Database db = await DatabaseHelper2.instance.database;
 
     // raw query
@@ -548,38 +593,156 @@ class DatabaseHelper2 {
     return result;
   }
 
-  Future<void> insertTextReviews(
-      review_content, submission_date, broadcaster_id, user_id) async {
-    // get a reference to the database
-    int count = 0;
-    Database db = await DatabaseHelper2.instance.database;
 
-    await db.rawQuery(
-        'INSERT INTO text_reviews (review_content, submission_date, fk_broadcaster_id, fk_user_id) VALUES(?, ?, ?, ?)',
-        [
-          review_content,
-          submission_date,
-          broadcaster_id,
-          user_id
-        ]);
-  }
 
-  Future<List<Map<String, dynamic>>> selectReviews(
-      broadcaster_id, user_id) async {
-    // get a reference to the database
-    int count = 0;
+  Future<List<Map<String, dynamic>>> selectTextReviewsByScore(broadcaster_id) async {
     Database db = await DatabaseHelper2.instance.database;
 
     // raw query
     List<Map> result = await db.rawQuery(
-        'SELECT * FROM reviews WHERE fk_user_id=? AND fk_broadcaster_id=?',
-        [user_id, broadcaster_id]);
+        'SELECT * FROM text_reviews WHERE fk_broadcaster_id=? ORDER BY (score) DESC',
+        [broadcaster_id]);
 
-    // print the results
-    // result.forEach((row) => print(row));
-    // {_id: 2, name: Mary, age: 32}
     return result;
   }
+
+  // Future<void> insertTextReviews(
+  //     review_content, submission_date, broadcaster_id, user_id) async {
+  //   // get a reference to the database
+  //   int count = 0;
+  //   Database db = await DatabaseHelper2.instance.database;
+  //
+  //   await db.rawQuery(
+  //       'INSERT INTO text_reviews (review_content, submission_date, score, fk_broadcaster_id, fk_user_id) VALUES(?, ?, ?, ?, ?)',
+  //       [review_content, submission_date, 0, broadcaster_id, user_id]);
+  // }
+
+  Future<void> insertTextReviews(
+      review_content, submission_date, broadcaster_id) async {
+    // get a reference to the database
+    int count = 0;
+    Database db = await DatabaseHelper2.instance.database;
+    String userEmail = await secureStorage.readSecureData("email");
+    int userId = await DatabaseHelper2.instance.getUserIdByEmail(userEmail);
+
+    List<Map> result = await db.rawQuery(
+      'SELECT * FROM text_reviews WHERE fk_user_id=? AND fk_broadcaster_id=?',
+      [userId, broadcaster_id],
+    );
+    count = result.length;
+
+    var x;
+
+    // raw query
+    if (count == 0) {
+      await db.rawQuery(
+          'INSERT INTO text_reviews (review_content, submission_date, score, fk_broadcaster_id, fk_user_id) VALUES(?, ?, ?, ?, ?)',
+          [review_content, submission_date, 0, broadcaster_id, userId]);
+    } else {
+      x = result[0]['favorites_id'];
+      await db.rawQuery(
+          'DELETE FROM user_text_review_scores WHERE temp_id =?',
+          [
+            x
+          ]);
+      await db.rawQuery(
+          'UPDATE text_reviews SET review_content =?, submission_date =?, score =? WHERE fk_broadcaster_id =? AND fk_user_id =?',
+          [
+            review_content,
+            submission_date,
+            0,
+            broadcaster_id,
+            userId
+          ]);
+      // await db.rawQuery(
+      //     'UPDATE text_reviews SET submission_date =? WHERE fk_broadcaster_id =? AND fk_user_id =?',
+      //     [
+      //       submission_date,
+      //       broadcaster_id,
+      //       userId
+      //     ]);
+      // await db.rawQuery(
+      //     'UPDATE text_reviews SET score =? WHERE fk_broadcaster_id =? AND fk_user_id =?',
+      //     [
+      //       0,
+      //       broadcaster_id,
+      //       userId
+      //     ]);
+    }
+  }
+
+  Future<int> selectReviewScoreByReviewIdAndUserId(
+      review_id) async {
+    Database db = await DatabaseHelper2.instance.database;
+    String userEmail = await secureStorage.readSecureData("email");
+    int user_id = await DatabaseHelper2.instance.getUserIdByEmail(userEmail);
+    List<Map> results = await db.rawQuery(
+      'SELECT * FROM user_text_review_scores WHERE fk_review_id=? AND fk_user_id=?',
+      [review_id, user_id],
+    );
+
+    if(results.length == 0) {
+      return 0;
+    }
+    else {
+      return (results[0]['score']);
+    }
+  }
+
+  Future<void> insertTextReviewScore(review_id, score) async {
+    Database db = await DatabaseHelper2.instance.database;
+    String userEmail = await secureStorage.readSecureData("email");
+    int user_id = await DatabaseHelper2.instance.getUserIdByEmail(userEmail);
+    int count;
+    List<Map> result = await db.rawQuery(
+      'SELECT * FROM user_text_review_scores WHERE fk_review_id=? AND fk_user_id=?',
+      [review_id, user_id],
+    );
+    count = result.length;
+
+
+    // raw query
+    if (count == 0) {
+      await db.rawQuery(
+          'INSERT INTO user_text_review_scores (score, fk_review_id, fk_user_id) VALUES(?, ?, ?)',
+          [score, review_id, user_id]);
+    } else {
+      await db.rawQuery(
+          'UPDATE user_text_review_scores SET score = ? WHERE fk_review_id = ? AND fk_user_id = ?',
+          [score, review_id, user_id]);
+    }
+
+    int tempScore = 0;
+    var results2 = await db.rawQuery(
+        'SELECT * FROM user_text_review_scores WHERE fk_review_id = ?',
+        [review_id]);
+
+    for (var f in results2) {
+      tempScore += f['score'];
+    }
+    await db
+        .rawQuery('UPDATE text_reviews SET score = ? WHERE favorites_id = ?', [
+      tempScore,
+      review_id,
+    ]);
+  }
+
+  Future<List<Map<String, dynamic>>> selectReviews(
+      broadcaster_id) async {
+    // get a reference to the database
+    int count = 0;
+    Database db = await DatabaseHelper2.instance.database;
+    String userEmail = await secureStorage.readSecureData("email");
+    int userId = await DatabaseHelper2.instance.getUserIdByEmail(userEmail);
+    // raw query
+    List<Map> result = await db.rawQuery(
+        'SELECT * FROM reviews WHERE fk_user_id=? AND fk_broadcaster_id=?',
+        [userId, broadcaster_id]);
+
+
+    return result;
+  }
+
 
   Future<List<Map<String, dynamic>>> selectBroadcaster(broadcaster_id) async {
     // get a reference to the database
@@ -592,9 +755,7 @@ class DatabaseHelper2 {
         [broadcaster_id]);
     // List<Map> result2 = await db.rawQuery('SELECT * FROM broadcaster_table WHERE broadcaster_id=?', [broadcaster_id]);
     // List<Map> result = await db.rawQuery('SELECT * FROM broadcaster_table WHERE user_id=?', [1]);
-    // print('WE ARE HERE');
-    // print(broadcaster_id);
-    // print(result2);
+
 
     return result;
   }
@@ -602,7 +763,6 @@ class DatabaseHelper2 {
   Future<List<Map>> selectAllBroadcasters() async {
     Database db = await DatabaseHelper2.instance.database;
     List<Map> result = await db.rawQuery('SELECT * FROM broadcaster_table');
-    print(result[0]);
     // List<StreamerThumb> streamerThumbList;
     // for(var i = 0; i < result.length; i++){
     //   if(result[i]['broadcaster_name'] != null){
@@ -612,19 +772,19 @@ class DatabaseHelper2 {
     return result;
   }
 
-
   Future<int> insertReview(satisfaction_rating, entertainment_rating,
-      interactiveness_rating, skill_rating, broadcaster_id, user_id, login) async {
+      interactiveness_rating, skill_rating, broadcaster_id, login) async {
     // get a reference to the database
     Database db = await DatabaseHelper2.instance.database;
     int count;
+    String userEmail = await secureStorage.readSecureData("email");
+    int userId = await DatabaseHelper2.instance.getUserIdByEmail(userEmail);
     List<Map> result = await db.rawQuery(
       'SELECT * FROM reviews WHERE fk_user_id=? AND fk_broadcaster_id=?',
-      [user_id, broadcaster_id],
+      [userId, broadcaster_id],
     );
     count = result.length;
-    print(result);
-    print('COUNT ' + count.toString());
+
 
     // raw query
     if (count == 0) {
@@ -636,7 +796,7 @@ class DatabaseHelper2 {
             interactiveness_rating,
             skill_rating,
             broadcaster_id,
-            user_id
+            userId
           ]);
     } else {
       await db.rawQuery(
@@ -647,7 +807,7 @@ class DatabaseHelper2 {
             interactiveness_rating,
             skill_rating,
             broadcaster_id,
-            user_id
+            userId
           ]);
     }
     double temp_satisfaction_rating = 0;
@@ -655,47 +815,29 @@ class DatabaseHelper2 {
     double temp_interaction_rating = 0;
     double temp_skill_rating = 0;
     for (var i = 0; i < result.length; i++) {
-      // print('HERE');
       temp_satisfaction_rating += result[i]['satisfaction_rating'];
       temp_entertainment_rating += result[i]['entertainment_rating'];
       temp_interaction_rating += result[i]['interactiveness_rating'];
       temp_skill_rating += result[i]['skill_rating'];
     }
-    // print('HERE 2');
     temp_satisfaction_rating /= result.length;
     temp_entertainment_rating /= result.length;
     temp_interaction_rating /= result.length;
     temp_skill_rating /= result.length;
-    // print(temp_satisfaction_rating);
-    // print(temp_entertainment_rating);
-    // print(temp_interaction_rating);
-    // print(temp_skill_rating);
     await insertBroadcaster(temp_satisfaction_rating, temp_skill_rating,
         temp_entertainment_rating, temp_interaction_rating, broadcaster_id, login);
-    // db = await DatabaseHelper2.instance.database;
-    // List<Map> result2 = await db.rawQuery('SELECT * FROM broadcaster_table WHERE broadcaster_id=?', [broadcaster_id],);
-    // count = result2.length;
-    // if(count == 0) {
-    //   db.rawQuery('INSERT INTO broadcaster_table (broadcaster_id, broadcaster_name, overall_satisfaction, overall_entertainment, overall_interactiveness, overall_skill) VALUES(?, ?, ?, ?, ?, ?)', [broadcaster_id, 'test', temp_satisfaction_rating, temp_skill_rating, temp_entertainment_rating, temp_interaction_rating]);
-    // } else {
-    //   db.rawQuery('UPDATE broadcaster_table SET overall_satisfaction = ?, overall_skill = ?, overall_entertainment = ?, overall_interactiveness = ? WHERE broadcaster_id = ?', [temp_satisfaction_rating, temp_skill_rating, temp_entertainment_rating, temp_interaction_rating, broadcaster_id]);
-    // }
 
-    // List<Map> result = await db.rawQuery('SELECT * FROM reviews WHERE fk_user_id=? AND fk_broadcaster_id=?', [user_id, broadcaster_id],);
-
-    // print the results
-    // result.forEach((row) => print(row));
-    // {_id: 2, name: Mary, age: 32}
     return 0;
   }
 
-
-  Future<void> updateBroadcaster(broadcaster_id, user_id, login) async {
+  Future<void> updateBroadcaster(broadcaster_id, login) async {
     // get a reference to the database
     Database db = await DatabaseHelper2.instance.database;
+    String userEmail = await secureStorage.readSecureData("email");
+    int user_id = await DatabaseHelper2.instance.getUserIdByEmail(userEmail);
     List<Map> result = await db.rawQuery(
-      'SELECT * FROM reviews WHERE fk_user_id=? AND fk_broadcaster_id=?',
-      [user_id, broadcaster_id],
+      'SELECT * FROM reviews WHERE fk_broadcaster_id=?',
+      [broadcaster_id],
     );
     double temp_satisfaction_rating = 0;
     double temp_entertainment_rating = 0;
@@ -711,6 +853,13 @@ class DatabaseHelper2 {
     temp_entertainment_rating /= result.length;
     temp_interaction_rating /= result.length;
     temp_skill_rating /= result.length;
+    print('SCORES ARE ');
+    print(result.length.toString());
+    print(temp_satisfaction_rating.toString());
+    print(temp_entertainment_rating.toString());
+    print(temp_interaction_rating.toString());
+    print(temp_skill_rating.toString());
+    print('==============================');
     await insertBroadcaster(temp_satisfaction_rating, temp_skill_rating,
         temp_entertainment_rating, temp_interaction_rating, broadcaster_id, login);
     return 0;
@@ -769,23 +918,26 @@ class DatabaseHelper2 {
     Database db = await DatabaseHelper2.instance.database;
     String userEmail = await secureStorage.readSecureData("email");
     int userId = await DatabaseHelper2.instance.getUserIdByEmail(userEmail);
-    print("**inserting favorite: $userId**");
 
     // Insert the User into the correct table. You might also specify the
     // `conflictAlgorithm` to use in case the same user is inserted twice.
     // In this case, replace any previous data.
     await db.rawQuery(
-        'INSERT OR IGNORE INTO user_favorites (fk_broadcaster_id, fk_user_id) VALUES(?, ?)',
+        'INSERT into user_favorites (fk_broadcaster_id, fk_user_id) VALUES(?, ?)',
         [broadcasterId, userId]);
   }
+
   Future<int> deleteFavorite(int broadcasterId) async {
     print("in the delete method for favorite in the database");
     Database db = await DatabaseHelper2.instance.database;
     String userEmail = await secureStorage.readSecureData("email");
     int userId = await DatabaseHelper2.instance.getUserIdByEmail(userEmail);
 
-    int deletedRow = await db.delete('user_favorites', where: 'fk_broadcaster_id = ?', whereArgs: [broadcasterId]);
-    return deletedRow;
+    await db.rawQuery('DELETE FROM user_favorites WHERE fk_broadcaster_id = ? AND fk_user_id = ?',
+        [broadcasterId, userId]);
+
+   // int deletedRow = await db.delete('user_favorites', where: 'fk_broadcaster_id = ?', whereArgs: [broadcasterId]);
+  //  return deletedRow;
   }
 
   Future<bool> isFavorite(int broadcasterId) async {
@@ -799,13 +951,10 @@ class DatabaseHelper2 {
     var isFav = await db.rawQuery(
         'SELECT * FROM user_favorites WHERE fk_broadcaster_id = ? AND fk_user_id = ?',
         [broadcasterId, userId]);
-    // print(isFav);
 
     if (isFav.length != 0) {
-      // print('is favorite');
       return true;
     } else {
-      // print('is not favorite');
       return false;
     }
   }
@@ -817,19 +966,10 @@ class DatabaseHelper2 {
 
     var favorites = await db.rawQuery(
         'SELECT * FROM user_favorites WHERE fk_user_id = ?', [userId]);
-    // print(isFav);
-    // print(favorites);
+
     return favorites;
-    // if (isFav.length != 0) {
-    //   // print('is favorite');
-    //   return favorites;
-    // } else {
-    //   // print('is not favorite');
-    //   return false;
-    // }
+
   }
-
-
 
   // int is used to make all id values unique since they are auto incremented by 1
   Future<int> insert(Map<String, dynamic> row) async {

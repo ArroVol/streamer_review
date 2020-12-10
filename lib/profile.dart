@@ -88,6 +88,8 @@ class _ProfileState extends State<Profile> {
   /// The widget profile.
   @override
   Widget build(BuildContext context) {
+    getNumReviews();
+
     return ValueListenableBuilder<ThemeModel>(
         valueListenable: _notifier,
         builder: (_, model, __) {
@@ -100,7 +102,7 @@ class _ProfileState extends State<Profile> {
             themeMode: mode,
             home: Scaffold(
               appBar: AppBar(
-                // backgroundColor: Colors.black54,
+                backgroundColor: Colors.black54,
                 title: Text('Settings'),
                 centerTitle: true,
                 elevation: 0,
