@@ -12,6 +12,7 @@ class ReviewsContainer extends StatefulWidget {
 class _ReviewsContainer extends State<ReviewsContainer> {
   var oldReview;
   var temp;
+  String x;
   List<ReviewCard> reviewsList = [];
 
   Future<List<ReviewCard>> getReview() async {
@@ -23,6 +24,11 @@ class _ReviewsContainer extends State<ReviewsContainer> {
         temp = oldReview[i]["fk_broadcaster_id"];
         ReviewCard reviewCard = new ReviewCard(temp.toString());
         reviewsList1.add(reviewCard);
+      }
+      if (oldReview.length == 0){
+        x = "empty";
+      } else{
+        x= "a";
       }
     }
     if (reviewsList1 != null) {
@@ -46,10 +52,23 @@ class _ReviewsContainer extends State<ReviewsContainer> {
     getReview();
     return Container(
       height: 1000,
-      child: ListView(
+      child: x.contains("empty") ?  Padding(
+        padding: const EdgeInsets.symmetric(
+            horizontal: 8.0, vertical: 12.0),
+        child: Row(
+          children: <Widget>[
+            Expanded(
+              child: Column(
+                children: <Widget>[
+                  Text(
+                    "NO REVIEWS MADE YET",
+                    style:    TextStyle(color: Colors.grey[400], letterSpacing: 1.5, fontSize: 18),
+                  ),], ),),],),)
+          : ListView(
         scrollDirection: Axis.vertical,
         children: reviewsList,
       ),
+
     );
   }
 }

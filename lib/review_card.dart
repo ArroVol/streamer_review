@@ -155,6 +155,7 @@ class _ReviewCard extends State<ReviewCard> {
               ),
             ],
           ),
+          SizedBox(height: 10.0),
           textReview.reviewContent != ""
               ? Text(
             textReview.reviewContent.toUpperCase(),
