@@ -68,9 +68,7 @@ class _MyHomePageState extends State<AaronsMain2> {
             new TextField(
               decoration:
               new InputDecoration.collapsed(hintText: "input email"),
-              // onChanged: (String text) {
-              // print("Text => $text");
-              // },
+
               onSubmitted: (email) {
                 print("Submitted:  $email");
                 _setEmail(email);
@@ -79,23 +77,13 @@ class _MyHomePageState extends State<AaronsMain2> {
             new TextField(
               decoration:
               new InputDecoration.collapsed(hintText: "input password"),
-              // onChanged: (String text) {
-              // print("Text => $text");
-              // },
+
               onSubmitted: (String password) {
                 print("Submitted:  $password");
                 _setPassword(password);
               },
             ),
-            // FlatButton(
-            //     onPressed: () async {
-            //       int i = await DatabaseHelper2.instance.insert({
-            //         DatabaseHelper2.columnEmail: 'sarah@spoopmail.net',
-            //         DatabaseHelper2.columnPassword: 'spoopy9r'
-            //       });
-            //       print('the inserted id is $i');
-            //     },
-            //     child: Text('insert')),
+
             FlatButton(
                 onPressed: () async {
                   List<Map<String, dynamic>> user =
@@ -135,16 +123,6 @@ class _MyHomePageState extends State<AaronsMain2> {
                 },
                 child: Text('query all favorites')),
             // FlatButton(
-            //     onPressed: () async {
-            //       int updatedId = await DatabaseHelper2.instance.update({
-            //         DatabaseHelper2.columnId: 12,
-            //         DatabaseHelper2.columnPassword: 'Mark'
-            //       });
-            //       //returns the number of rows affected
-            //       print("on update, this is the updated ID: ,  ");
-            //       print(updatedId);
-            //     },
-            //     child: Text('update')),
 
             Center(
               child: new TextField(

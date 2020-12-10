@@ -8,10 +8,6 @@ import 'package:streamer_review/repository/broadcaster_tag_repository.dart';
 import 'package:streamer_review/repository/review_repository.dart';
 import 'package:streamer_review/repository/user_favorites_repository.dart';
 import 'package:streamer_review/repository/user_repository.dart';
-
-import 'package:streamer_review/streamer.dart';
-import 'package:streamer_review/streamer_thumb.dart';
-import 'dart:convert';
 import 'package:streamer_review/secure_storage/secure_storage.dart';
 
 // library for input and output
@@ -170,6 +166,8 @@ class DatabaseHelper2 {
       tag_name TEXT
       )
       ''');
+    insertTags(db);
+
     // db.execute('''
     //   CREATE TABLE broadcaster_tags(
     //   tags_id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -180,11 +178,6 @@ class DatabaseHelper2 {
     //   )
     //   ''');
 
-    // db.execute(
-    //     ''' INSERT INTO tag_names (tag_name)
-    // VALUES('Gaming')
-    // ''');
-    insertTags(db);
 
     // db.execute(
     //     ''' INSERT INTO _user_table (email, password, phone_number, user_name)
