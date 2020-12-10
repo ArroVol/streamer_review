@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:streamer_review/helper/database_helper.dart';
+import 'package:streamer_review/model/review.dart';
 import 'package:streamer_review/repository/broadcaster_repository.dart';
 import 'package:streamer_review/repository/user_favorites_repository.dart';
 import 'package:streamer_review/repository/user_repository.dart';
+import 'package:streamer_review/model/user.dart';
 
 /// Runs the application
 ///
@@ -10,7 +12,7 @@ void main() {
   runApp(MyApp());
   print(DatabaseHelper2.directoryPath);
 }
-
+/// The class creates the widget for the test page
 class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
@@ -26,7 +28,7 @@ class MyApp extends StatelessWidget {
     );
   }
 }
-
+/// Creates the my home page state for testing.
 class AaronsMain2 extends StatefulWidget {
   AaronsMain2({Key key, this.title}) : super(key: key);
 
@@ -35,7 +37,7 @@ class AaronsMain2 extends StatefulWidget {
   @override
   _MyHomePageState createState() => _MyHomePageState();
 }
-
+/// This class gets the repositories as well as creates the variables.
 class _MyHomePageState extends State<AaronsMain2> {
   UserFavoritesRepository _userFavoritesRepository = new UserFavoritesRepository();
   BroadcasterRepository _broadcasterRepository = new BroadcasterRepository();
@@ -59,33 +61,6 @@ class _MyHomePageState extends State<AaronsMain2> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
 
-            new TextField(
-              decoration:
-              new InputDecoration.collapsed(hintText: "input broadcaster id"),
-              style: TextStyle(
-                color: Colors.deepPurple,
-                fontSize: 18.0,
-                fontWeight: FontWeight.bold,
-              ),
-              onSubmitted: (iD) {
-                print("Submitted ID:  $iD");
-                _setId(int.parse(iD));
-              },
-            ),
-            new TextField(
-              decoration:
-              new InputDecoration.collapsed(hintText: "input user Id"),
-              style: TextStyle(
-                color: Colors.deepPurple,
-                fontSize: 18.0,
-                fontWeight: FontWeight.bold,
-              ),
-              onSubmitted: (String userId) {
-                print("Submitted:  $userId");
-                _setUserId(int.parse(userId));
-              },
-            ),
-
             FlatButton(
                 onPressed: () async {
                   List<Map<String, dynamic>> queryRows =
@@ -102,13 +77,33 @@ class _MyHomePageState extends State<AaronsMain2> {
                   print(DatabaseHelper2.directoryPath);
                 },
                 child: Text('query all users')),
-
+            /// Test 1
+            ///
+            /// querying all reviews from the database.
             FlatButton(
                 onPressed: () async {
-                  List<Map<String, dynamic>> queryRows = await DatabaseHelper2.instance.selectReviews(229729353, 1);
-                  print(queryRows);
+                  List<Map<String, dynamic>> user = await DatabaseHelper2.instance.selectReviews(229729353, 1);
+                  print(user);
+                  List<Review> reviewList = [];
+                  List.generate(user.length, (i) {
+                    reviewList.add(Review(
+                      reviewId: user[i]['reviews_id'],
+                      satisfactionRating: user[i]['satisfaction_rating'],
+                      broadcasterId: user[i]['fk_broadcaster_id'],
+                      userId: user[i]['fk_user_id'],
+                    ));
+                  });
+                  print(reviewList[0].broadcasterId);
+                  assert(reviewList[0].broadcasterId == 229729353);
+                  assert(reviewList[0].userId == 1);
+                  List<User> user2 = await DatabaseHelper2.instance.userRepository.getUserById(1);
+                  print(user2.first.userName);
+                  assert(user2.first.userName == 'bnew@gmail.com');
                 },
                 child: Text('select reviews')),
+            /// Test 2
+            ///
+            /// inserting reviews
             FlatButton(
                 onPressed: () async {
                   int queryRows = await DatabaseHelper2.instance.insertReview(5, 5,5,5, 229729353, 1, 1);
@@ -117,9 +112,14 @@ class _MyHomePageState extends State<AaronsMain2> {
                   print(queryRows);
                 },
                 child: Text('insert reviews')),
+            /// Test 3
+            ///
+            /// clearing reviews
             FlatButton(
                 onPressed: () async {
                   await DatabaseHelper2.instance.clearReviews();
+                  List<Map<String, dynamic>> user = await DatabaseHelper2.instance.selectReviews(229729353, 1);
+                  assert(user.length == 0);
                 },
                 child: Text('clear reviews')),
             FlatButton(

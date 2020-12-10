@@ -8,12 +8,12 @@ import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 import 'category.dart';
 import 'featuredStreamer.dart';
-
+/// Creates the home screen state.
 class HomeScreen extends StatefulWidget {
   @override
   _HomeScreenState createState() => _HomeScreenState();
 }
-
+/// This class
 class _HomeScreenState extends State<HomeScreen> {
   List<Widget> listOfWidgets = new List<Widget>();
   List<Category> categoryList = new List<Category>();

@@ -9,20 +9,22 @@ import 'login.dart';
 import 'model/user.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
-
+/// Create the state for the profile.
 class Profile extends StatefulWidget {
   @override
   _ProfileState createState() => _ProfileState();
 }
 
+/// The profile state that populates the user's profile data and settings.
 class _ProfileState extends State<Profile> {
+  // secure storage to access the user's stored email.
   final SecureStorage secureStorage = SecureStorage();
 
   int numOfReviews = 0;
   String userEmail = '';
   String userName = '';
   String phoneNumber = '';
-
+  /// Gets the user's account
   Future<User> getUser() async {
     DatabaseHelper2 d = DBHelper.DatabaseHelper2.instance;
     String userEmail2 = await d.getUserEmail();
@@ -37,21 +39,26 @@ class _ProfileState extends State<Profile> {
   RefreshController _refreshController =
   RefreshController(initialRefresh: false);
 
+  /// Refreshes the page
   void _onRefresh() async {
     getNumReviews().then((value) => null);
     // if failed,use refreshFailed()
     _refreshController.refreshCompleted();
   }
 
+  /// Gets the number of reviews the user has submitted
   Future<int> getNumReviews() async {
     DatabaseHelper2 d = DBHelper.DatabaseHelper2.instance;
     var numOfReviews2 = await d.getNumUserReviews();
     var userEmail2 = await d.getUserEmail();
     var userName2 = await secureStorage.readSecureData('userName');
     var phoneNumber2 = await secureStorage.readSecureData('phoneNumber');
+    userName = userName2;
+    phoneNumber = phoneNumber2;
     if (mounted) {
       setState(() {
-        numOfReviews = numOfReviews2;
+        print("in profile set states.")
+;        numOfReviews = numOfReviews2;
         userEmail = userEmail2;
         userName = userName2;
         phoneNumber = phoneNumber2;
@@ -61,6 +68,7 @@ class _ProfileState extends State<Profile> {
     }
   }
 
+  /// Initalize data to be populated
   @override
   void initState() {
     getNumReviews();

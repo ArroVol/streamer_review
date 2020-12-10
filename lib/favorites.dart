@@ -6,15 +6,17 @@ import 'package:streamer_review/favorite_card.dart';
 import 'package:streamer_review/helper/database_helper.dart' as DBHelper;
 import 'helper/database_helper.dart';
 
+/// This class creates teh favorites page state.
 class FavoritesPage extends StatefulWidget {
   @override
   _FavoritesPage createState() => new _FavoritesPage();
 }
-
+/// The favorites page that displays the users favorite streamers
 class _FavoritesPage extends State<FavoritesPage> {
   List<String> favoritesList = [];
   var temp;
 
+  // Gets a list of streamers to populate the favorites widget.
   Future<List<String>> getStreamerList() async {
     favoritesList.clear();
 
@@ -37,6 +39,7 @@ class _FavoritesPage extends State<FavoritesPage> {
     return favoritesList;
   }
 
+  // initializes the state
   @override
   void initState() {
     getStreamerList();

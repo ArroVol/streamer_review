@@ -8,10 +8,6 @@ import 'package:streamer_review/repository/broadcaster_tag_repository.dart';
 import 'package:streamer_review/repository/review_repository.dart';
 import 'package:streamer_review/repository/user_favorites_repository.dart';
 import 'package:streamer_review/repository/user_repository.dart';
-
-import 'package:streamer_review/streamer.dart';
-import 'package:streamer_review/streamer_thumb.dart';
-import 'dart:convert';
 import 'package:streamer_review/secure_storage/secure_storage.dart';
 
 // library for input and output
@@ -170,6 +166,8 @@ class DatabaseHelper2 {
       tag_name TEXT
       )
       ''');
+    insertTags(db);
+
     // db.execute('''
     //   CREATE TABLE broadcaster_tags(
     //   tags_id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -180,11 +178,6 @@ class DatabaseHelper2 {
     //   )
     //   ''');
 
-    // db.execute(
-    //     ''' INSERT INTO tag_names (tag_name)
-    // VALUES('Gaming')
-    // ''');
-    insertTags(db);
 
     // db.execute(
     //     ''' INSERT INTO _user_table (email, password, phone_number, user_name)
@@ -194,14 +187,7 @@ class DatabaseHelper2 {
         ''' INSERT INTO broadcaster_table (broadcaster_id, broadcaster_name)
     VALUES(229729353, 'criticalrole')
     ''');
-    // addDummyData();
   }
-
-
-  // Future<void> deleteDb() async {
-  //   final Database db = await _holder.db;
-  //   // delete database
-  // }
 
   Future<List<Map<String, dynamic>>> selectAllBroadcasterTagsByBroadcaster(
       broadcasterId) async {
@@ -260,21 +246,18 @@ class DatabaseHelper2 {
         .query('_user_table', where: 'user_name = ?', whereArgs: [userName]);
     final userMap = user.asMap();
 
-    final user1 = userMap[0];
-
-    // for (String key in user.keys){
-    //   print(key);
-    //   print(testMap[key]);
-    // }
-    return List.generate(user.length, (i) {
-      return User(
-        id: user[i]['_id'],
-        email: user[i]['email'],
-        password: user[i]['password'],
-        userName: user[i]['user_name'],
-        phoneNumber: user[i]['phone_number'],
-      );
-    });
+    if(user.length > 0) {
+      return List.generate(user.length, (i) {
+        return User(
+          id: user[i]['_id'],
+          email: user[i]['email'],
+          password: user[i]['password'],
+          userName: user[i]['user_name'],
+          phoneNumber: user[i]['phone_number'],
+        );
+      });
+    }
+    return null;
     // return User(
     //   id: maps[i]['user_id'],
     //   email: maps[i]['user_email'],
@@ -289,18 +272,21 @@ class DatabaseHelper2 {
     final userMap = user.asMap();
     final user1 = userMap[0];
 
-    List<User> userList = [];
-    List.generate(user.length, (i) {
-      userList.add(User(
-        id: user[i]['_id'],
-        // email: user[i]['email'],
-        // password: user[i]['password'],
-        // userName: user[i]['user_name'],
-        // phoneNumber: user[i]['phone_number'],
-      ));
-    });
-    int id = userList.first.id;
-    return id;
+    if (user.length > 0) {
+      List<User> userList = [];
+      List.generate(user.length, (i) {
+        userList.add(User(
+          id: user[i]['_id'],
+          // email: user[i]['email'],
+          // password: user[i]['password'],
+          // userName: user[i]['user_name'],
+          // phoneNumber: user[i]['phone_number'],
+        ));
+      });
+      int id = userList.first.id;
+      return id;
+    }
+    return 0;
   }
   Future<int> getUserIdByEmail(String email) async {
     Database db = await instance.database;
@@ -531,6 +517,7 @@ class DatabaseHelper2 {
   Future<int> getNumOfTagsCreated() async {
     String userEmail = await secureStorage.readSecureData("email");
     int userId = await DatabaseHelper2.instance.getUserIdByEmail(userEmail);
+    print('the user id: $userId');
     // get a reference to the database
     Database db = await DatabaseHelper2.instance.database;
 
@@ -539,6 +526,7 @@ class DatabaseHelper2 {
         .rawQuery('SELECT * FROM broadcaster_tags WHERE fk_user_id=?', [userId]);
 
     int numOfReviews = result.length;
+    print('The num of reviews: $numOfReviews');
 
     return numOfReviews;
   }

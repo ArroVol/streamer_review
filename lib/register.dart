@@ -8,7 +8,7 @@ import 'helper/database_helper.dart';
 import 'main_screen.dart';
 import 'model/user.dart';
 
-
+/// The build for the register app
 class RegisterApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -19,7 +19,7 @@ class RegisterApp extends StatelessWidget {
   }
 }
 
-// Define a custom Form widget.
+/// Define a custom Form widget.
 class Register extends StatefulWidget {
   @override
  RegisterForm createState() => RegisterForm();
@@ -62,6 +62,7 @@ class RegisterForm extends State<Register> {
   final FocusNode fOne = FocusNode();
   final FocusNode fTwo = FocusNode();
 
+  // The widget for the register page.
   @override
   Widget build(BuildContext context) {
 
@@ -115,6 +116,7 @@ class RegisterForm extends State<Register> {
       autofocus: true,
     );
 
+    // the login button
     final loginButon = Material(
       elevation: 5.0,
       borderRadius: BorderRadius.circular(30.0),
@@ -141,37 +143,6 @@ class RegisterForm extends State<Register> {
             ),
           );
           Scaffold.of(context).showSnackBar(snackBar);
-          // print(phoneNumber);
-          // if(phoneNumber == null && phoneNumberUnSubmitted != null){
-          //   print("switching for onchanged for phone number");
-          //   phoneNumber = phoneNumberUnSubmitted;
-          //   print(phoneNumber);
-          // }
-          // if(phoneNumber != null) {
-          //   print("not null number...");
-          //   checkPhoneNumber(phoneNumber);
-          // }
-          //
-          // if(userName == null && userNameUnSubmitted != null){
-          //   print("switching for onchanged for user name");
-          //   userName = userNameUnSubmitted;
-          //   print(userName);
-          // }
-          // print('user name: $userName');
-          // if(userName != null) {
-          //   checkUserName(userName);
-          // }
-          // checkVerified();
-          // if (userNameVerified && phoneVerified) {
-          //   print("verified");
-          //   secureStorage.writeSecureData('userName', userName);
-          //   secureStorage.writeSecureData('phoneNumber', phoneNumber);
-          //   Navigator.of(context).pushReplacement(FadePageRoute(
-          //     builder: (context) => MainScreen(),
-          //   ));
-          // } else {
-          //   print('fields arent completed');
-          // }
         },
         child: Text(
           "Complete Registration",
@@ -304,6 +275,7 @@ class RegisterForm extends State<Register> {
     }
   }
 
+  /// This method verifies what user setting is to be updated.
   void checkVerified() async {
     String email = await secureStorage.readSecureData("email");
     sleep(const Duration(seconds:1));
@@ -332,6 +304,7 @@ class RegisterForm extends State<Register> {
     }
   }
 
+  /// This method checks both of the fields for updates.
   void checkFields() async {
     if(phoneNumber != null) {
       print("not null number...");
@@ -363,6 +336,9 @@ class RegisterForm extends State<Register> {
 
 }
 
+/// The snackbar widget.
+///
+/// This displays whether or not the profile was updated.
 class SnackBarPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
