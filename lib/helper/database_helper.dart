@@ -504,6 +504,35 @@ class DatabaseHelper2 {
     return result;
   }
 
+  Future<List<Map<String, dynamic>>> selectTextReviewsByScore(broadcaster_id) async {
+    Database db = await DatabaseHelper2.instance.database;
+
+    // raw query
+    List<Map> result = await db.rawQuery(
+        'SELECT * FROM text_reviews WHERE fk_broadcaster_id=? ORDER BY (score) DESC',
+        [broadcaster_id]);
+
+    return result;
+  }
+
+  Future<int> selectReviewScoreByReviewIdAndUserId(
+      review_id) async {
+    Database db = await DatabaseHelper2.instance.database;
+    String userEmail = await secureStorage.readSecureData("email");
+    int user_id = await DatabaseHelper2.instance.getUserIdByEmail(userEmail);
+    List<Map> results = await db.rawQuery(
+      'SELECT * FROM user_text_review_scores WHERE fk_review_id=? AND fk_user_id=?',
+      [review_id, user_id],
+    );
+
+    if(results.length == 0) {
+      return 0;
+    }
+    else {
+      return (results[0]['score']);
+    }
+  }
+
   Future<void> insertTextReviews(
       review_content, submission_date, broadcaster_id, user_id) async {
     // get a reference to the database
