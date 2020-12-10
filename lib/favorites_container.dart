@@ -4,6 +4,7 @@ import 'package:streamer_review/streamer.dart';
 import 'package:streamer_review/helper/database_helper.dart' as DBHelper;
 import 'helper/database_helper.dart';
 
+/// Creates the favorites container state.
 class FavoritesContainer extends StatefulWidget {
   @override
   _FavoritesContainer createState() => _FavoritesContainer();
@@ -24,7 +25,7 @@ class _FavoritesContainer extends State<FavoritesContainer> {
       ),
     );
   }
-
+  /// Gets a list of streamers.
   Future<List<FavoriteCard>> getStreamerList() async {
     List<FavoriteCard> streamerList = new List<FavoriteCard>();
 
@@ -40,9 +41,11 @@ class _FavoritesContainer extends State<FavoritesContainer> {
       }
     }
     if (streamerList != null) {
-      setState(() {
-        favList = streamerList;
-      });
+      if (mounted) {
+        setState(() {
+          favList = streamerList;
+        });
+      }
     }
     // print('HERE');
     print(favList.length);

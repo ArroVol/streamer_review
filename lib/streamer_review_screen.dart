@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:profanity_filter/profanity_filter.dart';
 import 'package:streamer_review/helper/database_helper.dart' as DBHelper;
 import 'package:http/http.dart' as http;
+import 'package:streamer_review/main.dart';
 import 'helper/database_helper.dart';
 
 class ReviewPage extends StatefulWidget {
@@ -519,6 +520,10 @@ class StreamerReview extends State<ReviewPage> {
   }
 
   Future<void> submitReview(var context) async {
+   DatabaseHelper2 d = DBHelper.DatabaseHelper2.instance;
+  String email = await secureStorage.readSecureData('email');
+    print(email);
+    int userId = await d.getUserIdByEmail(email);
     print('REVIEW SELECTIONS');
     print(satisfaction_rating);
     print(entertainment_rating);
@@ -529,6 +534,7 @@ class StreamerReview extends State<ReviewPage> {
         entertainment_rating == 0 ||
         interaction_rating == 0 ||
         skill_rating == 0) {
+
       Scaffold.of(context).showSnackBar(new SnackBar(
         content: new Text('ERROR SUBMITTING REVIEW'),
         backgroundColor: Colors.red,
@@ -540,10 +546,11 @@ class StreamerReview extends State<ReviewPage> {
         backgroundColor: Colors.red,
       ));
     } else {
-      DatabaseHelper2 d = DBHelper.DatabaseHelper2.instance;
 
       for (var tag in tags) {
-        await d.insertBroadcasterTag(broadcaster_id, tag);
+        print(tag);
+        d.broadcasterTagRepository.insertBroadcasterTag(broadcaster_id, tag, userId);
+        // await d.insertBroadcasterTag(broadcaster_id, tag);
       }
 
       var x = await d.selectAllBroadcasterTagsByBroadcaster(broadcaster_id);
@@ -599,6 +606,7 @@ class StreamerReview extends State<ReviewPage> {
         skill_rating = 1;
       }
     });
+
   }
 
   @override
@@ -1100,13 +1108,15 @@ class _MultiSelectDialogState<V> extends State<MultiSelectDialog<V>> {
   }
 
   void _onItemCheckedChange(V itemValue, bool checked) {
-    setState(() {
-      if (checked) {
-        _selectedValues.add(itemValue);
-      } else {
-        _selectedValues.remove(itemValue);
-      }
-    });
+    if (mounted) {
+      setState(() {
+        if (checked) {
+          _selectedValues.add(itemValue);
+        } else {
+          _selectedValues.remove(itemValue);
+        }
+      });
+    }
   }
 
   void _onCancelTap() {

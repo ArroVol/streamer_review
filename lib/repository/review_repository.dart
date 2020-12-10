@@ -1,14 +1,15 @@
-import 'dart:convert';
-
 import 'package:sqflite/sqflite.dart';
 import 'package:streamer_review/helper/database_helper.dart';
-import 'package:streamer_review/model/broadcaster.dart';
 
+/// This class holds the basic CRUD operations for the user's review of a broadcaster.
 class ReviewRepository {
 
-  // static final _dbVersion = 1;
   static final _tableName = 'reviews';
 
+  /// This method selects all reviews for a broadcaster.
+  ///
+  /// [broadcaster_id], the broadcasters unique id from twitch.
+  /// [user_id], the user's primary key id.
   Future<List<Map<String, dynamic>>> selectReviews(
       broadcaster_id, user_id) async {
     // get a reference to the database
@@ -25,6 +26,14 @@ class ReviewRepository {
     // {_id: 2, name: Mary, age: 32}
     return result;
   }
+  /// This method inserts a review into the review table.
+  ///
+  /// [satisfaction_rating], the satisfaction rating given by the user to the broadcaster.
+  /// [entertainment_rating], the entertainment rating given by the user to the broadcaster.
+  /// [interactivness_rating], the interactiveness rating given by the user to the broadcaster.
+  /// [skill_rating], the satisfaction rating given by the user to the broadcaster.
+  /// [broadcaster_id], the broadcaster's id from twitch.
+  /// [user_id], the user's id.
   Future<int> insertReview(satisfaction_rating, entertainment_rating,
       interactiveness_rating, skill_rating, broadcaster_id, user_id) async {
     // get a reference to the database
@@ -40,6 +49,7 @@ class ReviewRepository {
 
     // raw query
     if (count == 0) {
+      // if the broadcaster has not been reviewed yet.
       await db.rawQuery(
           'INSERT INTO reviews (satisfaction_rating, entertainment_rating, interactiveness_rating, skill_rating, fk_broadcaster_id, fk_user_id) VALUES(?, ?, ?, ?, ?, ?)',
           [
@@ -101,11 +111,19 @@ class ReviewRepository {
     return 0;
   }
 
+  /// Clears all reviews from the database.
   Future<void> clearReviews() async {
     Database db = await DatabaseHelper2.instance.database;
     db.rawQuery('DELETE FROM reviews WHERE reviews_id >= 0');
   }
 
+  /// The method inserts a broadcaster into the database.
+  ///
+  /// [temp_satisfaction_rating], the users satisfaction rating given to the specific broadcaster.
+  /// [temp_skill_rating], the users skill rating given to the specific broadcaster.
+  /// [temp_entertainment_rating], the users entertainment rating given to the specific broadcaster.
+  /// [temp_interaction_rating], the users interaction rating given to the specific broadcaster.
+  /// [broadcaster_id], the broadcaster's id from the twitch api.
   Future<int> insertBroadcaster(
       temp_satisfaction_rating,
       temp_skill_rating,

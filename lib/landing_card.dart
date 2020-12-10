@@ -11,6 +11,7 @@ import 'helper/database_helper.dart';
 import 'model/broadcaster_from_db.dart';
 import 'package:palette_generator/palette_generator.dart';
 
+/// Creates the landing card state.
 class LandingCard extends StatefulWidget {
   String streamerId;
 

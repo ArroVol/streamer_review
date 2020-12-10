@@ -3,11 +3,16 @@ import 'package:sqflite/sqflite.dart';
 import 'package:streamer_review/helper/database_helper.dart';
 import 'package:streamer_review/model/user.dart';
 
+/// The repository for storing user data.
 class UserRepository {
+  // Shared preferences to store data that is not sensitive.
   SharedPreferences prefs;
   // Database db = DatabaseHelper2.instance.database as Database;
   // UserRepository({this.prefs});
 
+  /// This method inserts a user object directly into the database.
+  ///
+  /// [user], the user object containing user data.
   Future<void> insertUser(User user) async {
     // Get a reference to the database.
     Database db = await DatabaseHelper2.instance.database;
@@ -21,6 +26,10 @@ class UserRepository {
       conflictAlgorithm: ConflictAlgorithm.replace,
     );
   }
+  /// This method retrieves user data by the user's id.
+  ///
+  /// [id], the user's id.
+  /// [return], returns a list of map user objects.
   Future<List<Map<String, dynamic>>> retrieveUserById(int id) async {
     // Get a reference to the database.
     Database db = await DatabaseHelper2.instance.database;
@@ -36,11 +45,15 @@ class UserRepository {
   }
   //Query returns a list of map (must be passed as a type)
   //All data will be in the form of map, so it returns a list of map
+  /// Gets a list of all users from the database.
   Future<List<Map<String, dynamic>>> queryAllUsers() async {
     Database db = await DatabaseHelper2.instance.database;
     return await db.query("_user_table");
   }
 
+  /// Gets a user by a username.
+  ///
+  /// [userName], the passed in user name.
   Future<List<User>> getUserByUserName(String userName) async {
     Database db = await DatabaseHelper2.instance.database;
     List<Map<String, dynamic>> user = await db
@@ -55,6 +68,44 @@ class UserRepository {
       );
     });
   }
+  /// Gets a user object by an id.
+  ///
+  /// [id], the passed in id.
+  Future<List<User>> getUserById(int id) async {
+    Database db = await DatabaseHelper2.instance.database;
+    List<Map<String, dynamic>> user = await db
+        .query('_user_table', where: '_id = ?', whereArgs: [id]);
+    return List.generate(user.length, (i) {
+      return User(
+        id: user[i]['_id'],
+        email: user[i]['email'],
+        password: user[i]['password'],
+        userName: user[i]['user_name'],
+        phoneNumber: user[i]['phone_number'],
+      );
+    });
+  }
+
+  /// Gets the user object from the database by an email.
+  ///
+  /// [email], the user's email.
+  Future<List<User>> getUserByEmail(String email) async {
+    Database db = await DatabaseHelper2.instance.database;
+    List<Map<String, dynamic>> user = await db
+        .query('_user_table', where: 'email = ?', whereArgs: [email]);
+    return List.generate(user.length, (i) {
+      return User(
+        id: user[i]['_id'],
+        email: user[i]['email'],
+        password: user[i]['password'],
+        userName: user[i]['user_name'],
+        phoneNumber: user[i]['phone_number'],
+      );
+    });
+  }
+  /// Gets the user's id from the database by their user name.
+  ///
+  /// [userName], the user's user name.
   Future<int> getUserIdByUserName(String userName) async {
     Database db = await DatabaseHelper2.instance.database;
     List<Map<String, dynamic>> user = await db
@@ -73,6 +124,35 @@ class UserRepository {
     return id;
   }
 
+  /// Checks to see if the phone number exists in the database.
+  ///
+  /// [phoneNumber], the user's phone number.
+  Future<String> getPhoneNumber(String phoneNumber) async {
+    Database db = await DatabaseHelper2.instance.database;
+    List<Map<String, dynamic>> user = await db
+        .query('_user_table', where: 'phone_number = ?', whereArgs: [phoneNumber]);
+    List<User> userList = [];
+    List.generate(user.length, (i) {
+      userList.add(User(
+        // id: user[i]['_id'],
+        // email: user[i]['email'],
+        // password: user[i]['password'],
+        // userName: user[i]['user_name'],
+        phoneNumber: user[i]['phone_number'],
+      ));
+    });
+    print("the length of the user list");
+    print(userList.length);
+    if(userList.length > 0) {
+      String phoneNumberRet = userList.first.phoneNumber;
+      return phoneNumberRet;
+    }
+    return null;
+  }
+
+  /// Gets the user's id by their email
+  ///
+  /// [email], the user's email.
   Future<int> getUserIdByEmail(String email) async {
     Database db = await DatabaseHelper2.instance.database;
     List<Map<String, dynamic>> user = await db
@@ -89,7 +169,9 @@ class UserRepository {
     int id = userList.first.id;
     return id;
   }
-
+  /// Checks to see if the user exists in the database.
+  ///
+  /// [user], the current user.
   Future<void> checkUserIntoDatabase(User user) async {
     Database db = await DatabaseHelper2.instance.database;
     List<Map<String, dynamic>> userPulled = await db.query('_user_table',
@@ -99,9 +181,11 @@ class UserRepository {
     } else {
       checkEmail(db, user);
     }
-    // await db.execute("SELECT COUNT(*) FROM _user_table WHERE user_name = :user_name", user.userName=user.userName);
   }
 
+  /// Checks to see if the user's email exists in the database.
+  ///
+  /// [user], the current user.
   Future<void> checkEmail(Database db, User user) async {
     List<Map<String, dynamic>> userPulled = await db
         .query('_user_table', where: 'email = ?', whereArgs: [user.email]);
@@ -111,7 +195,9 @@ class UserRepository {
       checkPhoneNumber(db, user);
     }
   }
-
+  /// Checks to see if the user's email exists in the database.
+  ///
+  /// [email], the current user's email.
   Future<bool> checkEmailByEmail(String email) async {
     Database db = await DatabaseHelper2.instance.database;
     List<Map<String, dynamic>> userPulled =
@@ -122,7 +208,9 @@ class UserRepository {
     }
     return false;
   }
-
+  /// Checks to see if the user's email exists in the database.
+  ///
+  /// [password], the current user's email.
   Future<bool> checkPasswordByPassword(String password) async {
     Database db = await DatabaseHelper2.instance.database;
     List<Map<String, dynamic>> userPulled = await db
@@ -133,11 +221,13 @@ class UserRepository {
     }
     return false;
   }
-
+  /// Checks to see if the user's user name exists in the database.
+  ///
+  /// [userName], user's user name.
   Future<bool> checkByUserName(String userName) async {
     Database db = await DatabaseHelper2.instance.database;
     List<Map<String, dynamic>> userPulled = await db
-        .query('_user_table', where: 'email = ?', whereArgs: [userName]);
+        .query('_user_table', where: 'user_name = ?', whereArgs: [userName]);
     if (userPulled.isNotEmpty) {
       print('The user name: $userName matches one in the db');
       return true;
@@ -145,7 +235,23 @@ class UserRepository {
     print('The user name: $userName DOES NOT match one in the db');
     return false;
   }
-
+  /// Checks to see if the user's user name exists in the database.
+  ///
+  /// [userName], user's user name.
+  Future<bool> checkByPhoneNumber(String phoneNumber) async {
+    Database db = await DatabaseHelper2.instance.database;
+    List<Map<String, dynamic>> userPulled = await db
+        .query('_user_table', where: 'phone_number = ?', whereArgs: [phoneNumber]);
+    if (userPulled.isNotEmpty) {
+      print('The #: $phoneNumber matches one in the db');
+      return true;
+    }
+    print('The #: $phoneNumber DOES NOT match one in the db');
+    return false;
+  }
+  /// Checks to see if the phone number exists in the database.
+  ///
+  /// [user], the current user.
   Future<void> checkPhoneNumber(Database db, User user) async {
     List<Map<String, dynamic>> userPulled = await db.query('_user_table',
         where: 'phone_number = ?', whereArgs: [user.phoneNumber]);
@@ -155,7 +261,9 @@ class UserRepository {
       addVerifiedUserToDatabase(db, user);
     }
   }
-
+  /// Adds a verified user to the database.
+  ///
+  /// [user], the current user's email.
   Future<void> addVerifiedUserToDatabase(Database db, User user) async {
     return await db.insert(
       '_user_table',
@@ -165,6 +273,9 @@ class UserRepository {
   }
 
   //delete the record that has that id
+  /// Deletes the user from the database.
+  ///
+  /// [id], the user's id.
   Future<int> deleteUser(int id) async {
     print('deleting...');
     print(id);
@@ -172,7 +283,7 @@ class UserRepository {
     return await db
         .delete('_user_table', where: '$columnId = ?', whereArgs: [id]);
   }
-
+  /// Retreives all users in the database.
   Future<List<User>> retrieveUsers() async {
     Database db = await DatabaseHelper2.instance.database;
 
@@ -204,8 +315,6 @@ class UserRepository {
     ''', [user.email, user.password, user.userName, user.phoneNumber, id]);
     return updatedCount;
   }
-
-
 
   static const String _IS_LOGGED_IN = "is_logged_in";
   static const String _NAME = "name";

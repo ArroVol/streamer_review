@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 
-import '../gooby.dart';
-
 void main() {
   runApp(MaterialApp(
     title: 'Navigation Basics',
@@ -29,15 +27,7 @@ class HomePage extends StatelessWidget {
               );
             },
           ),
-            ElevatedButton(
-              child: new Text('Hi, i dont work right now but thats okay :)'),
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => Gooby()),
-                );
-              },
-            ),
+
             Text(
               'Yeah, yeah, yeah',
               style: TextStyle(

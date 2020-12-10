@@ -10,9 +10,15 @@ import 'package:streamer_review/helper/database_helper.dart' as DBHelper;
 import 'helper/database_helper.dart';
 import 'model/broadcaster_from_db.dart';
 
+/// This class creates the the favorite card widget.
+///
+/// [streamerId], the id twitch gives to its broadcaster.
 class FavoriteCard extends StatefulWidget {
   String streamerId;
 
+  /// The favorite card constructor.
+  ///
+  /// [streamerId], the id of the broadcaster.
   FavoriteCard(String streamerId) {
     this.streamerId = streamerId;
   }
@@ -20,7 +26,7 @@ class FavoriteCard extends StatefulWidget {
   @override
   _FavoriteCard createState() => _FavoriteCard(streamerId);
 }
-
+/// This class stores and gets broadcaster information and builds the favorite card widget.
 class _FavoriteCard extends State<FavoriteCard> {
   String streamerId;
 
@@ -41,9 +47,10 @@ class _FavoriteCard extends State<FavoriteCard> {
   int user_id = 1;
   BroadcasterFromDB b;
   bool offline = false;
-  String userName;
+  String userName = '';
 
 
+  /// This gets the broadcaster data from the database.
   Future<String> getData() async {
     DatabaseHelper2 d = DBHelper.DatabaseHelper2.instance;
 
@@ -86,6 +93,7 @@ class _FavoriteCard extends State<FavoriteCard> {
 
   var averageScore;
 
+  // A method that calculates the average for the full rating of the broadcaster.
   void calcScore() {
     averageScore = (average_entertainment_rating +
         average_satisfaction_rating +
@@ -95,6 +103,7 @@ class _FavoriteCard extends State<FavoriteCard> {
   }
 
 
+  // Builds the favorite card widget.
   @override
   Widget build(BuildContext context) {
     getData();

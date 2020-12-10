@@ -53,33 +53,7 @@ class User extends DBInterface{
     userName = m['user_name'];
   }
 
-  // factory User.fromMap(Map<String, dynamic> json) => new User(
-  //   id: json["id"],
-  //   firstName: json["first_name"],
-  //   lastName: json["last_name"],
-  //   blocked: json["blocked"] == 1,
-  // );
-  // Map<String, dynamic> toMap() {
-  //   return {'user_id': id, 'user_email': email, 'user_password': password};
-  // }
-  // User(int id, String email, String password){
-  //   this.id = id;
-  //   this.email = email;
-  //   this.password = password;
-  // }
-
-  // User.fromJson(Map<String, dynamic> m) {
-  //   id = m['user_id'];
-  //   email = m['user_email'];
-  //   password = m['user_password'];
-  // }
-
-  // int get id => id;
-  //
-  // String get email => email;
-  //
-  // String get password => password;
-
+  ///Table for the user
   @override
   Future<void> onCreate(Database db, int version) async {
     await db.execute("""
@@ -102,4 +76,30 @@ class User extends DBInterface{
   //
   // @override
   // get name => 'testing.db';
+// factory User.fromMap(Map<String, dynamic> json) => new User(
+//   id: json["id"],
+//   firstName: json["first_name"],
+//   lastName: json["last_name"],
+//   blocked: json["blocked"] == 1,
+// );
+// Map<String, dynamic> toMap() {
+//   return {'user_id': id, 'user_email': email, 'user_password': password};
+// }
+// User(int id, String email, String password){
+//   this.id = id;
+//   this.email = email;
+//   this.password = password;
+// }
+
+// User.fromJson(Map<String, dynamic> m) {
+//   id = m['user_id'];
+//   email = m['user_email'];
+//   password = m['user_password'];
+// }
+
+// int get id => id;
+//
+// String get email => email;
+//
+// String get password => password;
 }

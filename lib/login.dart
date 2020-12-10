@@ -14,12 +14,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'main_screen.dart';
 import 'model/user.dart';
 
-
-// const users = const {
-//   'reviewer@gmail.com': 'reviewer',
-//   'complainer@gmail.com': 'icomplain1234',
-// };
-
+/// Creates the log in screen state.
 class LoginScreen extends StatelessWidget {
 
   // final _storage = FlutterSecureStorage();
@@ -38,7 +33,9 @@ class LoginScreen extends StatelessWidget {
   static User loadUsers() {
 
   }
-
+  /// Logs in the user
+  ///
+  /// [data], the username and password from the user.
   Future<String> _loginUser(LoginData data) {
 
     return Future.delayed(loginTime).then((_) async {
@@ -52,6 +49,9 @@ class LoginScreen extends StatelessWidget {
     });
   }
 
+  /// Recovers the password for the user, not yet implemented.
+  ///
+  /// [name], the users username/email
   Future<String> _recoverPassword(String name) {
     return Future.delayed(loginTime).then((_) {
       if (!mockUsers.containsKey(name)) {
@@ -61,6 +61,7 @@ class LoginScreen extends StatelessWidget {
     });
   }
 
+  // builds the widget.
   @override
   Widget build(BuildContext context) {
     final inputBorder = BorderRadius.vertical(
@@ -216,6 +217,7 @@ class LoginScreen extends StatelessWidget {
         print('Username is available');
         print(newUser.userName);
         print(newUser.email);
+        _email = loginData.name.toLowerCase();
         DatabaseHelper2.instance.insertUser(newUser);
         signedUp = true;
         return _loginUser(loginData);
@@ -225,11 +227,14 @@ class LoginScreen extends StatelessWidget {
       onSubmitAnimationCompleted: () {
         if(signedUp){
           print("user has first time sign up");
+          secureStorage.writeSecureData("email", _email);
+
+          secureStorage.writeSecureData("password", _password);
+
           // Navigator.pushReplacementNamed(context, '/main_screen');
 
         Navigator.of(context).pushReplacement(FadePageRoute(
-            // builder: (context) => Register(),
-            builder: (context) => MainScreen(),
+            builder: (context) => Register(),
           )
         );
         } else {

@@ -64,6 +64,13 @@ class BroadcasterRepository  {
     return 0;
   }
 
+  /// Thiis method inserts a broadcaster into the database.
+  ///
+  /// [temp_satisfaction_rating], the users satisfaction rating given to the specific broadcaster.
+  /// [temp_skill_rating], the users skill rating given to the specific broadcaster.
+  /// [temp_entertainment_rating], the users entertainment rating given to the specific broadcaster.
+  /// [temp_interaction_rating], the users interaction rating given to the specific broadcaster.
+  /// [broadcaster_id], the broadcaster's id from the twitch api.
   Future<int> insertBroadcaster(
       temp_satisfaction_rating,
       temp_skill_rating,
@@ -78,6 +85,7 @@ class BroadcasterRepository  {
         [broadcaster_id]);
     count = result.length;
     if (count == 0) {
+      print("broadcaster doesnt exist");
       db.rawQuery(
           'INSERT INTO broadcaster_table (broadcaster_id, broadcaster_name, overall_satisfaction, overall_entertainment, overall_interactiveness, overall_skill) VALUES(?, ?, ?, ?, ?, ?)',
           [
@@ -89,6 +97,7 @@ class BroadcasterRepository  {
             temp_interaction_rating
           ]);
     } else {
+      print("broadcaster already exists");
       db.rawQuery(
           'UPDATE broadcaster_table SET overall_satisfaction = ?, overall_skill = ?, overall_entertainment = ?, overall_interactiveness = ? WHERE broadcaster_id = ?',
           [
