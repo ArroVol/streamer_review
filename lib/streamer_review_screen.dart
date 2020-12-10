@@ -681,16 +681,15 @@ class StreamerReview extends State<ReviewPage> {
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: <Widget>[
-
                                   Card(
                                     margin: EdgeInsets.symmetric(
-                                        horizontal: 20.0, vertical: 10.0),
+                                        horizontal: 10.0, vertical: 10.0),
                                     clipBehavior: Clip.antiAlias,
                                     color: Colors.transparent,
                                     elevation: 5.0,
                                     child: Padding(
                                       padding: const EdgeInsets.symmetric(
-                                          horizontal: 8.0, vertical: 12.0),
+                                          horizontal: 8.0, vertical: 1.0),
                                       child: Row(
                                         children: <Widget>[
                                           Expanded(
@@ -716,13 +715,8 @@ class StreamerReview extends State<ReviewPage> {
                                                         alignment:
                                                             Alignment.center,
                                                         child: Text(
-                                                          "Select Tags",
-                                                          style: TextStyle(
-                                                            color: Colors
-                                                                .lightGreenAccent,
-                                                            fontSize: 18.0,
-                                                            // fontWeight: FontWeight.bold
-                                                          ),
+                                                          "SELECT TAGS",
+                                                          style:    TextStyle(color: Colors.lightGreenAccent, letterSpacing: 1.5, fontSize: 18),
                                                         ),
                                                       ),
                                                     )),
@@ -740,7 +734,7 @@ class StreamerReview extends State<ReviewPage> {
                                     margin: EdgeInsets.symmetric(
                                         horizontal: 20.0, vertical: 2.0),
                                     clipBehavior: Clip.antiAlias,
-                                    color: Colors.grey[850],
+                                    color: Colors.grey[800],
                                     elevation: 5.0,
                                     child: Padding(
                                       padding: const EdgeInsets.symmetric(
@@ -751,17 +745,14 @@ class StreamerReview extends State<ReviewPage> {
                                             child: Column(
                                               children: <Widget>[
                                                 Text(
-                                                  "Additional Comments",
-                                                  style: TextStyle(
-                                                    color: Colors.deepPurple,
-                                                    fontSize: 22.0,
-                                                    fontWeight: FontWeight.bold,
-                                                  ),
+                                                  "ADDITIONAL COMMENTS",
+                                                  style:    TextStyle(color: Colors.lightGreenAccent, letterSpacing: 1.5,fontSize: 18),
                                                 ),
                                                 SizedBox(
                                                   height: 5.0,
                                                 ),
                                                 TextField(
+                                                  style: TextStyle(color: Colors.grey[400], letterSpacing: 1.5),
                                                   controller: reviewController,
                                                   maxLines: 5,
                                                   decoration:
@@ -780,7 +771,7 @@ class StreamerReview extends State<ReviewPage> {
                                     margin: EdgeInsets.symmetric(
                                         horizontal: 20.0, vertical: 2.0),
                                     clipBehavior: Clip.antiAlias,
-                                    color: Colors.grey[850],
+                                    color: Colors.grey[800],
                                     elevation: 5.0,
                                     child: Padding(
                                       padding: const EdgeInsets.symmetric(
@@ -791,12 +782,8 @@ class StreamerReview extends State<ReviewPage> {
                                             child: Column(
                                               children: <Widget>[
                                                 Text(
-                                                  "Overall Satisfaction",
-                                                  style: TextStyle(
-                                                    color: Colors.deepPurple,
-                                                    fontSize: 22.0,
-                                                    fontWeight: FontWeight.bold,
-                                                  ),
+                                                  "OVERALL SATISFACTION",
+                                                  style:    TextStyle(color: Colors.lightGreenAccent, letterSpacing: 1.5, fontSize: 18),
                                                 ),
                                                 SizedBox(
                                                   height: 5.0,
@@ -864,7 +851,7 @@ class StreamerReview extends State<ReviewPage> {
                                     margin: EdgeInsets.symmetric(
                                         horizontal: 20.0, vertical: 2.0),
                                     clipBehavior: Clip.antiAlias,
-                                    color: Colors.grey[850],
+                                    color: Colors.grey[800],
                                     elevation: 5.0,
                                     child: Padding(
                                       padding: const EdgeInsets.symmetric(
@@ -875,12 +862,8 @@ class StreamerReview extends State<ReviewPage> {
                                             child: Column(
                                               children: <Widget>[
                                                 Text(
-                                                  "Entertainment Value",
-                                                  style: TextStyle(
-                                                    color: Colors.deepPurple,
-                                                    fontSize: 22.0,
-                                                    fontWeight: FontWeight.bold,
-                                                  ),
+                                                  "ENTERTAINMENT VALUE",
+                                                  style:    TextStyle(color: Colors.lightGreenAccent, letterSpacing: 1.5,fontSize: 18),
                                                 ),
                                                 SizedBox(
                                                   height: 5.0,
@@ -899,7 +882,7 @@ class StreamerReview extends State<ReviewPage> {
                                                   itemBuilder: (context, _) =>
                                                       Icon(
                                                     Icons.star,
-                                                    color: Colors.amber,
+                                                    color: Colors.lightGreenAccent[100],
                                                   ),
                                                   onRatingUpdate: (rating) {
                                                     entertainment_rating =
@@ -919,7 +902,7 @@ class StreamerReview extends State<ReviewPage> {
                                     margin: EdgeInsets.symmetric(
                                         horizontal: 20.0, vertical: 2.0),
                                     clipBehavior: Clip.antiAlias,
-                                    color: Colors.grey[850],
+                                    color: Colors.grey[800],
                                     elevation: 5.0,
                                     child: Padding(
                                       padding: const EdgeInsets.symmetric(
@@ -930,12 +913,8 @@ class StreamerReview extends State<ReviewPage> {
                                             child: Column(
                                               children: <Widget>[
                                                 Text(
-                                                  "Viewer Interaction",
-                                                  style: TextStyle(
-                                                    color: Colors.deepPurple,
-                                                    fontSize: 22.0,
-                                                    fontWeight: FontWeight.bold,
-                                                  ),
+                                                  "VIEWER INTERACTION",
+                                                  style:    TextStyle(color: Colors.lightGreenAccent, letterSpacing: 1.5, fontSize: 18),
                                                 ),
                                                 SizedBox(
                                                   height: 5.0,
@@ -954,7 +933,7 @@ class StreamerReview extends State<ReviewPage> {
                                                   itemBuilder: (context, _) =>
                                                       Icon(
                                                     Icons.star,
-                                                    color: Colors.amber,
+                                                    color: Colors.lightGreenAccent[100],
                                                   ),
                                                   onRatingUpdate: (rating) {
                                                     interaction_rating = rating;
@@ -973,7 +952,7 @@ class StreamerReview extends State<ReviewPage> {
                                     margin: EdgeInsets.symmetric(
                                         horizontal: 20.0, vertical: 2.0),
                                     clipBehavior: Clip.antiAlias,
-                                    color: Colors.grey[850],
+                                    color: Colors.grey[800],
                                     elevation: 5.0,
                                     child: Padding(
                                       padding: const EdgeInsets.symmetric(
@@ -984,12 +963,8 @@ class StreamerReview extends State<ReviewPage> {
                                             child: Column(
                                               children: <Widget>[
                                                 Text(
-                                                  "Skill Level",
-                                                  style: TextStyle(
-                                                    color: Colors.deepPurple,
-                                                    fontSize: 22.0,
-                                                    fontWeight: FontWeight.bold,
-                                                  ),
+                                                  "SKILL LEVEL",
+                                                  style:    TextStyle(color: Colors.lightGreenAccent, letterSpacing: 1.5, fontSize: 18),
                                                 ),
                                                 SizedBox(
                                                   height: 5.0,
@@ -1008,7 +983,7 @@ class StreamerReview extends State<ReviewPage> {
                                                   itemBuilder: (context, _) =>
                                                       Icon(
                                                     Icons.star,
-                                                    color: Colors.amber,
+                                                    color: Colors.lightGreenAccent[100],
                                                   ),
                                                   onRatingUpdate: (rating) {
                                                     skill_rating = rating;
@@ -1058,12 +1033,9 @@ class StreamerReview extends State<ReviewPage> {
                                                             minHeight: 50.0),
                                                         alignment: Alignment.center,
                                                         child: Text(
-                                                          "Submit",
-                                                          style: TextStyle(
-                                                            color: Colors.grey[850],
-                                                            fontSize: 18.0,
-                                                            // fontWeight: FontWeight.bold
-                                                          ),
+                                                          "SUBMIT",
+                                                          style:    TextStyle(color: Colors.grey[850], letterSpacing: 1.5, fontSize: 18),
+
                                                         ),
                                                       ),
                                                     )),

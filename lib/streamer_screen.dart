@@ -77,7 +77,6 @@ class StreamerProfile extends State<StreamerPage> {
   }
 
   Future<Streamer> getData() async {
-
     var url = 'https://api.twitch.tv/helix/search/channels?query=' + selection;
 
     http.Response response = await http.get(Uri.encodeFull(url), headers: {
@@ -86,7 +85,7 @@ class StreamerProfile extends State<StreamerPage> {
     });
 
     topStreamerInfo = json.decode(response.body);
-   ;
+    ;
     var temp;
     for (int i = 0; i < topStreamerInfo['data'].length; i++) {
       if (topStreamerInfo['data'][i]['display_name'].toString().toLowerCase() ==
@@ -100,7 +99,6 @@ class StreamerProfile extends State<StreamerPage> {
     broadcaster_id = topStreamerId;
 
     url = "https://api.twitch.tv/helix/users?id=" + topStreamerId;
-
 
     http.Response channelInformation =
         await http.get(Uri.encodeFull(url), headers: {
@@ -122,7 +120,7 @@ class StreamerProfile extends State<StreamerPage> {
     // ambientColorVarient = await getImagePalette2(profilePictureUrl);
     contrastColor =
         ambientColor.computeLuminance() > 0.5 ? Colors.black : Colors.white;
-    ambientColorVarient = contrastColor;
+    ambientColorVarient = ambientColor.computeLuminance() > 0.5 ? Colors.grey[850] : Colors.grey[300];
     oppositeContrast =
         contrastColor.computeLuminance() > 0.5 ? Colors.black : Colors.white;
     var streamer =
@@ -146,8 +144,8 @@ class StreamerProfile extends State<StreamerPage> {
     List<int> temp2 = [];
 
     for (var review in reviews) {
-      int x = await d.selectReviewScoreByReviewIdAndUserId(
-          review['favorites_id']);
+      int x =
+          await d.selectReviewScoreByReviewIdAndUserId(review['favorites_id']);
       temp2.add(x);
     }
 
@@ -247,8 +245,7 @@ class StreamerProfile extends State<StreamerPage> {
     }
     getData();
 
-    setState(() {
-    });
+    setState(() {});
   }
 
   Future<void> favorite() async {
@@ -261,8 +258,7 @@ class StreamerProfile extends State<StreamerPage> {
       await d.deleteFavorite(int.parse(broadcaster_id));
     }
 
-    setState(() {
-    });
+    setState(() {});
   }
 
   void openUrl() {
@@ -304,7 +300,6 @@ class StreamerProfile extends State<StreamerPage> {
                           ),
                     onPressed: () {
                       favorite();
-
                     }),
           ],
           centerTitle: true,
@@ -389,6 +384,7 @@ class StreamerProfile extends State<StreamerPage> {
                             margin: EdgeInsets.symmetric(
                                 horizontal: 20.0, vertical: 5.0),
                             clipBehavior: Clip.antiAlias,
+                            shadowColor: Colors.transparent,
                             color: topStreamer == null
                                 ? Colors.black
                                 : contrastColor,
@@ -401,40 +397,42 @@ class StreamerProfile extends State<StreamerPage> {
                                   Expanded(
                                     child: Column(
                                       children: <Widget>[
-                                        SizedBox(
-                                          height: 5.0,
-                                        ),
-                                        RaisedButton(
-                                            onPressed: openUrl,
-                                            shape: RoundedRectangleBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(
-                                                        80.0)),
-                                            elevation: 0.0,
-                                            padding: EdgeInsets.all(0.0),
-                                            child: Ink(
-                                              decoration: BoxDecoration(
-                                                borderRadius:
-                                                    BorderRadius.circular(30.0),
-                                                color: !offline
-                                                    ? Colors.red
-                                                    : Colors.lightGreenAccent,
-                                              ),
-                                              child: Container(
-                                                constraints: BoxConstraints(
-                                                    maxWidth: 125.0,
-                                                    minHeight: 50.0),
-                                                alignment: Alignment.center,
-                                                child: Text(
-                                                  "OPEN URL",
-                                                  style: TextStyle(
-                                                      color: Colors.grey[850],
-                                                      fontSize: 22.0,
-                                                      fontWeight:
-                                                          FontWeight.bold),
-                                                ),
-                                              ),
-                                            )),
+                                        IconButton(
+                                            icon:  Icon(Icons.settings_input_antenna_sharp, color: offline ? Colors.lightGreenAccent : Colors.red, size: 40),
+                                            onPressed: () {
+                                              favorite();
+                                            }),
+                                        // RaisedButton(
+                                        //     onPressed: openUrl,
+                                        //     shape: RoundedRectangleBorder(
+                                        //         borderRadius:
+                                        //             BorderRadius.circular(
+                                        //                 80.0)),
+                                        //     elevation: 0.0,
+                                        //     padding: EdgeInsets.all(0.0),
+                                        //     child: Ink(
+                                        //       decoration: BoxDecoration(
+                                        //         borderRadius:
+                                        //             BorderRadius.circular(30.0),
+                                        //         color: !offline
+                                        //             ? Colors.red
+                                        //             : Colors.lightGreenAccent,
+                                        //       ),
+                                        //       child: Container(
+                                        //         constraints: BoxConstraints(
+                                        //             maxWidth: 125.0,
+                                        //             minHeight: 50.0),
+                                        //         alignment: Alignment.center,
+                                        //         child: Text(
+                                        //           "OPEN URL",
+                                        //           style: TextStyle(
+                                        //               color: Colors.grey[850],
+                                        //               fontSize: 22.0,
+                                        //               fontWeight:
+                                        //                   FontWeight.bold),
+                                        //         ),
+                                        //       ),
+                                        //     )),
                                       ],
                                     ),
                                   ),
@@ -443,28 +441,28 @@ class StreamerProfile extends State<StreamerPage> {
                                       children: <Widget>[
                                         RaisedButton(
                                             onPressed: () {
-
-
-                                              Navigator.push(context, MaterialPageRoute(builder: (context) => ReviewPage(
-                                                  broadcaster_id))).then((value) {
-                                                    setState(() {
-                                                      getData();
-                                                    });
+                                              Navigator.push(
+                                                      context,
+                                                      MaterialPageRoute(
+                                                          builder: (context) =>
+                                                              ReviewPage(
+                                                                  broadcaster_id)))
+                                                  .then((value) {
+                                                setState(() {
+                                                  getData();
+                                                });
                                               });
-
-
-
                                             },
-                                            shape: RoundedRectangleBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(
-                                                        80.0)),
+                                            // shape: RoundedRectangleBorder(
+                                            //     borderRadius:
+                                            //         BorderRadius.circular(
+                                            //             80.0)),
                                             elevation: 0.0,
                                             padding: EdgeInsets.all(0.0),
                                             child: Ink(
                                               decoration: BoxDecoration(
-                                                borderRadius:
-                                                    BorderRadius.circular(30.0),
+                                                // borderRadius:
+                                                //     BorderRadius.circular(30.0),
                                                 color: ambientColor,
                                               ),
                                               child: Container(
@@ -493,6 +491,7 @@ class StreamerProfile extends State<StreamerPage> {
                             margin: EdgeInsets.symmetric(
                                 horizontal: 20.0, vertical: 5.0),
                             clipBehavior: Clip.antiAlias,
+                            shadowColor: Colors.transparent,
                             color: topStreamer == null
                                 ? Colors.black
                                 : contrastColor,
@@ -511,346 +510,305 @@ class StreamerProfile extends State<StreamerPage> {
                                               child: CircularProgressIndicator(
                                                   valueColor:
                                                       AlwaysStoppedAnimation(
-                                                          Colors.black)),
+                                                          oppositeContrast)),
                                             ),
                                           ),
                                         )
                                       : Expanded(
                                           child: Column(
-                                                  children: <Widget>[
-                                                    Text(
-                                                      "Audience Ratings",
-                                                      style: TextStyle(
-                                                        color: topStreamer ==
-                                                                null
-                                                            ? Colors.black
-                                                            : oppositeContrast,
-                                                        fontSize: 22.0,
-                                                        fontWeight:
-                                                            FontWeight.bold,
-                                                      ),
-                                                    ),
-                                                    SizedBox(
-                                                      height: 5,
-                                                    ),
-                                                    Text(
-                                                      "Overall Rating",
-                                                      textAlign: TextAlign.left,
-                                                      style: TextStyle(
-                                                        fontSize: 20.0,
-                                                        color: topStreamer ==
-                                                                null
-                                                            ? Colors.black
-                                                            : oppositeContrast,
-                                                        fontWeight:
-                                                            FontWeight.w500,
-                                                      ),
-                                                    ),
-                                                    overall_average == 0.0
-                                                        ? Text(
-                                                            "n/a",
-                                                            textAlign:
-                                                                TextAlign.left,
-                                                            style: TextStyle(
-                                                              fontSize: 20.0,
-                                                              color: topStreamer ==
-                                                                      null
-                                                                  ? Colors.black
-                                                                  : ambientColor,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .w500,
-                                                            ),
-                                                          )
-                                                        : Column(
-                                                            children: <Widget>[
-                                                              Align(
-                                                                alignment:
-                                                                    Alignment
-                                                                        .topLeft,
-                                                              ),
-                                                              RatingBar.builder(
-                                                                initialRating:
-                                                                    overall_average,
-                                                                minRating: 1,
-                                                                direction: Axis
-                                                                    .horizontal,
-                                                                allowHalfRating:
-                                                                    true,
-                                                                itemCount: 5,
-                                                                itemSize: 30.0,
-                                                                // itemPadding: EdgeInsets.symmetric(horizontal: 4.0),
-                                                                itemBuilder:
-                                                                    (context,
-                                                                            _) =>
-                                                                        Icon(
-                                                                  Icons.star,
-                                                                  color: topStreamer ==
-                                                                          null
-                                                                      ? Colors
-                                                                          .black
-                                                                      : ambientColor,
-                                                                ),
-                                                              ),
-                                                            ],
-                                                          ),
-                                                    Text(
-                                                      // "General Satisfaction: " + broadcasterFromDB.overall_satisfaction.toString(),
-                                                      "General Satisfaction",
-                                                      textAlign: TextAlign.left,
-                                                      style: TextStyle(
-                                                        fontSize: 20.0,
-                                                        color: topStreamer ==
-                                                                null
-                                                            ? Colors.black
-                                                            : oppositeContrast,
-                                                        fontWeight:
-                                                            FontWeight.w500,
-                                                      ),
-                                                    ),
-                                                    average_satisfaction_rating ==
-                                                            0
-                                                        ? Text(
-                                                            "n/a",
-                                                            textAlign:
-                                                                TextAlign.left,
-                                                            style: TextStyle(
-                                                              fontSize: 20.0,
-                                                              color: topStreamer ==
-                                                                      null
-                                                                  ? Colors.black
-                                                                  : ambientColor,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .w500,
-                                                            ),
-                                                          )
-                                                        : Column(
-                                                            children: <Widget>[
-                                                              Align(
-                                                                alignment:
-                                                                    Alignment
-                                                                        .topLeft,
-                                                              ),
-                                                              RatingBar.builder(
-                                                                initialRating:
-                                                                    average_satisfaction_rating,
-                                                                minRating: 1,
-                                                                direction: Axis
-                                                                    .horizontal,
-                                                                allowHalfRating:
-                                                                    true,
-                                                                itemCount: 5,
-                                                                itemSize: 30.0,
-                                                                // itemPadding: EdgeInsets.symmetric(horizontal: 4.0),
-                                                                itemBuilder:
-                                                                    (context,
-                                                                            _) =>
-                                                                        Icon(
-                                                                  Icons.star,
-                                                                  color: topStreamer ==
-                                                                          null
-                                                                      ? Colors
-                                                                          .black
-                                                                      : ambientColor,
-                                                                ),
-                                                              ),
-                                                            ],
-                                                          ),
-                                                    Text(
-                                                      // "Interaction: " + broadcasterFromDB.overall_interactiveness.toString(),
-                                                      "Interaction",
-                                                      textAlign: TextAlign.left,
-                                                      style: TextStyle(
-                                                        fontSize: 20.0,
-                                                        color: topStreamer ==
-                                                                null
-                                                            ? Colors.black
-                                                            : oppositeContrast,
-                                                        fontWeight:
-                                                            FontWeight.w500,
-                                                      ),
-                                                    ),
-                                                    average_satisfaction_rating ==
-                                                            0
-                                                        ? Text(
-                                                            "n/a",
-                                                            textAlign:
-                                                                TextAlign.left,
-                                                            style: TextStyle(
-                                                              fontSize: 20.0,
-                                                              color: topStreamer ==
-                                                                      null
-                                                                  ? Colors.black
-                                                                  : ambientColor,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .w500,
-                                                            ),
-                                                          )
-                                                        : Column(
-                                                            children: <Widget>[
-                                                              Align(
-                                                                alignment:
-                                                                    Alignment
-                                                                        .topLeft,
-                                                              ),
-                                                              RatingBar.builder(
-                                                                initialRating:
-                                                                    average_interaction_rating,
-                                                                minRating: 1,
-                                                                direction: Axis
-                                                                    .horizontal,
-                                                                allowHalfRating:
-                                                                    true,
-                                                                itemCount: 5,
-                                                                itemSize: 30.0,
-                                                                // itemPadding: EdgeInsets.symmetric(horizontal: 4.0),
-                                                                itemBuilder:
-                                                                    (context,
-                                                                            _) =>
-                                                                        Icon(
-                                                                  Icons.star,
-                                                                  color: topStreamer ==
-                                                                          null
-                                                                      ? Colors
-                                                                          .black
-                                                                      : ambientColor,
-                                                                ),
-                                                              ),
-                                                            ],
-                                                          ),
-                                                    Text(
-                                                      // "Entertainment: " + broadcasterFromDB.overall_entertainment.toString(),
-                                                      "Entertainment",
-                                                      textAlign: TextAlign.left,
-                                                      style: TextStyle(
-                                                        fontSize: 20.0,
-                                                        color: topStreamer ==
-                                                                null
-                                                            ? Colors.black
-                                                            : oppositeContrast,
-                                                        fontWeight:
-                                                            FontWeight.w500,
-                                                      ),
-                                                    ),
-                                                    average_satisfaction_rating ==
-                                                            0
-                                                        ? Text(
-                                                            "n/a",
-                                                            textAlign:
-                                                                TextAlign.left,
-                                                            style: TextStyle(
-                                                              fontSize: 20.0,
-                                                              color: topStreamer ==
-                                                                      null
-                                                                  ? Colors.black
-                                                                  : ambientColor,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .w500,
-                                                            ),
-                                                          )
-                                                        : Column(
-                                                            children: <Widget>[
-                                                              Align(
-                                                                alignment:
-                                                                    Alignment
-                                                                        .topLeft,
-                                                              ),
-                                                              RatingBar.builder(
-                                                                initialRating:
-                                                                    average_entertainment_rating,
-                                                                minRating: 1,
-                                                                direction: Axis
-                                                                    .horizontal,
-                                                                allowHalfRating:
-                                                                    true,
-                                                                itemCount: 5,
-                                                                itemSize: 30.0,
-                                                                // itemPadding: EdgeInsets.symmetric(horizontal: 4.0),
-                                                                itemBuilder:
-                                                                    (context,
-                                                                            _) =>
-                                                                        Icon(
-                                                                  Icons.star,
-                                                                  color: topStreamer ==
-                                                                          null
-                                                                      ? Colors
-                                                                          .black
-                                                                      : ambientColor,
-                                                                ),
-                                                              ),
-                                                            ],
-                                                          ),
-                                                    Text(
-                                                      // "Skill Level: " + broadcasterFromDB.overall_skill.toString(),
-                                                      "Skill Level",
-                                                      textAlign: TextAlign.left,
-                                                      style: TextStyle(
-                                                        fontSize: 20.0,
-                                                        color: topStreamer ==
-                                                                null
-                                                            ? Colors.black
-                                                            : oppositeContrast,
-                                                        fontWeight:
-                                                            FontWeight.w500,
-                                                      ),
-                                                    ),
-                                                    average_satisfaction_rating ==
-                                                            0
-                                                        ? Text(
-                                                            "n/a",
-                                                            textAlign:
-                                                                TextAlign.left,
-                                                            style: TextStyle(
-                                                              fontSize: 20.0,
-                                                              color: topStreamer ==
-                                                                      null
-                                                                  ? Colors.black
-                                                                  : ambientColor,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .w500,
-                                                            ),
-                                                          )
-                                                        : Column(
-                                                            children: <Widget>[
-                                                              Align(
-                                                                alignment:
-                                                                    Alignment
-                                                                        .topLeft,
-                                                              ),
-                                                              RatingBar.builder(
-                                                                initialRating:
-                                                                    average_skill_rating,
-                                                                minRating: 1,
-                                                                direction: Axis
-                                                                    .horizontal,
-                                                                allowHalfRating:
-                                                                    true,
-                                                                itemCount: 5,
-                                                                itemSize: 30.0,
-                                                                // itemPadding: EdgeInsets.symmetric(horizontal: 4.0),
-                                                                itemBuilder:
-                                                                    (context,
-                                                                            _) =>
-                                                                        Icon(
-                                                                  Icons.star,
-                                                                  color: topStreamer ==
-                                                                          null
-                                                                      ? Colors
-                                                                          .black
-                                                                      : ambientColor,
-                                                                ),
-                                                              ),
-                                                            ],
-                                                          ),
-                                                    SizedBox(
-                                                      height: 10,
-                                                    ),
-                                                  ],
+                                            children: <Widget>[
+                                              Text(
+                                                "Audience Ratings",
+                                                style: TextStyle(
+                                                  color: topStreamer == null
+                                                      ? Colors.black
+                                                      : oppositeContrast,
+                                                  fontSize: 22.0,
+                                                  fontWeight: FontWeight.bold,
                                                 ),
+                                              ),
+                                              SizedBox(
+                                                height: 5,
+                                              ),
+                                              Text(
+                                                "Overall Rating",
+                                                textAlign: TextAlign.left,
+                                                style: TextStyle(
+                                                  fontSize: 20.0,
+                                                  color: topStreamer == null
+                                                      ? Colors.black
+                                                      : oppositeContrast,
+                                                  fontWeight: FontWeight.w500,
+                                                ),
+                                              ),
+                                              overall_average == 0.0
+                                                  ? Text(
+                                                      "n/a",
+                                                      textAlign: TextAlign.left,
+                                                      style: TextStyle(
+                                                        fontSize: 20.0,
+                                                        color:
+                                                            topStreamer == null
+                                                                ? Colors.black
+                                                                : ambientColor,
+                                                        fontWeight:
+                                                            FontWeight.w500,
+                                                      ),
+                                                    )
+                                                  : Column(
+                                                      children: <Widget>[
+                                                        Align(
+                                                          alignment:
+                                                              Alignment.topLeft,
+                                                        ),
+                                                        RatingBar.builder(
+                                                          initialRating:
+                                                              overall_average,
+                                                          minRating: 1,
+                                                          direction:
+                                                              Axis.horizontal,
+                                                          allowHalfRating: true,
+                                                          itemCount: 5,
+                                                          itemSize: 30.0,
+                                                          unratedColor: Colors.grey[600],
+                                                          // itemPadding: EdgeInsets.symmetric(horizontal: 4.0),
+                                                          itemBuilder:
+                                                              (context, _) =>
+                                                                  Icon(
+                                                            Icons.star,
+                                                            color: topStreamer ==
+                                                                    null
+                                                                ? Colors.black
+                                                                : ambientColor,
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
+                                              Text(
+                                                // "General Satisfaction: " + broadcasterFromDB.overall_satisfaction.toString(),
+                                                "General Satisfaction",
+                                                textAlign: TextAlign.left,
+                                                style: TextStyle(
+                                                  fontSize: 20.0,
+                                                  color: topStreamer == null
+                                                      ? Colors.black
+                                                      : oppositeContrast,
+                                                  fontWeight: FontWeight.w500,
+                                                ),
+                                              ),
+                                              average_satisfaction_rating == 0
+                                                  ? Text(
+                                                      "n/a",
+                                                      textAlign: TextAlign.left,
+                                                      style: TextStyle(
+                                                        fontSize: 20.0,
+                                                        color:
+                                                            topStreamer == null
+                                                                ? Colors.black
+                                                                : ambientColor,
+                                                        fontWeight:
+                                                            FontWeight.w500,
+                                                      ),
+                                                    )
+                                                  : Column(
+                                                      children: <Widget>[
+                                                        Align(
+                                                          alignment:
+                                                              Alignment.topLeft,
+                                                        ),
+                                                        RatingBar.builder(
+                                                          initialRating:
+                                                              average_satisfaction_rating,
+                                                          minRating: 1,
+                                                          direction:
+                                                              Axis.horizontal,
+                                                          allowHalfRating: true,
+                                                          itemCount: 5,
+                                                          itemSize: 30.0,
+                                                          unratedColor: Colors.grey[600],
+                                                          // itemPadding: EdgeInsets.symmetric(horizontal: 4.0),
+                                                          itemBuilder:
+                                                              (context, _) =>
+                                                                  Icon(
+                                                            Icons.star,
+                                                            color: topStreamer ==
+                                                                    null
+                                                                ? Colors.black
+                                                                : ambientColor,
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
+                                              Text(
+                                                // "Interaction: " + broadcasterFromDB.overall_interactiveness.toString(),
+                                                "Interaction",
+                                                textAlign: TextAlign.left,
+                                                style: TextStyle(
+                                                  fontSize: 20.0,
+                                                  color: topStreamer == null
+                                                      ? Colors.black
+                                                      : oppositeContrast,
+                                                  fontWeight: FontWeight.w500,
+                                                ),
+                                              ),
+                                              average_satisfaction_rating == 0
+                                                  ? Text(
+                                                      "n/a",
+                                                      textAlign: TextAlign.left,
+                                                      style: TextStyle(
+                                                        fontSize: 20.0,
+                                                        color:
+                                                            topStreamer == null
+                                                                ? Colors.black
+                                                                : ambientColor,
+                                                        fontWeight:
+                                                            FontWeight.w500,
+                                                      ),
+                                                    )
+                                                  : Column(
+                                                      children: <Widget>[
+                                                        Align(
+                                                          alignment:
+                                                              Alignment.topLeft,
+                                                        ),
+                                                        RatingBar.builder(
+                                                          initialRating:
+                                                              average_interaction_rating,
+                                                          minRating: 1,
+                                                          direction:
+                                                              Axis.horizontal,
+                                                          allowHalfRating: true,
+                                                          itemCount: 5,
+                                                          itemSize: 30.0,
+                                                          unratedColor: Colors.grey[600],
+                                                          // itemPadding: EdgeInsets.symmetric(horizontal: 4.0),
+                                                          itemBuilder:
+                                                              (context, _) =>
+                                                                  Icon(
+                                                            Icons.star,
+                                                            color: topStreamer ==
+                                                                    null
+                                                                ? Colors.black
+                                                                : ambientColor,
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
+                                              Text(
+                                                // "Entertainment: " + broadcasterFromDB.overall_entertainment.toString(),
+                                                "Entertainment",
+                                                textAlign: TextAlign.left,
+                                                style: TextStyle(
+                                                  fontSize: 20.0,
+                                                  color: topStreamer == null
+                                                      ? Colors.black
+                                                      : oppositeContrast,
+                                                  fontWeight: FontWeight.w500,
+                                                ),
+                                              ),
+                                              average_satisfaction_rating == 0
+                                                  ? Text(
+                                                      "n/a",
+                                                      textAlign: TextAlign.left,
+                                                      style: TextStyle(
+                                                        fontSize: 20.0,
+                                                        color:
+                                                            topStreamer == null
+                                                                ? Colors.black
+                                                                : ambientColor,
+                                                        fontWeight:
+                                                            FontWeight.w500,
+                                                      ),
+                                                    )
+                                                  : Column(
+                                                      children: <Widget>[
+                                                        Align(
+                                                          alignment:
+                                                              Alignment.topLeft,
+                                                        ),
+                                                        RatingBar.builder(
+                                                          initialRating:
+                                                              average_entertainment_rating,
+                                                          minRating: 1,
+                                                          direction:
+                                                              Axis.horizontal,
+                                                          allowHalfRating: true,
+                                                          itemCount: 5,
+                                                          itemSize: 30.0,
+                                                          unratedColor: Colors.grey[600],
+                                                          // itemPadding: EdgeInsets.symmetric(horizontal: 4.0),
+                                                          itemBuilder:
+                                                              (context, _) =>
+                                                                  Icon(
+                                                            Icons.star,
+                                                            color: topStreamer ==
+                                                                    null
+                                                                ? Colors.black
+                                                                : ambientColor,
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
+                                              Text(
+                                                // "Skill Level: " + broadcasterFromDB.overall_skill.toString(),
+                                                "Skill Level",
+                                                textAlign: TextAlign.left,
+                                                style: TextStyle(
+                                                  fontSize: 20.0,
+                                                  color: topStreamer == null
+                                                      ? Colors.black
+                                                      : oppositeContrast,
+                                                  fontWeight: FontWeight.w500,
+                                                ),
+                                              ),
+                                              average_satisfaction_rating == 0
+                                                  ? Text(
+                                                      "n/a",
+                                                      textAlign: TextAlign.left,
+                                                      style: TextStyle(
+                                                        fontSize: 20.0,
+                                                        color:
+                                                            topStreamer == null
+                                                                ? Colors.black
+                                                                : ambientColor,
+                                                        fontWeight:
+                                                            FontWeight.w500,
+                                                      ),
+                                                    )
+                                                  : Column(
+                                                      children: <Widget>[
+                                                        Align(
+                                                          alignment:
+                                                              Alignment.topLeft,
+                                                        ),
+                                                        RatingBar.builder(
+                                                          initialRating:
+                                                              average_skill_rating,
+                                                          minRating: 1,
+                                                          direction:
+                                                              Axis.horizontal,
+                                                          allowHalfRating: true,
+                                                          itemCount: 5,
+                                                          itemSize: 30.0,
+                                                          unratedColor: Colors.grey[600],
+                                                          // itemPadding: EdgeInsets.symmetric(horizontal: 4.0),
+                                                          itemBuilder:
+                                                              (context, _) =>
+                                                                  Icon(
+                                                            Icons.star,
+                                                            color: topStreamer ==
+                                                                    null
+                                                                ? Colors.black
+                                                                : ambientColor,
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
+                                              SizedBox(
+                                                height: 10,
+                                              ),
+                                            ],
+                                          ),
                                         ),
                                 ],
                               ),
@@ -867,7 +825,7 @@ class StreamerProfile extends State<StreamerPage> {
                       Text(
                         "User Comments",
                         style: TextStyle(
-                            color: Colors.white,
+                            color: contrastColor,
                             fontSize: 22.0,
                             fontWeight: FontWeight.bold),
                       ),
@@ -879,26 +837,26 @@ class StreamerProfile extends State<StreamerPage> {
                     children: <Widget>[
                       DropdownButton<String>(
                         value: dropdownValue,
-                        icon: Icon(Icons.arrow_downward),
+                        icon: Icon(Icons.arrow_downward, color: contrastColor),
                         iconSize: 24,
                         elevation: 16,
-                        style: TextStyle(color: Colors.deepPurple),
+                        style: TextStyle(color: contrastColor),
                         underline: Container(
                           height: 2,
-                          color: Colors.deepPurpleAccent,
+                          color: contrastColor,
                         ),
                         onChanged: (String newValue) {
                           getReviews(newValue);
                           dropdownValue = newValue;
-
-
                         },
                         items: <String>['Top Rated', 'Most Recent']
                             .map<DropdownMenuItem<String>>((String value) {
                           return DropdownMenuItem<String>(
-                            value: value,
-                            child: Text(value),
-                          );
+                              value: value,
+                              child: Text(
+                                value,
+                                style: TextStyle(color: contrastColor),
+                              ));
                         }).toList(),
                       ),
                       //dropdown here
@@ -912,63 +870,163 @@ class StreamerProfile extends State<StreamerPage> {
               shrinkWrap: true,
               // physics: ClampingScrollPhysics(),
               itemBuilder: (context, index) => Card(
-                child: ListTile(
-                  // leading: Icon(Icons.gamepad),
-                  title: Text(rev[index]['submission_date']),
-                  subtitle: Text(rev[index]['review_content'] +
-                      '\n' +
-                      rev[index]['score'].toString()),
-                  isThreeLine: true,
-                  trailing: Row(
-                    mainAxisSize: MainAxisSize.min,
+                margin: EdgeInsets.symmetric(horizontal: 20.0, vertical: 5.0),
+                clipBehavior: Clip.antiAlias,
+                color: topStreamer == null ? Colors.black : contrastColor,
+                elevation: 5.0,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 8.0, vertical: 0.0),
+                  child: Column(
                     children: <Widget>[
-                      IconButton(
-                          icon: upPresses[index]
-                              ? Icon(
-                                  Icons.thumb_up_alt,
-                                  color: Colors.brown[900],
-                                )
-                              : Icon(
-                                  Icons.thumb_up_alt_outlined,
-                                  color: Colors.brown[900],
-                                ),
-                          onPressed: () {
-                            setState(() {
-                              // Here we changing the icon.
-                              if (!upPresses[index]) {
-                                upPresses[index] = true;
-                                downPresses[index] = false;
-                              } else {
-                                upPresses[index] = false;
-                              }
-                              updateReview(rev[index]['favorites_id'],
-                                  upPresses[index], downPresses[index]);
-                            });
-                          }),
-                      IconButton(
-                          icon: downPresses[index]
-                              ? Icon(
-                                  Icons.thumb_down_alt,
-                                  color: Colors.brown[900],
-                                )
-                              : Icon(
-                                  Icons.thumb_down_alt_outlined,
-                                  color: Colors.brown[900],
-                                ),
-                          onPressed: () {
-                            setState(() {
-                              // Here we changing the icon.
-                              if (!downPresses[index]) {
-                                downPresses[index] = true;
-                                upPresses[index] = false;
-                              } else {
-                                downPresses[index] = false;
-                              }
-                              updateReview(rev[index]['favorites_id'],
-                                  upPresses[index], downPresses[index]);
-
-                            });
-                          }),
+                      SizedBox(
+                        height: 17.0,
+                      ),
+                      Text(
+                        rev[index]['submission_date'],
+                        textAlign: TextAlign.left,
+                        style: TextStyle(
+                            color: ambientColor,
+                            fontSize: 14.0,
+                            fontWeight: FontWeight.bold,
+                            letterSpacing: 1.5),
+                      ),
+                      SizedBox(
+                        height: 15.0,
+                      ),
+                      Text(rev[index]['review_content'],
+                          style:
+                              TextStyle(color: oppositeContrast, fontSize: 20)),
+                      Card(
+                        // margin: EdgeInsets.symmetric(horizontal: 10.0, vertical: 10.0),
+                        clipBehavior: Clip.antiAlias,
+                        color: Colors.transparent,
+                        shadowColor: Colors.transparent,
+                        child: Row(
+                          children: <Widget>[
+                            Expanded(
+                              child: new ButtonBar(
+                                alignment: MainAxisAlignment.end,
+                                children: <Widget>[
+                                  Text(rev[index]['score'].toString(),
+                                      style: TextStyle(
+                                          color: Colors.grey[600],
+                                          fontSize: 20)),
+                                  IconButton(
+                                      icon: upPresses[index]
+                                          ? Icon(
+                                              Icons.thumb_up_alt,
+                                              color: ambientColor,
+                                            )
+                                          : Icon(
+                                              Icons.thumb_up_alt_outlined,
+                                              color: ambientColor,
+                                            ),
+                                      onPressed: () {
+                                        setState(() {
+                                          // Here we changing the icon.
+                                          if (!upPresses[index]) {
+                                            upPresses[index] = true;
+                                            downPresses[index] = false;
+                                          } else {
+                                            upPresses[index] = false;
+                                          }
+                                          updateReview(
+                                              rev[index]['favorites_id'],
+                                              upPresses[index],
+                                              downPresses[index]);
+                                        });
+                                      }),
+                                  IconButton(
+                                      icon: downPresses[index]
+                                          ? Icon(
+                                              Icons.thumb_down_alt,
+                                              color: ambientColor,
+                                            )
+                                          : Icon(
+                                              Icons.thumb_down_alt_outlined,
+                                              color: ambientColor,
+                                            ),
+                                      onPressed: () {
+                                        setState(() {
+                                          // Here we changing the icon.
+                                          if (!downPresses[index]) {
+                                            downPresses[index] = true;
+                                            upPresses[index] = false;
+                                          } else {
+                                            downPresses[index] = false;
+                                          }
+                                          updateReview(
+                                              rev[index]['favorites_id'],
+                                              upPresses[index],
+                                              downPresses[index]);
+                                        });
+                                      }),
+                                ],
+                              ),
+                              // ListTile(
+                              //   // leading: Icon(Icons.gamepad),
+                              //   title: Text(rev[index]['submission_date'],style: TextStyle(
+                              //       color: ambientColor, fontSize: 14) ),
+                              //   subtitle: Text(rev[index]['review_content'] +
+                              //       '\n' +
+                              //       rev[index]['score'].toString(), style: TextStyle(
+                              //       color: oppositeContrast, fontSize: 20) ),
+                              //   isThreeLine: true,
+                              //   trailing: Row(
+                              //     mainAxisSize: MainAxisSize.min,
+                              //     children: <Widget>[
+                              //       IconButton(
+                              //           icon: upPresses[index]
+                              //               ? Icon(
+                              //                   Icons.thumb_up_alt,
+                              //                   color: oppositeContrast,
+                              //                 )
+                              //               : Icon(
+                              //                   Icons.thumb_up_alt_outlined,
+                              //                   color: oppositeContrast,
+                              //                 ),
+                              //           onPressed: () {
+                              //             setState(() {
+                              //               // Here we changing the icon.
+                              //               if (!upPresses[index]) {
+                              //                 upPresses[index] = true;
+                              //                 downPresses[index] = false;
+                              //               } else {
+                              //                 upPresses[index] = false;
+                              //               }
+                              //               updateReview(rev[index]['favorites_id'],
+                              //                   upPresses[index], downPresses[index]);
+                              //             });
+                              //           }),
+                              //       IconButton(
+                              //           icon: downPresses[index]
+                              //               ? Icon(
+                              //                   Icons.thumb_down_alt,
+                              //                   color: oppositeContrast,
+                              //                 )
+                              //               : Icon(
+                              //                   Icons.thumb_down_alt_outlined,
+                              //                   color: oppositeContrast,
+                              //                 ),
+                              //           onPressed: () {
+                              //             setState(() {
+                              //               // Here we changing the icon.
+                              //               if (!downPresses[index]) {
+                              //                 downPresses[index] = true;
+                              //                 upPresses[index] = false;
+                              //               } else {
+                              //                 downPresses[index] = false;
+                              //               }
+                              //               updateReview(rev[index]['favorites_id'],
+                              //                   upPresses[index], downPresses[index]);
+                              //
+                              //             });
+                              //           }),
+                            ),
+                          ],
+                        ),
+                      ),
                     ],
                   ),
                 ),

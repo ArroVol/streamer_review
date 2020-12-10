@@ -35,6 +35,7 @@ class _ProfileState extends State<Profile> {
 
   @override
   Widget build(BuildContext context) {
+    getNumReviews();
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.black54,
