@@ -43,75 +43,6 @@ class _FavoriteCard extends State<FavoriteCard> {
   bool offline = false;
   String userName;
 
-  // Future<Streamer> getData() async {
-  //   var url = "https://api.twitch.tv/helix/users?id=" + streamerId;
-  //
-  //   http.Response channelInformation =
-  //       await http.get(Uri.encodeFull(url), headers: {
-  //     "Authorization": "Bearer 5e46v0tks21zqvnloyua8e76bcsui9",
-  //     "Client-Id": "874uve10v0bcn3rmp2bq4cvz8fb5wj"
-  //   });
-  //   data = json.decode(channelInformation.body);
-  //   if (data != null) {
-  //     var login = data['data'][0]['login'];
-  //     var description = data['data'][0]['description'];
-  //     var profilePictureUrl = data['data'][0]['profile_image_url'];
-  //     var viewCount = data['data'][0]['view_count'];
-  //     var streamer =
-  //         new Streamer(login, description, profilePictureUrl, viewCount);
-  //     DatabaseHelper2 d = DBHelper.DatabaseHelper2.instance;
-  //
-  //     await d.selectBroadcaster(streamerId).then((value) {
-  //       if (value.isNotEmpty) {
-  //         b = new BroadcasterFromDB(
-  //             value[0]['overall_satisfaction'],
-  //             value[0]['overall_skill'],
-  //             value[0]['overall_entertainment'],
-  //             value[0]['overall_interactiveness']);
-  //       }
-  //     }, onError: (error) {
-  //       print(error);
-  //     });
-  //     await d.updateBroadcaster(broadcaster_id, user_id, login);
-  //
-  //     var url2 = "https://api.twitch.tv/helix/search/channels?query=" + login;
-  //
-  //     http.Response channelInformation2 =
-  //         await http.get(Uri.encodeFull(url2), headers: {
-  //       "Authorization": "Bearer 5e46v0tks21zqvnloyua8e76bcsui9",
-  //       "Client-Id": "874uve10v0bcn3rmp2bq4cvz8fb5wj"
-  //     });
-  //
-  //     data = json.decode(channelInformation2.body);
-  //     offline = data['data'][0]['is_live'];
-  //
-  //     setState(() {
-  //       topStreamer = streamer;
-  //       if (b != null) {
-  //         broadcasterFromDB = b;
-  //         average_satisfaction_rating = broadcasterFromDB.overall_satisfaction;
-  //         average_entertainment_rating =
-  //             broadcasterFromDB.overall_entertainment;
-  //         average_interaction_rating =
-  //             broadcasterFromDB.overall_interactiveness;
-  //         average_skill_rating = broadcasterFromDB.overall_skill;
-  //         if( average_satisfaction_rating == "NaN"){
-  //           average_satisfaction_rating = 0;
-  //           average_entertainment_rating =0;
-  //           average_interaction_rating = 0;
-  //           average_skill_rating = 0;
-  //         }else {
-  //           calcScore();
-  //         }
-  //       } else {
-  //         broadcasterFromDB = new BroadcasterFromDB(0, 0, 0, 0);
-  //       }
-  //     });
-  //     print(
-  //         "making card++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
-  //     return streamer;
-  //   }
-  // }
 
   Future<String> getData() async {
     DatabaseHelper2 d = DBHelper.DatabaseHelper2.instance;
@@ -128,10 +59,8 @@ class _FavoriteCard extends State<FavoriteCard> {
     }, onError: (error) {
       print(error);
     });
-    // await d.updateBroadcaster(broadcaster_id, user_id, login);
 
     setState(() {
-      // topStreamer = streamer;
       if (b != null) {
         broadcasterFromDB = b;
         average_satisfaction_rating = broadcasterFromDB.overall_satisfaction;
@@ -152,8 +81,6 @@ class _FavoriteCard extends State<FavoriteCard> {
         broadcasterFromDB = new BroadcasterFromDB(0, 0, 0, 0);
       }
     });
-    // print(
-    //     "making card++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
     return userName;
   }
 
@@ -192,11 +119,7 @@ class _FavoriteCard extends State<FavoriteCard> {
           child: Column(
             children: <Widget>[
               ListTile(
-                //       leading: CircleAvatar(
-                //         backgroundImage:
-                //             NetworkImage(topStreamer.profilePictureUrl),
-                //         radius: 30.0,
-                //       ),
+
                 title: Text(
                   userName.toUpperCase(),
                   textAlign: TextAlign.center,

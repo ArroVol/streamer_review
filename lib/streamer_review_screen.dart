@@ -3,10 +3,10 @@ import 'dart:convert';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:profanity_filter/profanity_filter.dart';
 import 'package:streamer_review/helper/database_helper.dart' as DBHelper;
 import 'package:http/http.dart' as http;
 import 'helper/database_helper.dart';
-import 'package:profanity_filter/profanity_filter.dart';
 
 class ReviewPage extends StatefulWidget {
   String broadcaster_id;
@@ -21,6 +21,7 @@ class ReviewPage extends StatefulWidget {
 
 class StreamerReview extends State<ReviewPage> {
   TextEditingController reviewController = new TextEditingController();
+  static const String username = 'Temp Username';
   final filter = ProfanityFilter();
   final profanity = [
     '4r5e',
@@ -477,7 +478,6 @@ class StreamerReview extends State<ReviewPage> {
     'xrated',
     'xxx'
   ];
-  static const String username = 'Temp Username';
   double satisfaction_rating = 1;
   double entertainment_rating = 1;
   double interaction_rating = 1;
@@ -486,14 +486,9 @@ class StreamerReview extends State<ReviewPage> {
   String dropdownValue = 'Gaming';
   List<int> tagKeys = [];
 
-  // int broadcaster_id = 229729353;
-  // int broadcaster_id = 48526626;
-  // int broadcaster_id = 469790580;
-  // int broadcaster_id = 37402112;
-  // int broadcaster_id = 138117508;
+
   String broadcaster_id;
 
-  int user_id = 1;
 
   int old_satisfaction_rating = 1;
   int old_entertainment_rating = 1;
@@ -524,6 +519,12 @@ class StreamerReview extends State<ReviewPage> {
   }
 
   Future<void> submitReview(var context) async {
+    print('REVIEW SELECTIONS');
+    print(satisfaction_rating);
+    print(entertainment_rating);
+    print(interaction_rating);
+    print(skill_rating);
+    print('============================');
     if (satisfaction_rating == 0 ||
         entertainment_rating == 0 ||
         interaction_rating == 0 ||
@@ -532,7 +533,8 @@ class StreamerReview extends State<ReviewPage> {
         content: new Text('ERROR SUBMITTING REVIEW'),
         backgroundColor: Colors.red,
       ));
-    } else if (filter.hasProfanity(reviewController.text) || profanity.contains(reviewController.text)) {
+    } else if (filter.hasProfanity(reviewController.text) ||
+        profanity.contains(reviewController.text)) {
       Scaffold.of(context).showSnackBar(new SnackBar(
         content: new Text('YOUR COMMENT CANNOT CONTAIN PROFANITY'),
         backgroundColor: Colors.red,
@@ -541,16 +543,13 @@ class StreamerReview extends State<ReviewPage> {
       DatabaseHelper2 d = DBHelper.DatabaseHelper2.instance;
 
       for (var tag in tags) {
-        print(tag);
         await d.insertBroadcasterTag(broadcaster_id, tag);
       }
 
       var x = await d.selectAllBroadcasterTagsByBroadcaster(broadcaster_id);
-      print(x);
 
       String url = "https://api.twitch.tv/helix/users?id=" + broadcaster_id;
 
-      // print(url);
 
       http.Response channelInformation =
           await http.get(Uri.encodeFull(url), headers: {
@@ -560,25 +559,21 @@ class StreamerReview extends State<ReviewPage> {
 
       var data = json.decode(channelInformation.body);
       var login = data['data'][0]['login'];
-      print(login);
       await d.insertReview(satisfaction_rating, entertainment_rating,
-          interaction_rating, skill_rating, broadcaster_id, user_id, login);
-      await d.updateBroadcaster(broadcaster_id, user_id, login);
+          interaction_rating, skill_rating, broadcaster_id, login);
+      await d.updateBroadcaster(broadcaster_id, login);
       if (reviewController.text.isNotEmpty) {
         await d.insertTextReviews(reviewController.text,
-            new DateTime.now().toString(), broadcaster_id, user_id);
+            new DateTime.now().toString(), broadcaster_id);
       }
 
       var y = await d.selectTextReviews(broadcaster_id);
-      print(y);
     }
   }
 
   void getOldReview() async {
     DatabaseHelper2 d = DBHelper.DatabaseHelper2.instance;
-    oldReview = await d.selectReviews(broadcaster_id, user_id);
-    // print(oldReview[0]);
-    // print(oldReview[0]['satisfaction_rating'].runtimeType);
+    oldReview = await d.selectReviews(broadcaster_id);
     old_satisfaction_rating = oldReview[0]['satisfaction_rating'];
     old_entertainment_rating = oldReview[0]['entertainment_rating'];
     old_interaction_rating = oldReview[0]['interactiveness_rating'];
@@ -633,7 +628,6 @@ class StreamerReview extends State<ReviewPage> {
       },
     );
 
-    // print('this' + selectedValues.toString());
     getvaluefromkey(selectedValues);
   }
 
@@ -642,512 +636,461 @@ class StreamerReview extends State<ReviewPage> {
     tagKeys.clear();
     if (selection != null) {
       for (int x in selection.toList()) {
-        // print(valuestopopulate[x]);
         tags.add(valuestopopulate[x]);
         tagKeys.add(x);
-        // print(tags);
       }
     }
   }
 
   Widget build(BuildContext context) {
+    // getOldReview();
     return Scaffold(
-      body: GestureDetector(
-        behavior: HitTestBehavior.opaque,
-        onPanDown: (_) {
-          FocusScope.of(context).requestFocus(FocusNode());
-        },
-        child: SingleChildScrollView(
-          physics: NeverScrollableScrollPhysics(),
-          child: ConstrainedBox(
-            constraints: BoxConstraints(
-              minWidth: MediaQuery.of(context).size.width,
-              minHeight: MediaQuery.of(context).size.height,
-            ),
-            child: IntrinsicHeight(
-              child: Column(
-                mainAxisSize: MainAxisSize.max,
-                children: <Widget>[
-                  Column(
-                    children: <Widget>[
-                      Container(
-                        decoration: BoxDecoration(
-                            gradient: LinearGradient(
-                          begin: Alignment.topCenter,
-                          end: Alignment.bottomCenter,
-                          colors: [Colors.purple[900], Colors.white],
-                          stops: [0.2, 1],
-                        )),
-                        child: Container(
-                          width: double.infinity,
-                          height: MediaQuery.of(context).size.height * .9,
-                          child: ListView(
-                            scrollDirection: Axis.vertical,
-                            children: <Widget>[
-                              Center(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: <Widget>[
-                                    Text(
-                                      "Reviewing " + username,
-                                      style: TextStyle(
-                                        fontSize: 22.0,
-                                        color: Colors.white,
-                                      ),
-                                    ),
-                                    SizedBox(
-                                      height: 10.0,
-                                    ),
-                                    Card(
-                                      margin: EdgeInsets.symmetric(
-                                          horizontal: 20.0, vertical: 10.0),
-                                      clipBehavior: Clip.antiAlias,
-                                      color: Colors.white,
-                                      elevation: 5.0,
-                                      child: Padding(
-                                        padding: const EdgeInsets.symmetric(
-                                            horizontal: 8.0, vertical: 12.0),
-                                        child: Row(
-                                          children: <Widget>[
-                                            Expanded(
-                                              child: Column(
-                                                children: <Widget>[
-                                                  Text(
-                                                    "Category",
-                                                    style: TextStyle(
-                                                      color: Colors.deepPurple,
-                                                      fontSize: 22.0,
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                    ),
-                                                  ),
-                                                  SizedBox(
-                                                    height: 5.0,
-                                                  ),
-                                                  RaisedButton(
-                                                    child:
-                                                        Text("Show Categories"),
+      backgroundColor: Colors.black,
+      appBar: AppBar(
+          title: Text(
+            'STREVIEW',
+            style:
+                TextStyle(color: Colors.lightGreenAccent, letterSpacing: 1.5),
+          ),
+          actions: <Widget>[],
+          centerTitle: true,
+          backgroundColor: Colors.grey[850]),
+      body: SingleChildScrollView(
+        physics: NeverScrollableScrollPhysics(),
+        child: ConstrainedBox(
+          constraints: BoxConstraints(
+            minWidth: MediaQuery.of(context).size.width,
+            minHeight: MediaQuery.of(context).size.height,
+          ),
+          child: IntrinsicHeight(
+            child: Column(
+              mainAxisSize: MainAxisSize.max,
+              children: <Widget>[
+                Column(
+                  children: <Widget>[
+                    Container(
+                      decoration: BoxDecoration(),
+                      child: Container(
+                        width: double.infinity,
+                        height: MediaQuery.of(context).size.height * .9,
+                        child: ListView(
+                          scrollDirection: Axis.vertical,
+                          children: <Widget>[
+                            Center(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: <Widget>[
+
+                                  Card(
+                                    margin: EdgeInsets.symmetric(
+                                        horizontal: 20.0, vertical: 10.0),
+                                    clipBehavior: Clip.antiAlias,
+                                    color: Colors.transparent,
+                                    elevation: 5.0,
+                                    child: Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 8.0, vertical: 12.0),
+                                      child: Row(
+                                        children: <Widget>[
+                                          Expanded(
+                                            child: Column(
+                                              children: <Widget>[
+                                                RaisedButton(
                                                     onPressed: () =>
                                                         _showMultiSelect(
                                                             context),
-                                                  ),
-                                                  SizedBox(
-                                                    height: 5.0,
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-                                    Card(
-                                      margin: EdgeInsets.symmetric(
-                                          horizontal: 20.0, vertical: 2.0),
-                                      clipBehavior: Clip.antiAlias,
-                                      color: Colors.white,
-                                      elevation: 5.0,
-                                      child: Padding(
-                                        padding: const EdgeInsets.symmetric(
-                                            horizontal: 8.0, vertical: 12.0),
-                                        child: Row(
-                                          children: <Widget>[
-                                            Expanded(
-                                              child: Column(
-                                                children: <Widget>[
-                                                  Text(
-                                                    "Overall Satisfaction",
-                                                    style: TextStyle(
-                                                      color: Colors.deepPurple,
-                                                      fontSize: 22.0,
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                    ),
-                                                  ),
-                                                  SizedBox(
-                                                    height: 5.0,
-                                                  ),
-                                                  RatingBar.builder(
-                                                    initialRating:
-                                                        old_satisfaction_rating
-                                                            .toDouble(),
-                                                    itemCount: 5,
-                                                    itemPadding:
-                                                        EdgeInsets.symmetric(
-                                                            horizontal: 4.0),
-                                                    itemBuilder:
-                                                        (context, index) {
-                                                      switch (index) {
-                                                        case 0:
-                                                          return Icon(
-                                                            Icons
-                                                                .sentiment_very_dissatisfied,
-                                                            color: Colors.red,
-                                                          );
-                                                        case 1:
-                                                          return Icon(
-                                                            Icons
-                                                                .sentiment_dissatisfied,
+                                                    elevation: 0.0,
+                                                    padding:
+                                                        EdgeInsets.all(0.0),
+                                                    child: Ink(
+                                                      decoration: BoxDecoration(
+                                                          color:
+                                                              Colors.grey[850]),
+                                                      child: Container(
+                                                        constraints:
+                                                            BoxConstraints(
+                                                                maxWidth: 150.0,
+                                                                minHeight:
+                                                                    50.0),
+                                                        alignment:
+                                                            Alignment.center,
+                                                        child: Text(
+                                                          "Select Tags",
+                                                          style: TextStyle(
                                                             color: Colors
-                                                                .yellow[900],
-                                                          );
-                                                        case 2:
-                                                          return Icon(
-                                                            Icons
-                                                                .sentiment_neutral,
-                                                            color: Colors
-                                                                .amber[700],
-                                                          );
-                                                        case 3:
-                                                          return Icon(
-                                                            Icons
-                                                                .sentiment_satisfied,
-                                                            color: Colors
-                                                                    .limeAccent[
-                                                                700],
-                                                          );
-                                                        case 4:
-                                                          return Icon(
-                                                            Icons
-                                                                .sentiment_very_satisfied,
-                                                            color: Colors
-                                                                    .greenAccent[
-                                                                700],
-                                                          );
-                                                      }
-                                                    },
-                                                    onRatingUpdate: (rating) {
-                                                      satisfaction_rating =
-                                                          rating;
-                                                      print(rating);
-                                                    },
-                                                  ),
-                                                ],
-                                              ),
+                                                                .lightGreenAccent,
+                                                            fontSize: 18.0,
+                                                            // fontWeight: FontWeight.bold
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    )),
+                                                SizedBox(
+                                                  height: 5.0,
+                                                ),
+                                              ],
                                             ),
-                                          ],
-                                        ),
+                                          ),
+                                        ],
                                       ),
                                     ),
-                                    Card(
-                                      margin: EdgeInsets.symmetric(
-                                          horizontal: 20.0, vertical: 2.0),
-                                      clipBehavior: Clip.antiAlias,
-                                      color: Colors.white,
-                                      elevation: 5.0,
-                                      child: Padding(
-                                        padding: const EdgeInsets.symmetric(
-                                            horizontal: 8.0, vertical: 15.0),
-                                        child: Row(
-                                          children: <Widget>[
-                                            Expanded(
-                                              child: Column(
-                                                children: <Widget>[
-                                                  Text(
-                                                    "Entertainment Value",
-                                                    style: TextStyle(
-                                                      color: Colors.deepPurple,
-                                                      fontSize: 22.0,
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                    ),
+                                  ),
+                                  Card(
+                                    margin: EdgeInsets.symmetric(
+                                        horizontal: 20.0, vertical: 2.0),
+                                    clipBehavior: Clip.antiAlias,
+                                    color: Colors.grey[850],
+                                    elevation: 5.0,
+                                    child: Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 8.0, vertical: 15.0),
+                                      child: Row(
+                                        children: <Widget>[
+                                          Expanded(
+                                            child: Column(
+                                              children: <Widget>[
+                                                Text(
+                                                  "Additional Comments",
+                                                  style: TextStyle(
+                                                    color: Colors.deepPurple,
+                                                    fontSize: 22.0,
+                                                    fontWeight: FontWeight.bold,
                                                   ),
-                                                  SizedBox(
-                                                    height: 5.0,
+                                                ),
+                                                SizedBox(
+                                                  height: 5.0,
+                                                ),
+                                                TextField(
+                                                  controller: reviewController,
+                                                  maxLines: 5,
+                                                  decoration:
+                                                  InputDecoration.collapsed(
+                                                      hintText:
+                                                      "Enter your text here"),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                  Card(
+                                    margin: EdgeInsets.symmetric(
+                                        horizontal: 20.0, vertical: 2.0),
+                                    clipBehavior: Clip.antiAlias,
+                                    color: Colors.grey[850],
+                                    elevation: 5.0,
+                                    child: Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 8.0, vertical: 12.0),
+                                      child: Row(
+                                        children: <Widget>[
+                                          Expanded(
+                                            child: Column(
+                                              children: <Widget>[
+                                                Text(
+                                                  "Overall Satisfaction",
+                                                  style: TextStyle(
+                                                    color: Colors.deepPurple,
+                                                    fontSize: 22.0,
+                                                    fontWeight: FontWeight.bold,
                                                   ),
-                                                  RatingBar.builder(
-                                                    initialRating:
-                                                        old_entertainment_rating
-                                                            .toDouble(),
-                                                    minRating: 1,
-                                                    direction: Axis.horizontal,
-                                                    allowHalfRating: false,
-                                                    itemCount: 5,
-                                                    itemPadding:
-                                                        EdgeInsets.symmetric(
-                                                            horizontal: 4.0),
-                                                    itemBuilder: (context, _) =>
-                                                        Icon(
-                                                      Icons.star,
-                                                      color: Colors.amber,
-                                                    ),
-                                                    onRatingUpdate: (rating) {
-                                                      entertainment_rating =
-                                                          rating;
-                                                      print(rating);
+                                                ),
+                                                SizedBox(
+                                                  height: 5.0,
+                                                ),
+                                                RatingBar.builder(
+                                                  initialRating:
+                                                      old_satisfaction_rating
+                                                          .toDouble(),
+                                                  itemCount: 5,
+                                                  itemPadding:
+                                                      EdgeInsets.symmetric(
+                                                          horizontal: 4.0),
+                                                  itemBuilder:
+                                                      (context, index) {
+                                                    switch (index) {
+                                                      case 0:
+                                                        return Icon(
+                                                          Icons
+                                                              .sentiment_very_dissatisfied,
+                                                          color: Colors.red,
+                                                        );
+                                                      case 1:
+                                                        return Icon(
+                                                          Icons
+                                                              .sentiment_dissatisfied,
+                                                          color: Colors
+                                                              .yellow[900],
+                                                        );
+                                                      case 2:
+                                                        return Icon(
+                                                          Icons
+                                                              .sentiment_neutral,
+                                                          color: Colors.amber,
+                                                        );
+                                                      case 3:
+                                                        return Icon(
+                                                          Icons
+                                                              .sentiment_satisfied,
+                                                          color: Colors
+                                                              .limeAccent[700],
+                                                        );
+                                                      case 4:
+                                                        return Icon(
+                                                          Icons
+                                                              .sentiment_very_satisfied,
+                                                          color: Colors
+                                                              .greenAccent[700],
+                                                        );
+                                                    }
+                                                  },
+                                                  onRatingUpdate: (rating) {
+                                                    satisfaction_rating =
+                                                        rating;
+                                                    print('IN RATING BAR OVERALL ' + rating.toString());
+                                                  },
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                  Card(
+                                    margin: EdgeInsets.symmetric(
+                                        horizontal: 20.0, vertical: 2.0),
+                                    clipBehavior: Clip.antiAlias,
+                                    color: Colors.grey[850],
+                                    elevation: 5.0,
+                                    child: Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 8.0, vertical: 15.0),
+                                      child: Row(
+                                        children: <Widget>[
+                                          Expanded(
+                                            child: Column(
+                                              children: <Widget>[
+                                                Text(
+                                                  "Entertainment Value",
+                                                  style: TextStyle(
+                                                    color: Colors.deepPurple,
+                                                    fontSize: 22.0,
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
+                                                ),
+                                                SizedBox(
+                                                  height: 5.0,
+                                                ),
+                                                RatingBar.builder(
+                                                  initialRating:
+                                                      old_entertainment_rating
+                                                          .toDouble(),
+                                                  minRating: 1,
+                                                  direction: Axis.horizontal,
+                                                  allowHalfRating: false,
+                                                  itemCount: 5,
+                                                  itemPadding:
+                                                      EdgeInsets.symmetric(
+                                                          horizontal: 4.0),
+                                                  itemBuilder: (context, _) =>
+                                                      Icon(
+                                                    Icons.star,
+                                                    color: Colors.amber,
+                                                  ),
+                                                  onRatingUpdate: (rating) {
+                                                    entertainment_rating =
+                                                        rating;
+                                                    print('IN RATING BAR ENTERTAINMENT ' + rating.toString());
+
+                                                  },
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                  Card(
+                                    margin: EdgeInsets.symmetric(
+                                        horizontal: 20.0, vertical: 2.0),
+                                    clipBehavior: Clip.antiAlias,
+                                    color: Colors.grey[850],
+                                    elevation: 5.0,
+                                    child: Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 8.0, vertical: 15.0),
+                                      child: Row(
+                                        children: <Widget>[
+                                          Expanded(
+                                            child: Column(
+                                              children: <Widget>[
+                                                Text(
+                                                  "Viewer Interaction",
+                                                  style: TextStyle(
+                                                    color: Colors.deepPurple,
+                                                    fontSize: 22.0,
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
+                                                ),
+                                                SizedBox(
+                                                  height: 5.0,
+                                                ),
+                                                RatingBar.builder(
+                                                  initialRating:
+                                                      old_interaction_rating
+                                                          .toDouble(),
+                                                  minRating: 1,
+                                                  direction: Axis.horizontal,
+                                                  allowHalfRating: false,
+                                                  itemCount: 5,
+                                                  itemPadding:
+                                                      EdgeInsets.symmetric(
+                                                          horizontal: 4.0),
+                                                  itemBuilder: (context, _) =>
+                                                      Icon(
+                                                    Icons.star,
+                                                    color: Colors.amber,
+                                                  ),
+                                                  onRatingUpdate: (rating) {
+                                                    interaction_rating = rating;
+                                                    print('IN RATING BAR INTERACTION ' + rating.toString());
+
+                                                  },
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                  Card(
+                                    margin: EdgeInsets.symmetric(
+                                        horizontal: 20.0, vertical: 2.0),
+                                    clipBehavior: Clip.antiAlias,
+                                    color: Colors.grey[850],
+                                    elevation: 5.0,
+                                    child: Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 8.0, vertical: 15.0),
+                                      child: Row(
+                                        children: <Widget>[
+                                          Expanded(
+                                            child: Column(
+                                              children: <Widget>[
+                                                Text(
+                                                  "Skill Level",
+                                                  style: TextStyle(
+                                                    color: Colors.deepPurple,
+                                                    fontSize: 22.0,
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
+                                                ),
+                                                SizedBox(
+                                                  height: 5.0,
+                                                ),
+                                                RatingBar.builder(
+                                                  initialRating:
+                                                      old_skill_rating
+                                                          .toDouble(),
+                                                  minRating: 1,
+                                                  direction: Axis.horizontal,
+                                                  allowHalfRating: false,
+                                                  itemCount: 5,
+                                                  itemPadding:
+                                                      EdgeInsets.symmetric(
+                                                          horizontal: 4.0),
+                                                  itemBuilder: (context, _) =>
+                                                      Icon(
+                                                    Icons.star,
+                                                    color: Colors.amber,
+                                                  ),
+                                                  onRatingUpdate: (rating) {
+                                                    skill_rating = rating;
+                                                    print('IN RATING BAR SKILL ' + rating.toString());
+                                                  },
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                  Card(
+                                    margin: EdgeInsets.symmetric(
+                                        horizontal: 20.0, vertical: 2.0),
+                                    clipBehavior: Clip.antiAlias,
+                                    color: Colors.transparent,
+                                    elevation: 5.0,
+                                    child: Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 8.0, vertical: 15.0),
+                                      child: Row(
+                                        children: <Widget>[
+                                          Expanded(
+                                            child: Column(
+                                              children: <Widget>[
+
+                                                SizedBox(
+                                                  height: 5.0,
+                                                ),
+                                                RaisedButton(
+                                                    onPressed: () {
+                                                      submitReview(context);
+                                                      Navigator.pop(context);
                                                     },
-                                                  ),
-                                                ],
-                                              ),
+
+                                                    elevation: 0.0,
+                                                    padding: EdgeInsets.all(0.0),
+                                                    child: Ink(
+                                                      decoration: BoxDecoration(
+                                                          color: Colors
+                                                              .lightGreenAccent),
+                                                      child: Container(
+                                                        constraints: BoxConstraints(
+                                                            maxWidth: 150.0,
+                                                            minHeight: 50.0),
+                                                        alignment: Alignment.center,
+                                                        child: Text(
+                                                          "Submit",
+                                                          style: TextStyle(
+                                                            color: Colors.grey[850],
+                                                            fontSize: 18.0,
+                                                            // fontWeight: FontWeight.bold
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    )),
+                                              ],
                                             ),
-                                          ],
-                                        ),
+                                          ),
+                                        ],
                                       ),
                                     ),
-                                    Card(
-                                      margin: EdgeInsets.symmetric(
-                                          horizontal: 20.0, vertical: 2.0),
-                                      clipBehavior: Clip.antiAlias,
-                                      color: Colors.white,
-                                      elevation: 5.0,
-                                      child: Padding(
-                                        padding: const EdgeInsets.symmetric(
-                                            horizontal: 8.0, vertical: 15.0),
-                                        child: Row(
-                                          children: <Widget>[
-                                            Expanded(
-                                              child: Column(
-                                                children: <Widget>[
-                                                  Text(
-                                                    "Viewer Interaction",
-                                                    style: TextStyle(
-                                                      color: Colors.deepPurple,
-                                                      fontSize: 22.0,
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                    ),
-                                                  ),
-                                                  SizedBox(
-                                                    height: 5.0,
-                                                  ),
-                                                  RatingBar.builder(
-                                                    initialRating:
-                                                        old_interaction_rating
-                                                            .toDouble(),
-                                                    minRating: 1,
-                                                    direction: Axis.horizontal,
-                                                    allowHalfRating: false,
-                                                    itemCount: 5,
-                                                    itemPadding:
-                                                        EdgeInsets.symmetric(
-                                                            horizontal: 4.0),
-                                                    itemBuilder: (context, _) =>
-                                                        Icon(
-                                                      Icons.star,
-                                                      color: Colors.amber,
-                                                    ),
-                                                    onRatingUpdate: (rating) {
-                                                      interaction_rating =
-                                                          rating;
-                                                      print(rating);
-                                                    },
-                                                  ),
-                                                ],
-                                              ),
+                                  ),
+
+
+                                            SizedBox(
+                                              height: 100.0,
                                             ),
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-                                    Card(
-                                      margin: EdgeInsets.symmetric(
-                                          horizontal: 20.0, vertical: 2.0),
-                                      clipBehavior: Clip.antiAlias,
-                                      color: Colors.white,
-                                      elevation: 5.0,
-                                      child: Padding(
-                                        padding: const EdgeInsets.symmetric(
-                                            horizontal: 8.0, vertical: 15.0),
-                                        child: Row(
-                                          children: <Widget>[
-                                            Expanded(
-                                              child: Column(
-                                                children: <Widget>[
-                                                  Text(
-                                                    "Skill Level",
-                                                    style: TextStyle(
-                                                      color: Colors.deepPurple,
-                                                      fontSize: 22.0,
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                    ),
-                                                  ),
-                                                  SizedBox(
-                                                    height: 5.0,
-                                                  ),
-                                                  RatingBar.builder(
-                                                    initialRating:
-                                                        old_skill_rating
-                                                            .toDouble(),
-                                                    minRating: 1,
-                                                    direction: Axis.horizontal,
-                                                    allowHalfRating: false,
-                                                    itemCount: 5,
-                                                    itemPadding:
-                                                        EdgeInsets.symmetric(
-                                                            horizontal: 4.0),
-                                                    itemBuilder: (context, _) =>
-                                                        Icon(
-                                                      Icons.star,
-                                                      color: Colors.amber,
-                                                    ),
-                                                    onRatingUpdate: (rating) {
-                                                      skill_rating = rating;
-                                                      print(rating);
-                                                    },
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-                                    Card(
-                                      margin: EdgeInsets.symmetric(
-                                          horizontal: 20.0, vertical: 2.0),
-                                      clipBehavior: Clip.antiAlias,
-                                      color: Colors.white,
-                                      elevation: 5.0,
-                                      child: Padding(
-                                        padding: const EdgeInsets.symmetric(
-                                            horizontal: 8.0, vertical: 15.0),
-                                        child: Row(
-                                          children: <Widget>[
-                                            Expanded(
-                                              child: Column(
-                                                children: <Widget>[
-                                                  Text(
-                                                    "Additional Comments",
-                                                    style: TextStyle(
-                                                      color: Colors.deepPurple,
-                                                      fontSize: 22.0,
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                    ),
-                                                  ),
-                                                  SizedBox(
-                                                    height: 5.0,
-                                                  ),
-                                                  TextField(
-                                                    controller:
-                                                        reviewController,
-                                                    maxLines: 8,
-                                                    decoration: InputDecoration
-                                                        .collapsed(
-                                                            hintText:
-                                                                "Enter your text here"),
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-                                    Card(
-                                      margin: EdgeInsets.symmetric(
-                                          horizontal: 20.0, vertical: 2.0),
-                                      clipBehavior: Clip.antiAlias,
-                                      color: Colors.white,
-                                      elevation: 5.0,
-                                      child: Padding(
-                                        padding: const EdgeInsets.symmetric(
-                                            horizontal: 8.0, vertical: 15.0),
-                                        child: new ButtonBar(
-                                          alignment:
-                                              MainAxisAlignment.spaceBetween,
-                                          children: <Widget>[
-                                            RaisedButton(
-                                                onPressed: () {
-                                                  Navigator.pop(context);
-                                                },
-                                                shape: RoundedRectangleBorder(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            80.0)),
-                                                elevation: 0.0,
-                                                padding: EdgeInsets.all(0.0),
-                                                child: Ink(
-                                                  decoration: BoxDecoration(
-                                                    gradient: LinearGradient(
-                                                        begin: Alignment
-                                                            .centerRight,
-                                                        end: Alignment
-                                                            .centerLeft,
-                                                        colors: [
-                                                          Colors
-                                                              .deepPurpleAccent,
-                                                          Colors.deepPurple[700]
-                                                        ]),
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            30.0),
-                                                  ),
-                                                  child: Container(
-                                                    constraints: BoxConstraints(
-                                                        maxWidth: 125.0,
-                                                        minHeight: 50.0),
-                                                    alignment: Alignment.center,
-                                                    child: Text(
-                                                      "BACK",
-                                                      style: TextStyle(
-                                                          color: Colors.white,
-                                                          fontSize: 22.0,
-                                                          fontWeight:
-                                                              FontWeight.bold),
-                                                    ),
-                                                  ),
-                                                )),
-                                            RaisedButton(
-                                                onPressed: () {
-                                                  submitReview(context);
-                                                  Navigator.pop(context);
-                                                },
-                                                shape: RoundedRectangleBorder(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            80.0)),
-                                                elevation: 0.0,
-                                                padding: EdgeInsets.all(0.0),
-                                                child: Ink(
-                                                  decoration: BoxDecoration(
-                                                    gradient: LinearGradient(
-                                                        begin: Alignment
-                                                            .centerRight,
-                                                        end: Alignment
-                                                            .centerLeft,
-                                                        colors: [
-                                                          Colors
-                                                              .deepPurpleAccent,
-                                                          Colors.deepPurple[700]
-                                                        ]),
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            30.0),
-                                                  ),
-                                                  child: Container(
-                                                    constraints: BoxConstraints(
-                                                        maxWidth: 125.0,
-                                                        minHeight: 50.0),
-                                                    alignment: Alignment.center,
-                                                    child: Text(
-                                                      "SUBMIT",
-                                                      style: TextStyle(
-                                                          color: Colors.white,
-                                                          fontSize: 22.0,
-                                                          fontWeight:
-                                                              FontWeight.bold),
-                                                    ),
-                                                  ),
-                                                )),
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
+
+                                ],
                               ),
-                            ],
-                          ),
+                            ),
+                          ],
                         ),
                       ),
-                    ],
-                  ),
-                  // CONTENT HERE
-                ],
-              ),
+                    ),
+                  ],
+                ),
+                // CONTENT HERE
+              ],
             ),
           ),
         ),
