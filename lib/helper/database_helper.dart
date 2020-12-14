@@ -173,7 +173,7 @@ class DatabaseHelper2 {
          REFERENCES _user_table(_id)  
         )
       ''');
-  db.execute('''
+    db.execute('''
       CREATE TABLE tag_names(
       tag_id INTEGER PRIMARY KEY AUTOINCREMENT,
       tag_name TEXT
@@ -231,7 +231,7 @@ class DatabaseHelper2 {
     Database db = await instance.database;
     // Map<String, dynamic > user = (await db.query('_user_table', where: '_id = ?', whereArgs: [id])) as Map<String, dynamic >;
     List<Map<String, dynamic>> user =
-        await db.query('_user_table', where: '_id = ?', whereArgs: [id]);
+    await db.query('_user_table', where: '_id = ?', whereArgs: [id]);
     if (user.isEmpty) {
       print('The user with id: $id does not exist');
     } else {
@@ -304,7 +304,7 @@ class DatabaseHelper2 {
   Future<int> getUserIdByEmail(String email) async {
     Database db = await instance.database;
     List<Map<String, dynamic>> user =
-        await db.query('_user_table', where: 'email = ?', whereArgs: [email]);
+    await db.query('_user_table', where: 'email = ?', whereArgs: [email]);
     final userMap = user.asMap();
     final user1 = userMap[0];
 
@@ -347,7 +347,7 @@ class DatabaseHelper2 {
   Future<bool> checkEmailByEmail(String email) async {
     Database db = await instance.database;
     List<Map<String, dynamic>> userPulled =
-        await db.query('_user_table', where: 'email = ?', whereArgs: [email]);
+    await db.query('_user_table', where: 'email = ?', whereArgs: [email]);
     if (userPulled.isNotEmpty) {
       print('The email matches one in the db');
       return true;
@@ -531,12 +531,12 @@ class DatabaseHelper2 {
       'SELECT * FROM text_reviews WHERE fk_user_id=? AND fk_broadcaster_id=?',
       [userId, broadcasterId],
     );
+    var x = result[0]['favorites_id'];
 
     await db.rawQuery('DELETE FROM reviews WHERE fk_broadcaster_id = ? AND fk_user_id = ?',
         [broadcasterId, userId]);
     await db.rawQuery('DELETE FROM text_reviews WHERE fk_broadcaster_id = ? AND fk_user_id = ?',
         [broadcasterId, userId]);
-    var x = result[0]['favorites_id'];
     await db.rawQuery(
         'DELETE FROM user_text_review_scores WHERE temp_id =?',
         [
@@ -553,7 +553,7 @@ class DatabaseHelper2 {
 
     // raw query
     List<Map> result =
-        await db.rawQuery('SELECT * FROM reviews WHERE fk_user_id=?', [userId]);
+    await db.rawQuery('SELECT * FROM reviews WHERE fk_user_id=?', [userId]);
 
     int numOfReviews = result.length;
 
@@ -936,8 +936,8 @@ class DatabaseHelper2 {
     await db.rawQuery('DELETE FROM user_favorites WHERE fk_broadcaster_id = ? AND fk_user_id = ?',
         [broadcasterId, userId]);
 
-   // int deletedRow = await db.delete('user_favorites', where: 'fk_broadcaster_id = ?', whereArgs: [broadcasterId]);
-  //  return deletedRow;
+    // int deletedRow = await db.delete('user_favorites', where: 'fk_broadcaster_id = ?', whereArgs: [broadcasterId]);
+    //  return deletedRow;
   }
 
   Future<bool> isFavorite(int broadcasterId) async {
