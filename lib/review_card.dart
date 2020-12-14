@@ -102,9 +102,9 @@ class _ReviewCard extends State<ReviewCard> {
 
   void calcScore() {
     averageScore = (average_entertainment_rating +
-        average_satisfaction_rating +
-        average_interaction_rating +
-        average_skill_rating) /
+            average_satisfaction_rating +
+            average_interaction_rating +
+            average_skill_rating) /
         4;
   }
 
@@ -158,17 +158,17 @@ class _ReviewCard extends State<ReviewCard> {
           SizedBox(height: 10.0),
           textReview.reviewContent != ""
               ? Text(
-            textReview.reviewContent.toUpperCase(),
-            textAlign: TextAlign.center,
-            style: TextStyle(
-                color: Colors.grey[400],
-                fontSize: 12.0,
-                // fontWeight: FontWeight.bold,
-                letterSpacing: 1.5),
-          )
+                  textReview.reviewContent.toUpperCase(),
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                      color: Colors.grey[400],
+                      fontSize: 12.0,
+                      // fontWeight: FontWeight.bold,
+                      letterSpacing: 1.5),
+                )
               : SizedBox(
-            height: 0.0,
-          ),
+                  height: 0.0,
+                ),
           Card(
             // margin: EdgeInsets.symmetric(horizontal: 10.0, vertical: 10.0),
             clipBehavior: Clip.antiAlias,
@@ -202,11 +202,11 @@ class _ReviewCard extends State<ReviewCard> {
                       IconButton(
                         icon: Icon(Icons.edit, color: Colors.grey[400]),
                         onPressed: () {
-
-
-
-                          Navigator.push(context, MaterialPageRoute(builder: (context) => ReviewPage(
-                              streamerId))).then((value) {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      ReviewPage(streamerId))).then((value) {
                             // getData();
                             setState(() {
                               getData();

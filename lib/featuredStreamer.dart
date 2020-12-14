@@ -12,9 +12,9 @@ class _FeaturedStreamerState extends State<FeaturedStreamer> {
   @override
   Widget build(BuildContext context) {
     return Card(
-      color: Colors.black45,
+      color: Colors.grey[850],
       elevation: 10,
-      shadowColor: Colors.black,
+      // shadowColor: Colors.black,
       shape: RoundedRectangleBorder(),
       child: new InkWell(
         onTap: () {
@@ -29,7 +29,7 @@ class _FeaturedStreamerState extends State<FeaturedStreamer> {
           Padding(
           padding: EdgeInsets.all(10.0),
           child: Text(
-            'Featured Streamer',
+            'FEATURED STREAMER',
             style:
             TextStyle(color: Colors.lightGreenAccent, fontSize: 18, letterSpacing: 1.5),
           ),
@@ -37,8 +37,8 @@ class _FeaturedStreamerState extends State<FeaturedStreamer> {
         Padding(
           padding: const EdgeInsets.all(8.0),
           child: Text(
-              'Ninja',
-              style: TextStyle(color: Colors.lightGreenAccent, fontSize: 24),
+              'NINJA',
+              style: TextStyle(color: Colors.lightGreenAccent[100], fontSize: 24),
         ),
       ),
       Row(
@@ -61,7 +61,7 @@ class _FeaturedStreamerState extends State<FeaturedStreamer> {
           ),
           Column(
             children: [
-              Text('Description Placeholder'),
+              Text('Description Placeholder', style: TextStyle(color: Colors.grey[400]),),
             ],
           ),
         ],

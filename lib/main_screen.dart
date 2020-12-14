@@ -77,12 +77,12 @@ class _MainScreenState extends State<MainScreen> {
           ),
           BottomNavigationBarItem(
             icon: Icon(
-              Icons.person,
+              Icons.settings,
               color: Colors.grey,
             ),
             title: Text('SETTINGS'),
             activeIcon: Icon(
-              Icons.person,
+              Icons.settings,
               color: Colors.lightGreenAccent,
             ),
           ),

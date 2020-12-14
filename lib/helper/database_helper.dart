@@ -531,12 +531,12 @@ class DatabaseHelper2 {
       'SELECT * FROM text_reviews WHERE fk_user_id=? AND fk_broadcaster_id=?',
       [userId, broadcasterId],
     );
-    var x = result[0]['favorites_id'];
 
     await db.rawQuery('DELETE FROM reviews WHERE fk_broadcaster_id = ? AND fk_user_id = ?',
         [broadcasterId, userId]);
     await db.rawQuery('DELETE FROM text_reviews WHERE fk_broadcaster_id = ? AND fk_user_id = ?',
         [broadcasterId, userId]);
+    var x = result[0]['favorites_id'];
     await db.rawQuery(
         'DELETE FROM user_text_review_scores WHERE temp_id =?',
         [
