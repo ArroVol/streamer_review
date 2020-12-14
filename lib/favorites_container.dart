@@ -15,7 +15,7 @@ class FavoritesContainer extends StatefulWidget {
 class _FavoritesContainer extends State<FavoritesContainer> {
   List<FavoriteCard> favList = [];
   List<Streamer> listOfFavs = [];
-
+  String x;
   RefreshController _refreshController =
   RefreshController(initialRefresh: false);
 
@@ -33,7 +33,20 @@ class _FavoritesContainer extends State<FavoritesContainer> {
     // getStreamerList();
     return Container(
       height: 1000,
-        child: SmartRefresher(
+      child: x.contains("empty") ?  Padding(
+        padding: const EdgeInsets.symmetric(
+            horizontal: 8.0, vertical: 12.0),
+        child: Row(
+          children: <Widget>[
+            Expanded(
+              child: Column(
+                children: <Widget>[
+                  Text(
+                    "NO STREAMERS FAVORITED YET",
+                    style:    TextStyle(color: Colors.grey[400], letterSpacing: 1.5, fontSize: 18),
+                  ),], ),),],),)
+          :
+        SmartRefresher(
           enablePullDown: true,
           controller: _refreshController,
           onRefresh: _onRefresh,
@@ -57,6 +70,11 @@ class _FavoritesContainer extends State<FavoritesContainer> {
         temp = getStreamerList[i]["fk_broadcaster_id"];
         FavoriteCard favCard = new FavoriteCard(temp.toString());
         streamerList.add(favCard);
+      }
+      if (getStreamerList.length == 0){
+        x = "empty";
+      } else{
+        x= "a";
       }
     }
     if (streamerList != null) {
