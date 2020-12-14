@@ -102,7 +102,7 @@ class _EditUserSettings extends State<EditUserSettings> {
             content: Text(displayText.toString()),
             duration: Duration(seconds: 4),
             action: SnackBarAction(
-              label: 'Undo',
+              // label: 'Undo',
               onPressed: () {
                 // Some code to undo the change.
               },

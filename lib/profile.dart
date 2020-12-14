@@ -251,11 +251,24 @@ class _ProfileState extends State<Profile> {
                         ),
                       ),
                       OutlineButton(
+                        // onPressed: () {
+                        //   Navigator.push(
+                        //       context,
+                        //       MaterialPageRoute(
+                        //           builder: (context) => EditUserSettings()));
+                        // },
                         onPressed: () {
                           Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => EditUserSettings()));
+                                  builder: (context) =>
+                                      EditUserSettings()))
+                              .then((value) {
+                            setState(() {
+                              getNumReviews();
+                              getUser();
+                            });
+                          });
                         },
                         child: Container(
                           height: 40,
