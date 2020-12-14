@@ -35,7 +35,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: Colors.grey[500],
+        backgroundColor: Colors.black,
         appBar: AppBar(
             title: Text(
               'STREVIEW',
@@ -50,7 +50,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   })
             ],
             centerTitle: true,
-            backgroundColor: Colors.black54),
+            backgroundColor: Colors.grey[850]),
         body: Padding(
           padding: EdgeInsets.fromLTRB(10, 20, 10, 20),
           child: SmartRefresher(
@@ -68,10 +68,12 @@ class _HomeScreenState extends State<HomeScreen> {
   List<Widget> uniqueUserDisplay() {
     List<Widget> list = new List<Widget>();
     list.add(FeaturedStreamer());
-    list.add(Divider(color: Colors.black45));
+    list.add(Divider(color: Colors.grey[400]));
     for (Category c in categoryList) {
       if (c.selected) {
-        list.add(Text(c.category));
+        list.add(Text(c.category.toUpperCase(), style: TextStyle(
+        color: Colors.lightGreenAccent[100],
+            letterSpacing: 1.5)));
         list.add(ExpansionRowContainer(c.category),
         );
         // list.add(Divider(color: Colors.black45));
