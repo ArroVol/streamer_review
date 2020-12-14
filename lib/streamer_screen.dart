@@ -70,9 +70,31 @@ class StreamerProfile extends State<StreamerPage> {
     } else {
       reviews = await d.selectTextReviews(broadcaster_id);
     }
+    List<int> temp2 = [];
+    for (var review in reviews) {
+      int x = await d.selectReviewScoreByReviewIdAndUserId(review['favorites_id']);
+      temp2.add(x);
+    }
+    List<bool> tempUpPresses = [];
+    List<bool> tempDownPresses = [];
+
+    for(int score in temp2) {
+      if(score == 0) {
+        tempUpPresses.add(false);
+        tempDownPresses.add(false);
+      } else if(score == 1) {
+        tempUpPresses.add(true);
+        tempDownPresses.add(false);
+      } else if(score == -1) {
+        tempUpPresses.add(false);
+        tempDownPresses.add(true);
+      }
+    }
 
     setState(() {
       text_reviews = reviews;
+      upPresses = tempUpPresses;
+      downPresses = tempDownPresses;
     });
   }
 

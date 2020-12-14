@@ -3,6 +3,8 @@ import 'package:streamer_review/favorite_card.dart';
 import 'package:streamer_review/streamer.dart';
 import 'package:streamer_review/helper/database_helper.dart' as DBHelper;
 import 'helper/database_helper.dart';
+import 'package:pull_to_refresh/pull_to_refresh.dart';
+
 
 /// Creates the favorites container state.
 class FavoritesContainer extends StatefulWidget {
@@ -14,15 +16,32 @@ class _FavoritesContainer extends State<FavoritesContainer> {
   List<FavoriteCard> favList = [];
   List<Streamer> listOfFavs = [];
 
+  RefreshController _refreshController =
+  RefreshController(initialRefresh: false);
+
+  void _onRefresh() async {
+    setState(() {
+      getStreamerList();
+    });
+    // getList().then(updateCategoryList);
+    // if failed,use refreshFailed()
+    _refreshController.refreshCompleted();
+  }
+
   @override
   Widget build(BuildContext context) {
     // getStreamerList();
     return Container(
       height: 1000,
-      child: ListView(
-        scrollDirection: Axis.vertical,
-        children: favList,
-      ),
+        child: SmartRefresher(
+          enablePullDown: true,
+          controller: _refreshController,
+          onRefresh: _onRefresh,
+          child: ListView(
+            scrollDirection: Axis.vertical,
+            children: favList
+          ),
+        ),
     );
   }
   /// Gets a list of streamers.
