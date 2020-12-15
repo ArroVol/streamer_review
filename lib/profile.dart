@@ -434,10 +434,10 @@ class _ProfileState extends State<Profile> {
                                       secureStorage.deleteSecureData('email');
                                       secureStorage
                                           .deleteSecureData('password');
-                                      secureStorage
-                                          .deleteSecureData('userName');
-                                      secureStorage
-                                          .deleteSecureData('phoneNumber');
+                                      // secureStorage
+                                      //     .deleteSecureData('userName');
+                                      // secureStorage
+                                      //     .deleteSecureData('phoneNumber');
 
                                       Navigator.of(context, rootNavigator: true)
                                           .pushReplacement(FadePageRoute(
